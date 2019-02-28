@@ -1,2 +1,2 @@
-
-该项目通过 **`@react/cli`** 创建。
+# site-flame
+静态网页创建工具--(react、markdown)
