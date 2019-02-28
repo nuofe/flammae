@@ -1,0 +1,44 @@
+@import '../../styles/config.scss';
+
+
+.n-btn {
+    outline: none;
+    box-sizing: border-box;
+    cursor: pointer;
+    user-select: none;
+    color: #fff;
+
+    border: 1px solid $themeColor;
+    background: $themeColor;
+    border-radius: $radius;
+    padding: 0 ($basePadding - 1);
+    height: $baseHeight;
+    
+
+    &:hover,
+    &:focus {
+        background: $themeColorLight;
+        border-color: $themeColorLight;
+    }
+
+    &:active {
+        background: $themeColorDark;
+        border-color: $themeColorDark;
+    }
+
+    &:disabled {
+        border-color: #D9D9D9;
+        background: rgba(0, 0, 0, 0.04);
+        color: rgba(0, 0, 0, 0.25);
+        cursor: not-allowed;
+    }
+
+    &._small {
+        padding: 0 ($smallPadding - 1);
+        height: $smallHeight;
+    }
+    &._large {
+        padding: 0 ($largePadding - 1);
+        height: $largeHeight;
+    }
+}
