@@ -22,8 +22,8 @@ const {
 const styleExtension = require(resolveApp('package.json')).styleExtension;
 
 // 开发者自定义的配置
-const userConfig = fs.existsSync(resolveApp('cli.config.js')) 
-    ? require(resolveApp('cli.config.js'))
+const userConfig = fs.existsSync(resolveApp('flame.config.js')) 
+    ? require(resolveApp('flame.config.js'))
     : null
 
 // 默认配置
@@ -33,7 +33,7 @@ const defaultConfig = {
         host: '127.0.0.1'
     },
     alias: {
-        '@': resolveApp('src'),
+        '@app': resolveApp('src')
     },
     extensions: [],
     // 暂时只支持 sass | less， 其他需要可向作者反馈

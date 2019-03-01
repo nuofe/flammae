@@ -21,9 +21,11 @@ module.exports = function (str) {
         // 提取代码块，并解析成一个组件
         const codeReg = `\`\`\`(\s)*(.[^${newLineSym}]*)?${newLineSym}((?:(?!(\`\`\`)).)*${newLineSym})*\`\`\``
         const codeMatcher = str.match(new RegExp(codeReg, 'gm'))
+        console.log(codeMatcher)
         if (codeMatcher) {
             codeSplit = codeMatcher.map(codeParse).filter(Boolean)
         }
+
         // 提取标题
         const headingReg = `(#|##|###|####)(.[^${newLineSym}]*)${newLineSym}`
         const headingMatcher = str.match(new RegExp(headingReg, 'mg'))

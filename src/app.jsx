@@ -5,7 +5,7 @@ import {
     Route,
     Link
 } from 'react-router-dom'
-import staticData from 'staticData'
+import staticData from './static-data'
 import Markdown from './templates/markdown'
 
 class App extends Component {
@@ -15,8 +15,8 @@ class App extends Component {
             <HashRouter>
                 <Switch>
                     {
-                        staticData.docs.map(doc=>{
-                            const md = require(`./docs/${doc.title.toLowerCase()}.md`).default
+                        staticData.docs && staticData.docs.map(doc=>{
+                            const md = require(`@app/docs/${doc.title.toLowerCase()}.md`).default
                             return <Route key={doc.path} path={doc.path} render={()=><Markdown md={md}/>}/>
                         })
                     }

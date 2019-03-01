@@ -94,7 +94,7 @@ module.exports = function genConfig(webpackEnv) {
         // ? 如果传递的是一个对象，则对象的每个key都会生成一个包（多入口）
         // ! Simple rule: one entry point per HTML page. SPA: one entry point, MPA: multiple entry points.
         // 一般只使用一个入口就ok
-        entry: [paths.appIndexJs],
+        entry: [paths.packageIndexJs],
         output: {
             // 打包文件保存的文件夹路径
             path: paths.appBuild,
@@ -225,9 +225,7 @@ module.exports = function genConfig(webpackEnv) {
         resolve: {
             extensions: onlyOne(['.js', '.json', '.jsx', 'css'], config.extensions),
             // 路径解析别名
-            alias: Object.assign({}, config.alias, {
-                'staticData': paths.appStaticData
-            }),
+            alias: Object.assign({}, config.alias),
             // 告诉webpack 到哪里找 modules
             modules: ['node_modules'],
             plugins: [
@@ -242,7 +240,7 @@ module.exports = function genConfig(webpackEnv) {
                 // please link the files into your node_modules/ and let module-resolution kick in.
                 // Make sure your source files are compiled, as they will not be processed in any way.
 
-                // new ModuleScopePlugin(paths.appSrc, [paths.appPackageJson]),
+                // new ModuleScopePlugin(paths.packageSrc, [paths.packagePackageJson]),
 
             ],
         },
@@ -258,7 +256,7 @@ module.exports = function genConfig(webpackEnv) {
                 {
                     test: /\.(js|jsx)$/,
                     enforce: 'pre',
-                    include: paths.appSrc,
+                    include: [paths.appSrc, paths.packageSrc],
                     use: [{
                         options: {
                             eslintPath: require.resolve('eslint'),
@@ -288,9 +286,10 @@ module.exports = function genConfig(webpackEnv) {
                         },
                         {
                             test: /\.(js|mjs|jsx|ts|tsx)$/,
-                            include: paths.appSrc,
+                            include: [paths.appSrc, paths.packageSrc],
                             loader: require.resolve('babel-loader'),
                             options: {
+                                presets: ['react-app'],
                                 // 启用缓存，这是webpack针对“babel-loader”的特性(不是babel本身的)。
                                 // 将会在./node_Module/.cache/babel-loader/目录中保存缓存结果
                                 // 对于多次的run build 会节省大量时间
@@ -301,7 +300,6 @@ module.exports = function genConfig(webpackEnv) {
                         },
                         {
                             loader: require.resolve('file-loader'),
-
                             exclude: [/\.(js|jsx)$/, /\.html$/, /\.json$/],
                             options: {
                                 name: 'static/media/[name].[hash:8].[ext]',
@@ -317,13 +315,12 @@ module.exports = function genConfig(webpackEnv) {
             isDevEnv && new webpack.HotModuleReplacementPlugin(),
             // 
             new HtmlWebpackPlugin({
-                template: paths.appHtml,
+                template: paths.packageHtml,
             }),
             // 允许你在js 代码中使用环境变量, 例如： if (process.env.NODE_ENV === 'production') { ... }
             // 如果在这里设置了，需要调整eslint检测规则，否则eslint会报错（毕竟eslint不知道有这个变量，他会觉得这个未定义）
             new webpack.DefinePlugin({
                 'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
-                'process.env.staticData': process.env.staticData
             }),
 
             isProdEnv && new MiniCssExtractPlugin({

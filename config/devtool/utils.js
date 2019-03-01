@@ -2,7 +2,6 @@
 const path = require('path');
 const fs = require('fs');
 
-const utils = {}
 
 // 因为执行npm start的时候是在项目根目录，也就是工作目录是根目录，
 // 所以process.cwd()返回的是根目录
@@ -10,6 +9,12 @@ const appDirectory = fs.realpathSync(process.cwd());
 function resolveApp(src) {
     return path.resolve(appDirectory, src)
 }
+
+const packageDirectory = path.resolve(__dirname, '../../')
+function resolvePackage(src) {
+    return path.resolve(packageDirectory, src)
+}
+
 
 function onlyOne(...args) {
     let arr = []
@@ -48,6 +53,7 @@ function copy(target, obj) {
 
 module.exports = {
     resolveApp,
+    resolvePackage,
     onlyOne,
     copy
 }

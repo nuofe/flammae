@@ -1,35 +1,23 @@
 {
-    "name": "nuo-ui",
+    "name": "site-flame",
     "version": "0.1.0",
     "main": "index.js",
-    "author": "NuoFE",
+    "author": "LiZ2z",
     "description": "",
-    "private": true,
+    "private": false,
     "license": "MIT",
-    "scripts": {
-        "dev": "node scripts/start -dev",
-        "start": "npm run dev",
-        "build": "node scripts/start -build"
-    },
-    "babel": {
-        "presets": [
-            "react-app"
-        ]
-    },
     "eslintConfig": {
         "extends": "@78d6/eslint-config-react-app"
     },
     "styleExtension": "sass",
     "dependencies": {
-        "classnames": "^2.2.6"
-    },
-    "peerDependencies": {
+        "classnames": "^2.2.6",
         "react": "^16.8.3",
-        "react-dom": "^16.8.3"
-    },
-    "devDependencies": {
-        "@78d6/eslint-config-common": "0.1.4",
-        "@78d6/eslint-config-react-app": "0.1.0",
+        "react-dom": "^16.8.3",
+        "react-router-dom": "4.3.1",
+        "redux": "4.0.1",
+        "@78d6/eslint-config-common": "0.1.5",
+        "@78d6/eslint-config-react-app": "0.1.1",
         "@svgr/webpack": "4.1.0",
         "babel-eslint": "10.0.1",
         "babel-loader": "8.0.5",
@@ -54,8 +42,6 @@
         "postcss-loader": "3.0.0",
         "postcss-preset-env": "6.5.0",
         "postcss-safe-parser": "4.0.1",
-        "react-router-dom": "4.3.1",
-        "redux": "4.0.1",
         "style-loader": "0.23.1",
         "terser-webpack-plugin": "1.2.3",
         "url-loader": "1.1.2",
