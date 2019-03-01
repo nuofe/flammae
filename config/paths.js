@@ -1,22 +1,34 @@
 const path = require('path')
-const {
-    resolvePackage,
-    resolveApp,
-} = require('./devtool/utils');
+const fs = require('fs');
 
-const packageDirectory = path.resolve(__dirname, '../')
+
+// 因为执行npm start的时候是在项目根目录，也就是工作目录是根目录，
+// 所以process.cwd()返回的是根目录
+const appDirectory = fs.realpathSync(process.cwd());
+function resolveApp(src) {
+    return path.resolve(appDirectory, src)
+}
+const flameDirectory = path.resolve(__dirname, '../')
+
+function resolveFlame(src) {
+    return path.resolve(flameDirectory, src)
+}
 
 
 module.exports = {
-    appBuild: resolveApp('build'),
-    appSrc: resolveApp('src'),
+    // 函数
+    resolveApp: resolveApp,
+    resolveFlame: resolveFlame,
 
-    packagePublic: resolvePackage('public'),
-    packageHtml: resolvePackage('public/index.html'),
-    packageIndexJs: resolvePackage('src/index.js'),
-    packagePackageJson: resolvePackage('package.json'),
-    packageSrc: resolvePackage('src'),
-    packageStaticData: path.resolve(packageDirectory, 'scripts/static-data.js'), // 网站静态数据
-    packageDir: packageDirectory,
-    packageModules: resolvePackage('node_modules')
+    // flame创建的项目的地址
+    appSrc: resolveApp('src'),
+    appBuild: resolveApp('build'),
+    
+    // flame自己的地址
+    flameDir: flameDirectory,
+    flameSrc: resolveFlame('src'),
+    flamePublic: resolveFlame('public'),
+    flameIndexJs: resolveFlame('src/index.js'),
+    flameHtml: resolveFlame('public/index.html'),
+    flamePackageJson: resolveFlame('package.json'),
 }

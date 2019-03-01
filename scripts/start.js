@@ -12,19 +12,25 @@ process.on('uncaughtException', err => {
 process.on('unhandledRejection', err => {
     throw err
 })
-
 process.on('exit', (code) => {
     console.log(`退出码: ${code}`)
 })
 
-
-const fs = require('fs-extra')
 const path = require('path')
 const chalk = require('chalk')
+const fs = require('fs-extra')
+const markdownParse = require('./libs/markdown/parse')
+const jsxParse = require('./libs/jsx-parse')
 const {
     appSrc,
-    packageSrc
+    flameSrc
 } = require('../config/paths')
+
+// 这里文档路径 以后可配置. 暂时没空做
+// 目前默认 appRoot/src/docs
+const docDir = path.resolve(appSrc, 'docs')
+const pageDir = path.resolve(appSrc, 'pages')
+
 
 if (!fs.existsSync(appSrc)) {
     console.log(chalk.red('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n'))
@@ -33,9 +39,10 @@ if (!fs.existsSync(appSrc)) {
     process.exit(1)
     return
 }
-if(
-    !fs.existsSync(path.resolve(appSrc, 'docs')) 
-    && !fs.existsSync(path.resolve(appSrc, 'pages'))
+
+if (
+    !fs.existsSync(path.resolve(appSrc, 'docs')) &&
+    !fs.existsSync(path.resolve(appSrc, 'pages'))
 ) {
     console.log()
     console.log(chalk.red('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n'))
@@ -47,42 +54,23 @@ if(
     return
 }
 
+// 读取flame 项目下的目录
+// src/docs 目录被规定为专门存放 .md文件
+// src/pages 目录下被规定专门存放 .jsx文件
+// 将会根据每个文档的头部 信息 生成对应的 页面
+function parseFiles() {
+    const pageNames = fs.existsSync(pageDir) ? fs.readdirSync(pageDir) : []
+    const docNames = fs.existsSync(docDir) ? fs.readdirSync(docDir) : []
+    const fileNames = docNames.concat(pageNames)
 
-const startWebpack = (function () {
-    let started = false
-    return function (data) {
-        if (started) return
-        started = true
+    if (fileNames.length) {
+        Promise.all(
+            fileNames.map(fileName => {
+                const isJSX = fileName.match(/.*\.jsx$/)
+                if (!isJSX && !fileName.match(/.*\.md$/)) return
 
-        const staticData = JSON.stringify({
-            docs: data,
-            // pages:
-        })
-
-        fs.writeFileSync(path.resolve(packageSrc, 'static-data.json'), staticData)
-
-        watchDocDir()
-        const mode = process.argv[2].slice(1)
-        require(`./${mode}.js`)()
-    }
-})();
-
-
-
-// 这里文档路径 以后可配置. 暂时没空做
-// 目前默认 appRoot/src/docs
-const docDir = path.resolve(appSrc, 'docs')
-const docPaths = fs.existsSync(docDir) ? fs.readdirSync(docDir) : []
-
-const pageDir = path.resolve(appSrc,'pages')
-const pagePaths = fs.existsSync(pageDir) ? fs.readdirSync(pageDir) :[]
-
-if (docPaths.length) {
-    Promise.all(
-        docPaths.map(docPath =>
-            docPath.match(/.*\.md$/) && (
-                new Promise(resolve => {
-                    const filePath = path.resolve(docDir, docPath)
+                return new Promise(resolve => {
+                    const filePath = path.resolve(isJSX ? pageDir : docDir, fileName)
                     fs.readFile(filePath, {
                         encoding: 'utf8'
                     }, (err, data) => {
@@ -97,55 +85,54 @@ if (docPaths.length) {
                         }
                     })
                 })
-            )
-        )
+            }).filter(Boolean)
+        ).then(files => {
 
-    ).then(files => {
-        // 分析 .md 文件中的数据
-        const docData = parseFile(files.filter(Boolean))
-        startWebpack(docData)
-    }).catch(err => {
-        console.log(err)
-        startWebpack()
-    })
-} else {
-    startWebpack()
+            const docDatas = []
+            const pageDatas = []
+
+            files.forEach(file => {
+                const isJSX = file.path.match(/.*\.jsx$/)
+                if (isJSX) {
+                    const pageData = jsxParse(file.data, file.path)
+                    pageData && pageDatas.push(pageData)
+                } else {
+                    const doc = markdownParse(file.data, file.path)
+                    doc && docDatas.push(doc.frontmatter)
+                }
+            })
+
+            writeData({
+                docs: docDatas,
+                pages: pageDatas
+            })
+        }).catch(err => {
+            console.log(err)
+            writeData()
+        })
+    } else {
+        writeData()
+    }
 }
 
+parseFiles()
 
+// 将静态数据写入文件中
+// 启动文件观察
+// 启动webpack
+let webpackStarted = false
+function writeData(data) {
+    data = data || {
+        docs: null,
+        pages: null
+    }
+    fs.writeFileSync(path.resolve(flameSrc, 'static-data.json'), JSON.stringify(data))
 
-
-const newLineSym = '\r\n'
-
-// 提取 frontmatter
-function parseFile(files) {
-    return files.map(file => {
-        const newLineSym = '\r\n'
-        let frontmatter = null
-        const fmReg = `---${newLineSym}((${newLineSym}|.)*)${newLineSym}---`
-        const fmMatcher = file.data.match(new RegExp(fmReg))
-        if (fmMatcher) {
-            frontmatter = frontmatterParse(fmMatcher[1])
-        }
-        if (!frontmatter) {
-            console.warn(`未能从${file.path}文件中找到frontmatter，该文档将不被显示`)
-            return
-        } else if (!frontmatter.path) {
-            console.warn(`未能从${file.path}文件中找到路径（path）信息，该文档将不被显示`)
-            return
-        }
-        return frontmatter
-    }).filter(Boolean)
-}
-
-function frontmatterParse(str) {
-    const arr = str.replace(/('|")/gm, '').split(newLineSym).filter(Boolean)
-    const obj = {}
-    arr.forEach(item => {
-        const subArr = item.split(':')
-        obj[subArr[0].trim()] = subArr[1].trim()
-    })
-    return obj
+    if (webpackStarted) return
+    webpackStarted = true
+    watchDocDir()
+    const mode = process.argv[2].slice(1)
+    require(`./${mode}.js`)()
 }
 
 

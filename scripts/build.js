@@ -9,14 +9,14 @@ module.exports = function () {
     const chalk = require('chalk');
     const webpack = require('webpack');
     const webpackConfig = require('../config/webpack.config')('production');
-    const paths = require('../config/paths');
+    const appBuild = require('../config/paths').appBuild;
     // https://www.npmjs.com/package/fs-extra
     const fs = require('fs-extra');
 
     console.log();
-    if (fs.existsSync(paths.appBuild)) {
+    if (fs.existsSync(appBuild)) {
         console.log(chalk.cyan('正在清理旧的打包文件... \n'));
-        fs.removeSync(paths.appBuild);
+        fs.removeSync(appBuild);
         console.log(chalk.cyan('开始重新打包... \n'));
     } else {
         console.log(chalk.cyan('开始打包... \n'));
@@ -38,7 +38,7 @@ module.exports = function () {
 
 
         if (!messages.errors.length && !messages.warnings.length) {
-            console.log(chalk.green(`打包完成：${paths.appBuild}`));
+            console.log(chalk.green(`打包完成：${appBuild}`));
             console.log();
         } else {
             console.log(chalk.red('编译出错！\n'));

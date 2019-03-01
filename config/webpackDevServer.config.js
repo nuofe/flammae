@@ -12,7 +12,7 @@ module.exports = {
     // devServer.publicPath 将用于确定应该从哪里提供 bundle，并且此选项优先。
     // 推荐使用绝对路径。默认情况下，将使用当前工作目录作为提供内容的目录，但是你可以修改为其他目录
     // 也可以从多个目录提供内容：contentBase: [path.join(__dirname, 'public'), path.join(__dirname, 'assets')]
-    contentBase: paths.packagePublic,
+    contentBase: paths.flamePublic,
     // 告知服务器，观察 devServer.contentBase 下的文件。文件修改后，会触发一次完整的页面重载。
     watchContentBase: true,
     // 启用热重载服务，

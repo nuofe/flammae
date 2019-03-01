@@ -1,4 +1,3 @@
-
 // ~~~~~~~~~~~~~~~~~~
 // /!\ 注意 /!\
 // ~~~~~~~~~~~~~~~~~~
@@ -13,18 +12,16 @@
 
 'use strict';
 
-const fs = require('fs-extra');
-const {
-    resolveApp,
-    copy
-} = require('./devtool/utils');
-
-const styleExtension = require(resolveApp('package.json')).styleExtension;
+const fs = require('fs-extra')
+const resolveApp = require('./paths').resolveApp
+const styleExtension = require(resolveApp('package.json')).styleExtension
 
 // 开发者自定义的配置
-const userConfig = fs.existsSync(resolveApp('flame.config.js')) 
-    ? require(resolveApp('flame.config.js'))
-    : null
+const userConfig = (
+    fs.existsSync(resolveApp('flame.config.js')) ?
+    require(resolveApp('flame.config.js')) :
+    null
+);
 
 // 默认配置
 const defaultConfig = {
@@ -42,4 +39,33 @@ const defaultConfig = {
 };
 
 
-module.exports = copy(defaultConfig, userConfig);
+
+
+module.exports = merge(defaultConfig, userConfig)
+
+
+// 拷贝
+function merge(target, obj) {
+    if (!obj) return target
+    target = Object.assign({}, target)
+    let targetItem;
+    let objItem;
+    for (let key in obj) {
+        targetItem = target[key];
+        objItem = obj[key];
+
+        if (typeof objItem !== 'object' || objItem === null) {
+            target[key] = objItem;
+            continue;
+        }
+        if (Object.prototype.toString.call(objItem) === '[object Array]') {
+            target[key] = onlyOne(targetItem, objItem);
+            continue;
+        }
+
+        target[key] = Object.assign({}, targetItem, objItem);
+
+    }
+
+    return target
+}

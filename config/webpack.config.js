@@ -8,7 +8,6 @@ const safePostCssParser = require('postcss-safe-parser');
 
 const paths = require('./paths');
 const config = require('./config');
-const onlyOne = require('./devtool/utils').onlyOne;
 
 
 
@@ -94,7 +93,7 @@ module.exports = function genConfig(webpackEnv) {
         // ? 如果传递的是一个对象，则对象的每个key都会生成一个包（多入口）
         // ! Simple rule: one entry point per HTML page. SPA: one entry point, MPA: multiple entry points.
         // 一般只使用一个入口就ok
-        entry: [paths.packageIndexJs],
+        entry: paths.flameIndexJs,
         output: {
             // 打包文件保存的文件夹路径
             path: paths.appBuild,
@@ -223,7 +222,7 @@ module.exports = function genConfig(webpackEnv) {
         // 可以在根目录建立 cli.config.js文件，在其中修改extensions alias 配置
         // 除非必须，否则不要在这里改配置
         resolve: {
-            extensions: onlyOne(['.js', '.json', '.jsx', 'css'], config.extensions),
+            extensions: ['.js', '.json', '.jsx', 'css'].concat(config.extensions),
             // 路径解析别名
             alias: Object.assign({}, config.alias),
             // 告诉webpack 到哪里找 modules
@@ -240,7 +239,7 @@ module.exports = function genConfig(webpackEnv) {
                 // please link the files into your node_modules/ and let module-resolution kick in.
                 // Make sure your source files are compiled, as they will not be processed in any way.
 
-                // new ModuleScopePlugin(paths.packageSrc, [paths.packagePackageJson]),
+                // new ModuleScopePlugin(paths.flameSrc, [paths.flamePackageJson]),
 
             ],
         },
@@ -256,7 +255,7 @@ module.exports = function genConfig(webpackEnv) {
                 {
                     test: /\.(js|jsx)$/,
                     enforce: 'pre',
-                    include: [paths.appSrc, paths.packageSrc],
+                    include: [paths.appSrc, paths.flameSrc],
                     use: [{
                         options: {
                             eslintPath: require.resolve('eslint'),
@@ -282,11 +281,11 @@ module.exports = function genConfig(webpackEnv) {
 
                         {
                             test: /\.md$/,
-                            loader: require.resolve('./markdown-loader.js')
+                            loader: require.resolve('../scripts/libs/markdown/loader.js')
                         },
                         {
                             test: /\.(js|mjs|jsx|ts|tsx)$/,
-                            include: [paths.appSrc, paths.packageSrc],
+                            include: [paths.appSrc, paths.flameSrc],
                             loader: require.resolve('babel-loader'),
                             options: {
                                 presets: ['react-app'],
@@ -315,7 +314,7 @@ module.exports = function genConfig(webpackEnv) {
             isDevEnv && new webpack.HotModuleReplacementPlugin(),
             // 
             new HtmlWebpackPlugin({
-                template: paths.packageHtml,
+                template: paths.flameHtml,
             }),
             // 允许你在js 代码中使用环境变量, 例如： if (process.env.NODE_ENV === 'production') { ... }
             // 如果在这里设置了，需要调整eslint检测规则，否则eslint会报错（毕竟eslint不知道有这个变量，他会觉得这个未定义）
