@@ -3,3 +3,7 @@ node_modules/
 *.lock
 
 package-lock.json
+
+.gitignore
+
+.git/
