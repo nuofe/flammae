@@ -58,11 +58,8 @@ if (
 // src/docs 目录被规定为专门存放 .md文件
 // src/pages 目录下被规定专门存放 .jsx文件
 // 将会根据每个文档的头部 信息 生成对应的 页面
-function parseFiles() {
-    const pageNames = fs.existsSync(pageDir) ? fs.readdirSync(pageDir) : []
-    const docNames = fs.existsSync(docDir) ? fs.readdirSync(docDir) : []
-    const fileNames = docNames.concat(pageNames)
-
+function parseFiles(fileNames) {
+    if(!fileNames) return
     if (fileNames.length) {
         Promise.all(
             fileNames.map(fileName => {
@@ -95,10 +92,16 @@ function parseFiles() {
                 const isJSX = file.path.match(/.*\.jsx$/)
                 if (isJSX) {
                     const pageData = jsxParse(file.data, file.path)
-                    pageData && pageDatas.push(pageData)
+                    pageData && pageDatas.push(Object.assign({}, pageData, {
+                        filePath: file.path,
+                        type: 'page'
+                    }))
                 } else {
                     const doc = markdownParse(file.data, file.path)
-                    doc && docDatas.push(doc.frontmatter)
+                    doc && docDatas.push(Object.assign({}, doc.frontmatter, {
+                        filePath: file.path,
+                        type: 'doc'
+                    }))
                 }
             })
 
@@ -106,39 +109,76 @@ function parseFiles() {
                 docs: docDatas,
                 pages: pageDatas
             })
+            startWepack()
         }).catch(err => {
             console.log(err)
-            writeData()
+            startWepack()
         })
     } else {
-        writeData()
+        startWepack()
     }
 }
 
-parseFiles()
+
+;(function () {
+    const pageNames = fs.existsSync(pageDir) ? fs.readdirSync(pageDir) : []
+    const docNames = fs.existsSync(docDir) ? fs.readdirSync(docDir) : []
+    parseFiles(docNames.concat(pageNames))
+})();
+
+
 
 // 将静态数据写入文件中
 // 启动文件观察
 // 启动webpack
-let webpackStarted = false
-function writeData(data) {
-    data = data || {
-        docs: null,
-        pages: null
-    }
-    fs.writeFileSync(path.resolve(flameSrc, 'static-data.json'), JSON.stringify(data))
 
-    if (webpackStarted) return
-    webpackStarted = true
+function writeData(data) {
+    try {
+        fs.writeFileSync(path.resolve(flameSrc, 'static-data.json'), JSON.stringify(data))
+        let appStr = fs.readFileSync(path.resolve(flameSrc, 'app.template.jsx'), {
+            encoding: 'utf8'
+        })
+        data.pages.concat(data.docs).forEach((item, i) => {
+            const isDoc = item.type === 'doc'
+            const name = isDoc ? `Md${i}` : `Comp${i}`
+            const render = (
+                !isDoc ?
+                `component={${name}}` :
+                `render={()=><Markdown md={${name}}/>}`
+            );
+            appStr = appStr.replace('/* import */', `import ${name} from '${item.filePath.split(path.sep).join('/')}';\n/* import */`)
+            appStr = appStr.replace('{/* route */}', `<Route path='${item.path}' ${render} />\n{/* route */}`)
+        })
+
+        fs.writeFileSync(path.resolve(flameSrc, 'app.jsx'), appStr)
+    } catch (err) {
+        throw err
+    }
+
+}
+
+
+function startWepack() {
+    if (this.webpackStarted) return
+    this.webpackStarted = true
+    // 监听文件添加修改
     watchDocDir()
+
     const mode = process.argv[2].slice(1)
     require(`./${mode}.js`)()
 }
 
-
 // 监听文件 创建修改
-function watchDocDir() {
-    // const watcher = fs.watch(docDir, {
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// 待优化，监听特定文件，因此没必要改一个之后其他都分析，只要分析改的哪个
 
-    // })
+function watchDocDir() {
+    fs.watch(appSrc, {
+        encoding: 'utf8',
+        recursive: true
+    }, (event, shorPath) => {
+
+        const filePath = path.resolve(appSrc, shorPath)
+        // parseFiles()
+    })
 }

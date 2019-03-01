@@ -5,10 +5,12 @@ const chalk = require('chalk')
 // unix \n
 // mac \r
 const newLineSym = '\r\n'
+// 空格
+const space = '(\u0020| )'
 // frontmatter
 const fmReg = `---${newLineSym}((${newLineSym}|.)*)${newLineSym}---`
 // code
-const codeReg = `\`\`\`(\s)*(.[^${newLineSym}]*)?${newLineSym}((?:(?!(\`\`\`)).)*${newLineSym})*\`\`\``
+const codeReg = `\`\`\`(${space})*(.[^${newLineSym}]*)?${newLineSym}((?:(?!(\`\`\`)).)*${newLineSym})*\`\`\``
 // heading
 const headingReg = `(#|##|###|####)(.[^${newLineSym}]*)${newLineSym}`
 

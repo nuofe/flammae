@@ -1,6 +1,6 @@
 import marked from 'marked'
 import './styles/atom-one-light.css'
-import './style.scss'
+import './style.css'
 import hljs from 'highlight.js/lib/highlight';
 import javascript from 'highlight.js/lib/languages/javascript';
 import xml from 'highlight.js/lib/languages/xml';

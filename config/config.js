@@ -14,7 +14,6 @@
 
 const fs = require('fs-extra')
 const resolveApp = require('./paths').resolveApp
-const styleExtension = require(resolveApp('package.json')).styleExtension
 
 // 开发者自定义的配置
 const userConfig = (
@@ -30,15 +29,13 @@ const defaultConfig = {
         host: '127.0.0.1'
     },
     alias: {
-        '@app': resolveApp('src')
+        '@': resolveApp('src')
     },
     extensions: [],
     // 暂时只支持 sass | less， 其他需要可向作者反馈
     // 在这里改了后，记得下载对应的 loader 
-    style: styleExtension || 'sass'
+    style: 'css'
 };
-
-
 
 
 module.exports = merge(defaultConfig, userConfig)

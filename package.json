@@ -7,9 +7,9 @@
     "private": false,
     "license": "MIT",
     "eslintConfig": {
-        "extends": "@78d6/eslint-config-react-app"
+        "extends": "@78d6/eslint-config-react-app",
+        "root": true
     },
-    "styleExtension": "sass",
     "dependencies": {
         "classnames": "^2.2.6",
         "react": "^16.8.3",
