@@ -11,11 +11,9 @@
         "root": true
     },
     "dependencies": {
-        "classnames": "^2.2.6",
         "react": "^16.8.3",
         "react-dom": "^16.8.3",
         "react-router-dom": "4.3.1",
-        "redux": "4.0.1",
         "@78d6/eslint-config-common": "0.1.5",
         "@78d6/eslint-config-react-app": "0.1.1",
         "@svgr/webpack": "4.1.0",
