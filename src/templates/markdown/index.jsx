@@ -5,9 +5,17 @@ import PropTypes from 'prop-types'
 
 
 class Markdown extends Component {
-    
+
     componentDidMount() {
-        this.__html = marked(this.props.md.text, {
+        this.genHTML(this.props.md.text)
+    }
+    UNSAFE_componentWillReceiveProps(nextP) {
+        if (this.props.md.text !== nextP.md.text) {
+            this.genHTML(nextP.md.text)
+        }
+    }
+    genHTML(str) {
+        this.__html = marked(str, {
             renderer: renderer
         })
         this.forceUpdate()

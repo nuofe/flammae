@@ -7,3 +7,7 @@ package-lock.json
 .gitignore
 
 .git/
+
+# 这两个文件是运行时动态生成的
+app.jsx
+static-data.json

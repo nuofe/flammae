@@ -1,1 +1,2 @@
-export {default as staticData } from './src/static-data'
+export {default as siteData } from './src/temp/site-data'
+export {default as Markdown} from './src/templates/markdown'
