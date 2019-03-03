@@ -20,15 +20,20 @@ marked.setOptions({
 const renderer = new marked.Renderer();
 
 // 重写heading输出规则
-renderer.heading = function (text, level) {
-    var escapedText = text.toLowerCase().replace(/[^\w]+/g, '-');
-    return `
-          <h${level}>
-            <a name="${escapedText}" class="anchor" href="#${escapedText}">
-              <span class="header-link">${text}</span>
-            </a>
-            
-          </h${level}>`;
-};
+// renderer.heading = function (text, level) {
+//     var escapedText = text.toLowerCase().replace(/[^\w]+/g, '-');
+//     return `
+//           <h${level}>
+//             <a name="${escapedText}" class="anchor" href="#${escapedText}">
+//               <span class="header-link">${text}</span>
+//             </a>
+//           </h${level}>`;
+// };
+
+// renderer.code = function (str, lang, b) {
+//     console.log(text, x, b)
+//     return text
+// };
+
 
 export default renderer

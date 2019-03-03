@@ -16,14 +16,15 @@ module.exports = function (str, filePath) {
     }
 
     if (!pageData) {
-        console.warn(chalk.yellow(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>>>>>>>>>>>>>>>>`))
+        console.warn(chalk.yellow(`>>>>>>>>>>>>>>>>`))
         console.warn(`${chalk.yellow(`注意：`)}未能从${chalk.yellow(filePath)}文件中找到有效注释，该文档将不被显示`)
-        console.warn(chalk.yellow(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>>>>>>>>>>>>>>>>\n`))
+        console.warn()
+
         return
     } else if (!pageData.path) {
-        console.warn(chalk.yellow(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>>>>>>>>>>>>>>>>`))
+        console.warn(chalk.yellow(`>>>>>>>>>>>>>>>>`))
         console.warn(`${chalk.yellow(`注意：`)}未能从${chalk.yellow(filePath)}文件头部的注释中找到路径（path）信息，该文档将不被显示`)
-        console.warn(chalk.yellow(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>>>>>>>>>>>>>>>>\n`))
+        console.warn()
         return
     }
 

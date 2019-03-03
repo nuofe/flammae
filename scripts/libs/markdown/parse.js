@@ -27,14 +27,14 @@ module.exports = function (str, needWarning) {
     }
     if (needWarning) {
         if (!frontmatter) {
-            console.warn(chalk.yellow(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`))
+            console.warn(chalk.yellow(`>>>>>>>>>>>>>>>>`))
             console.warn(`${chalk.yellow(`注意：`)}未能从${chalk.yellow(needWarning)}文件中找到frontmatter，该文档将不被显示`)
-            console.warn(chalk.yellow(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n`))
+            console.warn()
             return     
         } else if (!frontmatter.path) {
-            console.warn(chalk.yellow(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`))
+            console.warn(chalk.yellow(`>>>>>>>>>>>>>>>>`))
             console.warn(`${chalk.yellow(`注意：`)}未能从${chalk.yellow(needWarning)}文件中找到路径（path）信息，该文档将不被显示`)
-            console.warn(chalk.yellow(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n`))
+            console.warn()
             return
         }
     }

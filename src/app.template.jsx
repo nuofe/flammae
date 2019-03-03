@@ -5,8 +5,6 @@ import {
     Route,
     Redirect
 } from 'react-router-dom';
-import Index from './templates/home'
-import Markdown from './templates/markdown';
 /* import */
 
 class App extends Component {
