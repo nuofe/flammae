@@ -1,22 +1,13 @@
 const chalk = require('chalk')
 
-// 针对不同平台判断，不同换行符。这里只匹配了 Windows
-// windows \n\r
-// unix \n
-// mac \r
-const newLineSym = '\r\n'
-// 空格
-const space = '(\u0020| )'
+const {newLine} = require('../new-line')
 // frontmatter
-const fmReg = `---${newLineSym}((${newLineSym}|.)*)${newLineSym}---`
-// code
-const codeReg = `\`\`\`(${space})*(.[^${newLineSym}]*)?${newLineSym}((?:(?!(\`\`\`)).)*${newLineSym})*\`\`\``
+const fmReg = `---${newLine}((${newLine}|.)*)${newLine}---`
 // heading
-const headingReg = `(#|##|###|####)(.[^${newLineSym}]*)${newLineSym}`
+const headingReg = `(#|##|###|####)(.[^${newLine}]*)${newLine}`
 
 module.exports = function (str, needWarning) {
     let frontmatter = null
-    let codeSplit = []
     let headings = []
 
     // 提取 frontmatter
@@ -40,22 +31,14 @@ module.exports = function (str, needWarning) {
     }
 
 
-    // 提取代码块，并解析成一个组件
-    const codeMatcher = str.match(new RegExp(codeReg, 'gm'))
-    if (codeMatcher) {
-        codeSplit = codeMatcher.map(codeParse).filter(Boolean)
-    }
-
     // 提取标题
     const headingMatcher = str.match(new RegExp(headingReg, 'mg'))
     if (headingMatcher) {
         headings = headingMatcher.map(headingParse).filter(Boolean)
     }
 
-
     return {
         frontmatter: frontmatter,
-        codeSplit: codeSplit,
         headings: headings,
         text: str
     }
@@ -64,19 +47,24 @@ module.exports = function (str, needWarning) {
 
 // 解析frontmatter中的数据
 function frontmatterParse(str) {
-    const arr = str.replace(/('|")/gm, '').split(newLineSym).filter(Boolean)
+    const arr = str/* .replace(/('|")/gm, '') */.split(newLine).filter(Boolean)
     const obj = {}
 
     arr.forEach(item => {
         const subArr = item.split(':')
-        obj[subArr[0].trim()] = subArr[1].trim()
+        try{
+            obj[subArr[0].trim()] = eval(subArr[1].trim())
+        }catch(err){
+            console.log(chalk.red('frontmatter解析出错：'))
+            console.log(err)
+        }
     })
     return obj
 }
 
 // 解析文档标题
 function headingParse(headingStr) {
-    const subArr = headingStr.replace(new RegExp(newLineSym), '').split(/ +/)
+    const subArr = headingStr.replace(new RegExp(newLine), '').split(/ +/)
     if (subArr.length) {
         return {
             level: subArr[0].length,
@@ -85,12 +73,3 @@ function headingParse(headingStr) {
     }
 }
 
-// 解析代码块 '```jsx\r\nconstructor() {\r\n\r\n}\r\n\r\nrender() {\r\n    \r\n}\r\n```'
-function codeParse(codeStr) {
-    codeStr = codeStr.replace(/```/mg, '')
-    const arr = codeStr.split(newLineSym)
-    return {
-        lang: arr[0].trim(),
-        text: codeStr.replace(arr[0], '')
-    }
-}

@@ -281,7 +281,9 @@ module.exports = function genConfig(webpackEnv) {
 
                         {
                             test: /\.md$/,
-                            loader: require.resolve('../scripts/libs/markdown/loader.js')
+                            use: [
+                                require.resolve('../scripts/libs/markdown/loader.js')
+                            ]
                         },
                         {
                             test: /\.(js|mjs|jsx|ts|tsx)$/,

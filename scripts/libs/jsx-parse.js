@@ -1,8 +1,6 @@
 const chalk = require('chalk')
-
-const newLineSym = '\r\n'
-const space = '(\u0020| )'
-const fmReg = `\/\/(${space}*)([A-z]+)(${space}*):(${space}*)('(.[^'"]+)'|"(.[^'"]+)")(${space}*)(${newLineSym})?`
+const {space, newLine} = require('./new-line')
+const fmReg = `\/\/(${space}*)([A-z]+)(${space}*):(${space}*)('(.[^'"]+)'|"(.[^'"]+)")(${space}*)(${newLine})?`
 
 module.exports = function (str, filePath) {
     const fmMatcher = str.match(new RegExp(fmReg, 'mg'))
@@ -10,7 +8,7 @@ module.exports = function (str, filePath) {
     if (fmMatcher) {
         pageData = {}
         fmMatcher.forEach(str => {
-            const arr = str.replace(new RegExp(`${newLineSym}|\/\/`), '').split(':')
+            const arr = str.replace(new RegExp(`${newLine}|\/\/`), '').split(':')
             pageData[arr[0].trim()] = arr[1].trim().replace(/'|"/gm, '')
         })
     }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import marked from 'marked'
-import renderer from './config'
+import ReactDOM from 'react-dom'
+import marked from './marked'
 import PropTypes from 'prop-types'
 
 
@@ -15,10 +15,16 @@ class Markdown extends Component {
         }
     }
     genHTML(str) {
-        this.__html = marked(str, {
-            renderer: renderer
+        this.__html = marked(str)
+        this.forceUpdate(() => {
+            setTimeout(()=>{this.renderDemo()})
         })
-        this.forceUpdate()
+    }
+    renderDemo() {
+        this.props.md.demos.forEach(demo=>{
+            const Comp = demo.code(React, ReactDOM)
+            ReactDOM.render(<Comp/>, document.getElementById(demo.id))
+        })
     }
     render() {
         return (
@@ -31,9 +37,7 @@ class Markdown extends Component {
 Markdown.propTypes = {
     md: PropTypes.shape({
         text: PropTypes.string,
-        frontmatter: PropTypes.object,
-        codeSplit: PropTypes.array,
-        headings: PropTypes.array
+        demos: PropTypes.array
     }).isRequired
 }
 
