@@ -12,7 +12,7 @@ issues: https://github.com/LiZ2z/site-flame/issues
 ```
 npm install site-flame
 ```
-在`package.json'中添加
+在`package.json`中添加
 ```json
  "scripts": {
     "start": "node node_modules/site-flame/scripts/start -dev",
@@ -44,7 +44,7 @@ src目录下又包括（_这些文件夹将被`flame`解析，其他命名文件
 #### 1. `templates`
 `templates`用于存放模板文件，目前可选的有`index.js`和`content.js`。
 
-`index.js`将会作为网站的首页，可通过`#\index`访问到。
+`index.js`将会作为网站的首页，可通过`#/index`访问到。
 
 `content.js`将被用作每个`.md`文件的渲染模板。
 例如：
@@ -96,7 +96,7 @@ title: 'My first flame page'
 modules: ['React', 'Component', 'Button']
 ---
 ```
-这样，我们就可以在上面说到的`templates/content.js`中通过`this.props.data`来访问这些信息。
+这样，我们就可以在上面说到的`templates\content.js`中通过`this.props.data`来访问这些信息。
 
 对于`.jsx`文件，需要在头部使用行级注释（`//`）的方式书写信息：
 ```jsx
@@ -112,7 +112,7 @@ modules: ['React', 'Component', 'Button']
 
 
 #### 3. `styles`
-`styles`下只能用来存放样式文件（`.css`、`.less`或`.scss`），否则会导致错误。这些文件将会作为全局的样式文件，放在项目的入口处。对于`.less`或`.scss`之类的文件，需要在`root/flame.config.js`中添加配置，并安装相应的`loader`。
+`styles`下只能用来存放样式文件（`.css`、`.less`或`.scss`），否则会导致错误。这些文件将会作为全局的样式文件，放在项目的入口处。对于`.less`或`.scss`之类的文件，需要在`root\flame.config.js`中添加配置，并安装相应的`loader`。
 
 ## `flame.config.js`的配置
 
