@@ -7,7 +7,12 @@ github: https://github.com/LiZ2z/site-flame
 
 site-flame 还在开发阶段，此包为测试样例，不要依赖它
 
+site-flame 可能改名为 flamma
+
+
 Site-flame is still in the development phase. this package is a test sample. don't rely on it.
+
+Site-flame may change its name to flamma
 
 ## 安装
 
