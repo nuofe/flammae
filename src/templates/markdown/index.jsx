@@ -22,7 +22,7 @@ class Markdown extends Component {
     }
     renderDemo() {
         this.props.md.demos.forEach(demo=>{
-            const Comp = demo.code(React, ReactDOM)
+            const Comp = demo.code(...this.props.modules)
             ReactDOM.render(<Comp/>, document.getElementById(demo.id))
         })
     }
@@ -38,7 +38,8 @@ Markdown.propTypes = {
     md: PropTypes.shape({
         text: PropTypes.string,
         demos: PropTypes.array
-    }).isRequired
+    }).isRequired,
+    modules: PropTypes.array
 }
 
 export default Markdown;

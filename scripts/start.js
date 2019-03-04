@@ -17,7 +17,7 @@ process.on('exit', (code) => {
 })
 
 
-
+const chalk = require('chalk')
 const path = require('path')
 const fs = require('fs-extra')
 const jsxParse = require('./libs/jsx-parse')
@@ -46,12 +46,21 @@ function resolvePath(p) {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // 确保flameRoot/src/temp目录存在且为空
 // 确保appRoot/src 目录存在
+console.log('初始化...\n')
 fs.emptyDirSync(flameSrcJoin('temp'))
 fs.ensureDirSync(appSrc)
 
 
 const docDir = appSrcJoin('docs')
 const pageDir = appSrcJoin('pages')
+
+const siteData = {
+    pages: [],
+    docs: []
+}
+
+const docsMap = {}
+const pagesMap = {}
 
 
 
@@ -73,91 +82,90 @@ const pageDir = appSrcJoin('pages')
 //
 // path: '/one'
 //
-function parseFiles(fileNames) {
-    if (!fileNames) return
-    if (fileNames.length) {
-        Promise.all(
-            fileNames.map(fileName => {
-                const isJSX = fileName.match(/.*\.jsx$/)
-                if (!isJSX && !fileName.match(/.*\.md$/)) return
-
-                return new Promise(resolve => {
-                    const filePath = path.join(isJSX ? pageDir : docDir, fileName)
-                    fs.readFile(filePath, {
-                        encoding: 'utf8'
-                    }, (err, data) => {
-                        if (err) {
-                            console.log(err)
-                            resolve()
-                        } else {
-                            resolve({
-                                data,
-                                path: filePath
-                            })
-                        }
-                    })
-                })
-            }).filter(Boolean)
-        ).then(files => {
-
-            const docDatas = []
-            const pageDatas = []
-
-            files.forEach(file => {
-                const isJSX = file.path.match(/.*\.jsx$/)
-                if (isJSX) {
-                    const pageData = jsxParse(file.data, file.path)
-                    pageData && pageDatas.push(Object.assign({}, pageData, {
-                        filePath: file.path,
-                        type: 'page'
-                    }))
-                } else {
-                    const doc = markdownParse(file.data, file.path)
-                    doc && docDatas.push(Object.assign({}, doc.frontmatter, {
-                        filePath: file.path,
-                        type: 'doc'
-                    }))
-                }
-            })
-
-            writeData({
-                docs: docDatas,
-                pages: pageDatas
-            })
-            startWepack()
-        }).catch(err => {
-            console.log(err)
-            writeData()
-            startWepack()
-        })
-    } else {
-        writeData()
+function parseFiles(filePaths) {
+    console.log('正在分析目录...\n')
+    if (!filePaths || (Array.isArray(filePaths) && filePaths.length === 0)) {
+        writeFile()
         startWepack()
+        return
     }
+    if (typeof filePaths === 'string') {
+        filePaths = [filePaths]
+    }
+    Promise.all(
+        filePaths.map(filePath => {
+            return new Promise(resolve => {
+                fs.readFile(filePath, {
+                    encoding: 'utf8'
+                }, (err, data) => {
+                    if (err) {
+                        console.log(err)
+                        resolve()
+                    } else {
+                        resolve({
+                            data,
+                            path: filePath
+                        })
+                    }
+                })
+            })
+        }).filter(Boolean)
+    ).then(files => {
+        files.forEach(file => {
+            const isJSX = file.path.match(/.*\.jsx$/)
+            if (isJSX) {
+                const pageData = jsxParse(file.data, file.path)
+                pageData && siteData.pages.push(Object.assign({}, pageData, {
+                    filePath: file.path,
+                    type: 'page'
+                }))
+            } else {
+                const mdData = markdownParse(file.data, file.path)
+                mdData && siteData.docs.push(Object.assign({}, mdData.frontmatter, {
+                    filePath: file.path,
+                    type: 'doc'
+                }))
+            }
+        })
+
+        writeFile()
+        startWepack()
+    }).catch(err => {
+        console.log(err)
+        writeFile()
+        startWepack()
+    })
 }
 
-;
-(function () {
-    const pageNames = fs.existsSync(pageDir) ? fs.readdirSync(pageDir) : []
-    const docNames = fs.existsSync(docDir) ? fs.readdirSync(docDir) : []
 
-    parseFiles(docNames.concat(pageNames))
-})();
+parseFiles(getFilePaths(docDir, pattern).concat(getFilePaths(pageDir, pattern)));
 
+function pattern(filePath) {
+    return filePath.match(/.*\.(jsx|md)$/)
+}
+
+function patternJSX (filePath) {
+   const isJSX = filePath.match(/.*\.jsx$/)
+    return isJSX
+}
+
+function patternMD(filePath) {
+    const isMD = filePath.match(/.*\.md$/)
+    return isMD
+}
 
 
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                  第三步
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
+// 
 // 将静态数据写入临时文件中
+// 写入路由
+// 写入网站的静态数据
 //
-function writeData(data) {
-    data = data || {
-        pages: [],
-        docs: []
-    }
+function writeFile() {
+    console.log('正在写入数据...\n')
     try {
         let appStr = fs.readFileSync(flameSrcJoin('app.template.jsx'), {
             encoding: 'utf8'
@@ -178,7 +186,7 @@ function writeData(data) {
             appStr
         )
 
-        if (data.docs.length) {
+        if (siteData.docs.length) {
             appStr = insertImport(
                 'Content',
                 (
@@ -191,7 +199,7 @@ function writeData(data) {
         }
 
         // 根据文件目录生成app.jsx文件，并配置内部路由
-        data.pages.concat(data.docs).forEach((item, i) => {
+        siteData.pages.concat(siteData.docs).forEach((item, i) => {
             const isDoc = item.type === 'doc'
             const name = isDoc ? `Md${i}` : `Comp${i}`
             const render = (
@@ -204,7 +212,7 @@ function writeData(data) {
         })
 
         // 向 site-data.json文件中存入静态数据
-        fs.writeFileSync(tempStaticPath, JSON.stringify(data))
+        fs.writeFileSync(tempStaticPath, JSON.stringify(siteData))
         // 生成 app.jsx
         fs.writeFileSync(tempAppPath, appStr)
     } catch (err) {
@@ -229,6 +237,7 @@ function startWepack() {
     if (this.webpackStarted) return
     this.webpackStarted = true
 
+    console.log('启动webpack...\n')
     // 监听文件添加修改
     watchDocDir()
 
@@ -243,17 +252,84 @@ function startWepack() {
 // 监听文件 创建修改
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // 待优化，监听特定文件，因此没必要改一个之后其他都分析，只要分析改的哪个
-
+const watchDirs = ['docs', 'pages', 'templates']
 function watchDocDir() {
     fs.watch(appSrc, {
         encoding: 'utf8',
         recursive: true
-    }, (event, shorPath) => {
+    }, debounce((event, shorPath) => {
+        console.log(`\n${chalk.yellow(event)} > ${shorPath} \n`)
+        const dir = shorPath.split(path.sep)[0]
+        if (!watchDirs.includes(dir)) {
+            return
+        }
+        if (dir === 'templates') {
+            writeFile()
+        } else {
+            siteData[dir] = []
+            // 这里可以做diff优化            
+            parseFiles(getFilePaths(appSrcJoin(dir), pattern))
+        }
+    }))
+}
 
-        const filePath = appSrcJoin(shorPath)
-        console.log(123)
-        const pageNames = fs.existsSync(pageDir) ? fs.readdirSync(pageDir) : []
-        const docNames = fs.existsSync(docDir) ? fs.readdirSync(docDir) : []
-        parseFiles(docNames.concat(pageNames))
+
+
+
+
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                      utils
+//  __    __  .___________. __   __           _______.
+// |  |  |  | |           ||  | |  |         /       |
+// |  |  |  | `---|  |----`|  | |  |        |   (----`
+// |  |  |  |     |  |     |  | |  |         \   \    
+// |  `--'  |     |  |     |  | |  `----..----)   |   
+//  \______/      |__|     |__| |_______||_______/   
+//                      utils
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                   
+/**
+ * 读取目标文件夹内所有指定类型文件路径，并返回由文件路径组成的数组
+ * 没读取到返回空数组
+ * 
+ * @param {string} dir 目标文件夹
+ * @param {function} callback 接受文件路径作为参数。可对路径进行解析，并返回Boolean类型值
+ *                            如果callback返回 true，该路径将最终被 getFilePaths返回，否则不返回
+ * 
+ */
+function getFilePaths(dir, callback) {
+
+    let filesPaths = []
+    const direntArr = fs.existsSync(dir) ? fs.readdirSync(dir, {
+        withFileTypes: true
+    }) : []
+    direntArr.length && direntArr.forEach(dirent => {
+        if (dirent.isFile()) {
+            const absolutePath = path.resolve(dir, dirent.name)
+            if (!callback(absolutePath)) {
+                return
+            }
+            filesPaths.push(absolutePath)
+        } else if (dirent.isDirectory()) {
+            filesPaths = filesPaths.concat(getFilePaths(path.resolve(dir, dirent.name), callback))
+        }
     })
+    return filesPaths
+}
+
+
+/**
+ * 防抖
+ * @param {function} fn 
+ * @param {number} time 
+ */
+function debounce (fn, time) {
+    let timer
+    return function (...args) {
+        clearTimeout(timer)
+        timer = setTimeout(()=>{
+            fn(...args)
+        }, time || 300)
+    }
 }
