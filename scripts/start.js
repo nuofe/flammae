@@ -163,14 +163,14 @@ function patternMD(filePath) {
 //
 function writeStylesToIndexJs() {
     const stylePaths = getFilePaths(appSrcJoin('styles'))
-    const indexJsPath = flameSrcJoin('index.js')
+    const indexJsPath = flameSrcJoin('index.template.js')
     let indexJsStr = fs.readFileSync(indexJsPath, {
         encoding: 'utf8'
     })
     stylePaths.forEach(stylePath => {
         indexJsStr = insertImport(indexJsStr, resolvePath(stylePath))
     })
-    fs.writeFileSync(indexJsPath, indexJsStr)
+    fs.writeFileSync(flameSrcJoin('index.js'), indexJsStr)
 }
 
 function writeFile() {

@@ -11,3 +11,4 @@ package-lock.json
 # 这两个文件是运行时动态生成的
 app.jsx
 static-data.json
+src/index.js
