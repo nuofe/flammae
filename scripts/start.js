@@ -85,7 +85,6 @@ const pagesMap = {}
 function parseFiles(filePaths) {
     console.log('正在分析目录...\n')
     if (!filePaths || (Array.isArray(filePaths) && filePaths.length === 0)) {
-        writeFile()
         startWepack()
         return
     }
@@ -128,11 +127,9 @@ function parseFiles(filePaths) {
             }
         })
 
-        writeFile()
         startWepack()
     }).catch(err => {
         console.log(err)
-        writeFile()
         startWepack()
     })
 }
@@ -144,8 +141,8 @@ function pattern(filePath) {
     return filePath.match(/.*\.(jsx|md)$/)
 }
 
-function patternJSX (filePath) {
-   const isJSX = filePath.match(/.*\.jsx$/)
+function patternJSX(filePath) {
+    const isJSX = filePath.match(/.*\.jsx$/)
     return isJSX
 }
 
@@ -164,6 +161,18 @@ function patternMD(filePath) {
 // 写入路由
 // 写入网站的静态数据
 //
+function writeStylesToIndexJs() {
+    const stylePaths = getFilePaths(appSrcJoin('styles'))
+    const indexJsPath = flameSrcJoin('index.js')
+    let indexJsStr = fs.readFileSync(indexJsPath, {
+        encoding: 'utf8'
+    })
+    stylePaths.forEach(stylePath => {
+        indexJsStr = insertImport(indexJsStr, stylePath)
+    })
+    fs.writeFileSync(indexJsPath, indexJsStr)
+}
+
 function writeFile() {
     console.log('正在写入数据...\n')
     try {
@@ -207,7 +216,7 @@ function writeFile() {
                 `component={${name}}` :
                 `render={()=><Content data={${name}}/>}`
             );
-            appStr = insertImport(name, resolvePath(item.filePath), appStr)
+            appStr = insertImport(appStr, resolvePath(item.filePath), name)
             appStr = insertRoute(render, item.path, appStr)
         })
 
@@ -220,8 +229,11 @@ function writeFile() {
     }
 }
 
-function insertImport(name, path, target) {
-    return target.replace('/* import */', `import ${name} from '${path}';\n/* import */`)
+function insertImport(target, path, name) {
+    if (name) {
+        return target.replace('/* import */', `;import ${name} from '${path}';\n/* import */`)
+    }
+    return target.replace('/* import */', `;import '${path}';\n/* import */`)
 }
 
 function insertRoute(render, path, target) {
@@ -234,6 +246,9 @@ function insertRoute(render, path, target) {
 // 启动webpack
 // 启动文件监听
 function startWepack() {
+    writeStylesToIndexJs()
+    writeFile()
+
     if (this.webpackStarted) return
     this.webpackStarted = true
 
@@ -252,7 +267,8 @@ function startWepack() {
 // 监听文件 创建修改
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // 待优化，监听特定文件，因此没必要改一个之后其他都分析，只要分析改的哪个
-const watchDirs = ['docs', 'pages', 'templates']
+
+// 这里可能导致bug， writeFile会重新触发 watchDocDir。目前用 debounce 解决
 function watchDocDir() {
     fs.watch(appSrc, {
         encoding: 'utf8',
@@ -260,12 +276,11 @@ function watchDocDir() {
     }, debounce((event, shorPath) => {
         console.log(`\n${chalk.yellow(event)} > ${shorPath} \n`)
         const dir = shorPath.split(path.sep)[0]
-        if (!watchDirs.includes(dir)) {
-            return
-        }
-        if (dir === 'templates') {
+        if(dir==='templates') {
             writeFile()
-        } else {
+        } else if(dir === 'styles') {
+            writeStylesToIndexJs()
+        } else if (['docs', 'pages'].includes(dir)) {
             siteData[dir] = []
             // 这里可以做diff优化            
             parseFiles(getFilePaths(appSrcJoin(dir), pattern))
@@ -288,7 +303,7 @@ function watchDocDir() {
 //  \______/      |__|     |__| |_______||_______/   
 //                      utils
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                                                   
+
 /**
  * 读取目标文件夹内所有指定类型文件路径，并返回由文件路径组成的数组
  * 没读取到返回空数组
@@ -299,7 +314,7 @@ function watchDocDir() {
  * 
  */
 function getFilePaths(dir, callback) {
-
+    callback = callback || (() => true);
     let filesPaths = []
     const direntArr = fs.existsSync(dir) ? fs.readdirSync(dir, {
         withFileTypes: true
@@ -324,11 +339,11 @@ function getFilePaths(dir, callback) {
  * @param {function} fn 
  * @param {number} time 
  */
-function debounce (fn, time) {
+function debounce(fn, time) {
     let timer
     return function (...args) {
         clearTimeout(timer)
-        timer = setTimeout(()=>{
+        timer = setTimeout(() => {
             fn(...args)
         }, time || 300)
     }
