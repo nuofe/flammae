@@ -1,6 +1,6 @@
 {
   "name": "site-flame",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "index.js",
   "author": "LiZ2z",
   "description": "静态网页创建工具--(react、markdown)",
