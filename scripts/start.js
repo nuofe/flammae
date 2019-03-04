@@ -168,7 +168,7 @@ function writeStylesToIndexJs() {
         encoding: 'utf8'
     })
     stylePaths.forEach(stylePath => {
-        indexJsStr = insertImport(indexJsStr, stylePath)
+        indexJsStr = insertImport(indexJsStr, resolvePath(stylePath))
     })
     fs.writeFileSync(indexJsPath, indexJsStr)
 }
