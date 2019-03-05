@@ -108,7 +108,7 @@ module.exports = function genConfig(webpackEnv) {
             // 因为这些代码大多不会经常变动，所以单独分离出来便于浏览器进行缓存
             // 2. 一些 被异步加载包 依赖的 公用代码 会被分离出来 以节省流量
             // -- 选项就是规定 如何命名这些 分割代码文件的名称
-            chunkFilename: `static/js/[name].${isDevEnv ? '' : '[chunkhash:8]'}.chunk.js`,
+            chunkFilename: `static/js/[name]${isDevEnv ? '' : '.[chunkhash:8]'}.chunk.js`,
             // 对于按需加载或加载外部资源（如图片、文件等）来说，
             // output.publicPath 是很重要的选项。如果指定了一个错误的值，则在加载这些资源时会收到 404 错误。
 
