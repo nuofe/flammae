@@ -20,7 +20,7 @@ yarn-error.log*
 # 忽略打包后的文件
 /build
 /dist
+/src/temp
 
-# 这两个文件是运行时动态生成的
-app.jsx
-static-data.json
+
+package-lock.json*

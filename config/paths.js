@@ -28,7 +28,7 @@ module.exports = {
     flameDir: flameDirectory,
     flameSrc: resolveFlame('src'),
     flamePublic: resolveFlame('public'),
-    flameIndexJs: resolveFlame('src/index.js'),
+    flameIndexJs: resolveFlame('src/temp/index.js'),
     flameHtml: resolveFlame('public/index.html'),
     flamePackageJson: resolveFlame('package.json'),
 }

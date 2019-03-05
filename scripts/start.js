@@ -163,20 +163,20 @@ function patternMD(filePath) {
 //
 function writeStylesToIndexJs() {
     const stylePaths = getFilePaths(appSrcJoin('styles'))
-    const indexJsPath = flameSrcJoin('index.template.js')
+    const indexJsPath = flameSrcJoin('templates/index.js')
     let indexJsStr = fs.readFileSync(indexJsPath, {
         encoding: 'utf8'
     })
     stylePaths.forEach(stylePath => {
         indexJsStr = insertImport(indexJsStr, resolvePath(stylePath))
     })
-    fs.writeFileSync(flameSrcJoin('index.js'), indexJsStr)
+    fs.writeFileSync(flameSrcJoin('temp/index.js'), indexJsStr)
 }
 
 function writeFile() {
     console.log('正在写入数据...\n')
     try {
-        let appStr = fs.readFileSync(flameSrcJoin('app.template.jsx'), {
+        let appStr = fs.readFileSync(flameSrcJoin('templates/app.jsx'), {
             encoding: 'utf8'
         })
         const tempAppPath = flameSrcJoin('temp/app.jsx')
@@ -186,24 +186,24 @@ function writeFile() {
         const templateContentPath = appSrcJoin('templates/content.jsx')
 
         appStr = insertImport(
-            'Index',
+            appStr,
             (
                 fs.existsSync(templateIndexPath) ?
                 resolvePath(templateIndexPath) :
-                '../templates/index'
+                '../templates/home'
             ),
-            appStr
+            'Index'
         )
 
         if (siteData.docs.length) {
             appStr = insertImport(
-                'Content',
+                appStr,
                 (
                     fs.existsSync(templateContentPath) ?
                     resolvePath(templateContentPath) :
                     '../templates/content'
                 ),
-                appStr
+                'Content'
             )
         }
 
@@ -231,9 +231,9 @@ function writeFile() {
 
 function insertImport(target, path, name) {
     if (name) {
-        return target.replace('/* import */', `;import ${name} from '${path}';\n/* import */`)
+        return target.replace('/* import */', `import ${name} from '${path}';\n/* import */`)
     }
-    return target.replace('/* import */', `;import '${path}';\n/* import */`)
+    return target.replace('/* import */', `import '${path}';\n/* import */`)
 }
 
 function insertRoute(render, path, target) {
@@ -276,9 +276,9 @@ function watchDocDir() {
     }, debounce((event, shorPath) => {
         console.log(`\n${chalk.yellow(event)} > ${shorPath} \n`)
         const dir = shorPath.split(path.sep)[0]
-        if(dir==='templates') {
+        if (dir === 'templates') {
             writeFile()
-        } else if(dir === 'styles') {
+        } else if (dir === 'styles') {
             writeStylesToIndexJs()
         } else if (['docs', 'pages'].includes(dir)) {
             siteData[dir] = []

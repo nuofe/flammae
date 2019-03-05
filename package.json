@@ -1,64 +1,64 @@
 {
-  "name": "site-flame",
-  "version": "1.0.5",
-  "main": "index.js",
-  "author": "LiZ2z",
-  "description": "静态网页创建工具--(react、markdown)",
-  "private": false,
-  "license": "MIT",
-  "eslintConfig": {
-    "extends": "@78d6/eslint-config-react-app",
-    "root": true
-  },
-  "dependencies": {
-    "react": "^16.8.3",
-    "react-dom": "^16.8.3",
-    "react-router-dom": "4.3.1",
-    "@78d6/eslint-config-common": "0.1.5",
-    "@78d6/eslint-config-react-app": "0.1.1",
-    "@svgr/webpack": "4.1.0",
-    "babel-eslint": "10.0.1",
-    "babel-loader": "8.0.5",
-    "babel-plugin-named-asset-import": "0.3.1",
-    "babel-preset-react-app": "7.0.1",
-    "chalk": "2.4.2",
-    "css-loader": "2.1.0",
-    "eslint": "5.14.1",
-    "eslint-loader": "2.1.2",
-    "eslint-plugin-import": "2.16.0",
-    "eslint-plugin-jsx-a11y": "6.2.1",
-    "eslint-plugin-react": "7.12.4",
-    "file-loader": "3.0.1",
-    "fs-extra": "7.0.1",
-    "highlight.js": "^9.15.6",
-    "html-webpack-plugin": "3.2.0",
-    "marked": "^0.6.1",
-    "mini-css-extract-plugin": "0.5.0",
-    "optimize-css-assets-webpack-plugin": "5.0.1",
-    "postcss-loader": "3.0.0",
-    "postcss-preset-env": "6.5.0",
-    "postcss-safe-parser": "4.0.1",
-    "style-loader": "0.23.1",
-    "terser-webpack-plugin": "1.2.3",
-    "url-loader": "1.1.2",
-    "webpack": "4.29.5",
-    "webpack-dev-server": "3.2.1"
-  },
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/LiZ2z/site-flame.git"
-  },
-  "keywords": [
-    "react",
-    "markdown",
-    "site"
-  ],
-  "bugs": {
-    "url": "https://github.com/LiZ2z/site-flame/issues"
-  },
-  "homepage": "https://github.com/LiZ2z/site-flame#readme"
+    "name": "site-flame",
+    "version": "1.0.5",
+    "main": "index.js",
+    "author": "LiZ2z",
+    "description": "静态网页创建工具--(react、markdown)",
+    "private": false,
+    "license": "MIT",
+    "eslintConfig": {
+        "extends": "@78d6/eslint-config-react-app",
+        "root": true
+    },
+    "dependencies": {
+        "react": "^16.8.3",
+        "react-dom": "^16.8.3",
+        "react-router-dom": "4.3.1",
+        "@78d6/eslint-config-common": "0.1.5",
+        "@78d6/eslint-config-react-app": "0.1.1",
+        "@svgr/webpack": "4.1.0",
+        "babel-eslint": "10.0.1",
+        "babel-loader": "8.0.5",
+        "babel-plugin-named-asset-import": "0.3.1",
+        "babel-preset-react-app": "7.0.1",
+        "chalk": "2.4.2",
+        "css-loader": "2.1.0",
+        "eslint": "5.14.1",
+        "eslint-loader": "2.1.2",
+        "eslint-plugin-import": "2.16.0",
+        "eslint-plugin-jsx-a11y": "6.2.1",
+        "eslint-plugin-react": "7.12.4",
+        "file-loader": "3.0.1",
+        "fs-extra": "7.0.1",
+        "highlight.js": "^9.15.6",
+        "html-webpack-plugin": "3.2.0",
+        "marked": "^0.6.1",
+        "mini-css-extract-plugin": "0.5.0",
+        "optimize-css-assets-webpack-plugin": "5.0.1",
+        "postcss-loader": "3.0.0",
+        "postcss-preset-env": "6.5.0",
+        "postcss-safe-parser": "4.0.1",
+        "style-loader": "0.23.1",
+        "terser-webpack-plugin": "1.2.3",
+        "url-loader": "1.1.2",
+        "webpack": "4.29.5",
+        "webpack-dev-server": "3.2.1"
+    },
+    "devDependencies": {},
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/LiZ2z/site-flame.git"
+    },
+    "keywords": [
+        "react",
+        "markdown",
+        "site"
+    ],
+    "bugs": {
+        "url": "https://github.com/LiZ2z/site-flame/issues"
+    },
+    "homepage": "https://github.com/LiZ2z/site-flame#readme"
 }
