@@ -1,5 +1,24 @@
-pre{
-    background: #f1f1f1;
-    border-radius: 4px;
+.code-demo {
+    padding: 16px 0;
+}
+
+.code-text {
     padding: 16px;
+}
+
+.code-text-wrapper {
+    border: 1px solid #E9EAEF;
+    border-radius: 4px;
+}
+
+.toggle-btn {
+    text-align: center;
+    height: 60px;
+    line-height: 60px;
+    color: #C8CBDA;
+    cursor: pointer;
+}
+
+.toggle-btn:hover{
+    color: #1890FF;
 }

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom'
-import marked from './marked'
+import marked from '../../marked'
 import PropTypes from 'prop-types'
-
+import CodeDemo from './code'
+import './style.css'
 
 class Markdown extends Component {
 
@@ -17,18 +18,28 @@ class Markdown extends Component {
     genHTML(str) {
         this.__html = marked(str)
         this.forceUpdate(() => {
-            setTimeout(()=>{this.renderDemo()})
+            setTimeout(() => { this.renderDemo() })
         })
     }
     renderDemo() {
-        this.props.md.demos.forEach(demo=>{
-            const Comp = demo.code(...this.props.modules)
-            ReactDOM.render(<Comp/>, document.getElementById(demo.id))
+        this.props.md.demos.forEach(demo => {
+            const Comp = demo.fn(...this.props.modules)
+            const codeHtml = marked(demo.code)
+            ReactDOM.render(
+                <CodeDemo
+                    demoComp={<Comp />}
+                    codeHtml={codeHtml}
+                />,
+                document.getElementById(demo.elId)
+            )
         })
     }
     render() {
         return (
-            <div className='markdown-content' dangerouslySetInnerHTML={{ __html: this.__html }}></div>
+            <div
+                className='markdown-content'
+                dangerouslySetInnerHTML={{ __html: this.__html }}
+            />
         );
     }
 }

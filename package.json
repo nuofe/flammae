@@ -3,7 +3,7 @@
     "version": "1.0.7",
     "main": "index.js",
     "author": "LiZ2z",
-    "description": "静态网页创建工具--(react、markdown)",
+    "description": "基于React的静态网页创建工具(markdown)",
     "private": false,
     "license": "MIT",
     "eslintConfig": {
@@ -42,7 +42,9 @@
         "terser-webpack-plugin": "1.2.3",
         "url-loader": "1.1.2",
         "webpack": "4.29.5",
-        "webpack-dev-server": "3.2.1"
+        "webpack-dev-server": "3.2.1",
+        "fast-sass-loader": "^1.4.7",
+        "node-sass": "^4.11.0"
     },
     "devDependencies": {},
     "scripts": {

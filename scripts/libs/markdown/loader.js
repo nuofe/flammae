@@ -1,6 +1,6 @@
 const parse = require('./parse')
 const babel = require("@babel/core")
-const fs = require('fs-extra')
+// const fs = require('fs-extra')
 
 // 空格  针对不同平台判断，不同换行符。
 const {
@@ -39,14 +39,14 @@ module.exports = function (fileStr) {
     // markdown中使用反引号包裹代码，在js中反引号为特殊符号，所以需要转义
     return `export default {
         ${
-        JSON.stringify({
-            frontmatter: frontmatter,
-            headings:headings,
-            text: mdStr
-        }).replace(/\`/gm, '\\\`').slice(1,-1)
-    },
-    demos: ${demos ? demos : '[]'}
-}`
+            JSON.stringify({
+                frontmatter: frontmatter,
+                headings:headings,
+                text: mdStr
+            }).replace(/\`/gm, '\\\`').slice(1,-1)
+        },
+        demos: ${demos ? demos : '[]'}
+    }`
 }
 
 
@@ -60,16 +60,16 @@ const jsxLoader = (function () {
             console.log('即使在Demo中没使用modules，也需要将modules设置为[]')
             return null
         }
-        const key = `demo-${id++}`
-        callback(mdStr.replace(rawCodeStr, `<div id='${key}' ><\/div>\n\n${rawCodeStr}`))
+        const key = `demo-wrapper-${id++}`
+        callback(mdStr.replace(rawCodeStr, `<div id='${key}' ><\/div>\n\n`))
         // 解析 jsx
         const result = babel.transformSync(codeStr, {
             presets: ["@babel/preset-env", "@babel/preset-react"]
         })
-
         return `{
-            id: '${key}',
-            code: function (${modules.join(',')}) { ${result.code};return Demo}
+            elId: '${key}',
+            fn: function(${modules.join(',')}) { ${result.code};return Demo},
+            code: \`${rawCodeStr.replace(/\`/gm, '\\\`')}\`
         }`
     }
 })();

@@ -116,13 +116,13 @@ function parseFiles(filePaths) {
                 const pageData = jsxParse(file.data, file.path)
                 pageData && siteData.pages.push(Object.assign({}, pageData, {
                     filePath: file.path,
-                    type: 'page'
+                    __type: 'page'
                 }))
             } else {
                 const mdData = markdownParse(file.data, file.path)
                 mdData && siteData.docs.push(Object.assign({}, mdData.frontmatter, {
                     filePath: file.path,
-                    type: 'doc'
+                    __type: 'doc'
                 }))
             }
         })
@@ -209,7 +209,7 @@ function writeFile() {
 
         // 根据文件目录生成app.jsx文件，并配置内部路由
         siteData.pages.concat(siteData.docs).forEach((item, i) => {
-            const isDoc = item.type === 'doc'
+            const isDoc = item.__type === 'doc'
             const name = isDoc ? `Md${i}` : `Comp${i}`
             const render = (
                 !isDoc ?
