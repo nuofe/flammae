@@ -182,8 +182,8 @@ function writeFile() {
         const tempAppPath = flameSrcJoin('temp/app.jsx')
         const tempStaticPath = flameSrcJoin('temp/site-data.json')
 
-        const templateIndexPath = appSrcJoin('templates/index.jsx')
-        const templateContentPath = appSrcJoin('templates/content.jsx')
+        const templateIndexPath = appSrcJoin('templates/index')
+        const templateContentPath = appSrcJoin('templates/content')
 
         appStr = insertImport(
             appStr,
