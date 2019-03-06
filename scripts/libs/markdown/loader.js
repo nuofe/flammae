@@ -7,9 +7,26 @@ const {
     space,
     newLine
 } = require('../new-line')
-// code
-const codeReg = `\`\`\`(${space})*(.[^${newLine}]*)?${newLine}((?:(?!(\`\`\`)).)*${newLine})*\`\`\``
+//
+// codeBlock 是下面格式的markdown文本
+//
+// ::: only （不加 only 就显示demo和代码, 加了就只显示demo）
+// 代码的一些说明写在这里
+// ``` jsx
+//  code here
+// ```
+// :::
+//
+const codeBlockSym = ':::'
+const codeSym = '\`\`\`'
 
+function genReg(sym) {
+
+    return `${sym}(${space})*(.[^${newLine}]*)?${newLine}((?:(?!(${sym})).)*${newLine})*${sym}`
+}
+
+const codeBlockReg = genReg(codeBlockSym)
+const codeReg = genReg(codeSym)
 
 let mdStr;
 
@@ -29,7 +46,7 @@ module.exports = function (fileStr) {
     
     let demos = null;
     // 提取代码块，并解析成一个组件
-    const codeBlocks = mdStr.match(new RegExp(codeReg, 'gm'))
+    const codeBlocks = mdStr.match(new RegExp(codeBlockReg, 'gm'))
     if (codeBlocks) {
         // flame在启动前会检测所有md文件的 frontmatter， 如果没有frontmatter， 则文件不会被加载
         // 所以这里frontmatter 是一定会存在的， 不用 做额外判断
@@ -74,24 +91,37 @@ const jsxLoader = (function () {
     }
 })();
 
-
-
+/**
+ * 
+ * @param {array} codeBlocks 
+ * @param {*} options 
+ * 
+ */
+// codeBlocks 是由下面格式的markdown文本组成的数组
+// ::: only （不加 only 就显示demo和代码, 加了就只显示demo）
+// 代码的一些说明写在这里
+// ``` jsx
+//  code here
+// ```
+// :::
+// 
 
 function codeParse(codeBlocks, options) {
     return `[
         ${
-            codeBlocks.map(rawCodeStr=>{
-
-                // \`\`\` jsx demo something
-                // code here
-                // \`\`\`
-                // 去除代码字符串两头的 \`\`\` 符号
-                const strBlock = rawCodeStr.replace(/\`\`\`/mg, '')
+            codeBlocks.map(codeBlock=>{
+                
+                console.log(codeBlock.match(new RegExp(`:::(.*)${newLine}(.*)\`\`\`(.*)\`\`\`${newLine}:::`)))
+                return 
+                const strBlock = codeBlock.replace(/:::/mg, '')
         
                 // 分离 代码前缀信息 和 代码  jsx demo something
                 let [prefixInfo, ...codeLines] = strBlock.split(newLine)
+            
                 const codeStr = codeLines.join(newLine)
+                
                 prefixInfo = prefixInfo.trim()
+
                 // 分析语言
                 const lang = prefixInfo.match(/\S*/)[0]
                 // 分析 demo 标识符
@@ -100,7 +130,7 @@ function codeParse(codeBlocks, options) {
         
                     if(lang === 'jsx') {
 
-                        return jsxLoader(codeStr, rawCodeStr, options, mdStr, editStr)
+                        return jsxLoader(codeStr, codeBlock, options, mdStr, editStr)
                     }
                 }
             }).filter(Boolean).join(',')
