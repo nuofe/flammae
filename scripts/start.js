@@ -83,7 +83,6 @@ const pagesMap = {}
 // path: '/one'
 //
 function parseFiles(filePaths) {
-    console.log('正在分析目录...\n')
     if (!filePaths || (Array.isArray(filePaths) && filePaths.length === 0)) {
         startWepack()
         return
@@ -110,7 +109,9 @@ function parseFiles(filePaths) {
             })
         }).filter(Boolean)
     ).then(files => {
-        files.forEach(file => {
+        console.log('开始提取文件信息...\n')
+        files.forEach((file,i) => {
+
             const isJSX = file.path.match(/.*\.jsx$/)
             if (isJSX) {
                 const pageData = jsxParse(file.data, file.path)
@@ -124,6 +125,7 @@ function parseFiles(filePaths) {
                     filePath: file.path,
                     __type: 'doc'
                 }))
+
             }
         })
 
@@ -134,7 +136,7 @@ function parseFiles(filePaths) {
     })
 }
 
-
+console.log('正在读取文件...\n')
 parseFiles(getFilePaths(docDir, pattern).concat(getFilePaths(pageDir, pattern)));
 
 function pattern(filePath) {

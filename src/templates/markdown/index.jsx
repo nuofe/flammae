@@ -22,13 +22,16 @@ class Markdown extends Component {
         })
     }
     renderDemo() {
+
         this.props.md.demos.forEach(demo => {
             const Comp = demo.fn(...this.props.modules)
-            const codeHtml = marked(demo.code)
+            const codeHtml = demo.code && marked(demo.code)
+            const codeNoteHtml = codeHtml && marked(demo.codeNote) 
             ReactDOM.render(
                 <CodeDemo
                     demoComp={<Comp />}
                     codeHtml={codeHtml}
+                    codeNoteHtml = {codeNoteHtml}
                 />,
                 document.getElementById(demo.elId)
             )

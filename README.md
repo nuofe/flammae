@@ -120,24 +120,53 @@ modules: ['React', 'Component', 'Button']
 
 ## markdown 编写规范
 
-#### 1. 代码演示
-如果代码想要被演示（根据markdown中的代码块动态渲染内容，目前仅支持`jsx`）， 需要在代码标识符后加`lang`（根据不同的语言）和`demo`字符串 ，例如，我们想演示一个`React`组件，需要在markdown中这样写：
+### 代码演示
+如果代码想要被演示（根据markdown中的代码块动态渲染内容，目前仅支持`jsx`）， 需要在代码标识符后加`lang`（根据不同的语言）和`demo`字符串 ，例如，我们想演示一个`React`组件，需要用`:::`将代码块包起来，像下面这样：
 
 ```
-``` jsx demo
+:::
+\`\`\` jsx
 class Demo extends Component {
     ...code here
 }
-`` `
+\`\`\`
+:::
 ```
-这样，当加载到这个markdown文件时，解析器就会知道该代码片段需要展示出来，且需要使用能解析`jsx`语法的loader来处理这段代码。
+这样，当加载到这个markdown文件时，解析器就会知道该代码片段需要展示出来，且需要使用能解析`jsx`语法的编译器（即flame的代码插件，flame默认提供针对`jsx`的解析插件）来处理这段代码。
 
-> 注意： class 的名称必须为 `Demo`
+注意，必须指定代码块的语言（上方的`jsx`），不然flame不知道用什么编译器来处理该段代码。
 
-#### 2. 代码演示中的模块
-假如我们有如下需要演示的代码：
+**代码的编写规则由相应的插件规定。**
 
-```jsx demo
+此外我们还可以在`:::`符号后面加入一些指令或说明，就像下面这样
+
+```
+::: only
+
+这里是代码的一些说明
+here is some note for code
+
+\`\`\` jsx
+class Demo extends Component {
+    ...code here
+}
+\`\`\`
+:::
+```
+
+`:::`内部的内容（不包括代码块）将被当作对代码的说明传给插件。
+
+`:::`后面的字符将被当作指令传递给插件，具体的指令由不同的插件规定。默认的`jsx`解析插件支持`only`指令。
+
+
+
+### `jsx`解析插件的规则
+
+#### 一般规则
+
+假如我们有如下需要演示的代码（当然，要使用`:::`包裹住。）：
+
+```jsx
 class Demo extends Component {
     handleClick() {
         console.log('clicked')
@@ -152,14 +181,20 @@ class Demo extends Component {
     }
 }
 ```
-我们在这段代码中使用到了`React`、`Component`和`Button`模块。
-根据`jsx-loader`规定，任何在demo代码块中使用到的`module`都需要在markdown头部的`frontmatter`块中声明：
+
+1. class 的名称必须为 `Demo`。如果写成函数式的组件，那么函数名也必须为 `Demo`。
+2. 任何在demo代码块中使用到的`module`都需要在markdown头部的`frontmatter`块中声明：
 
 ``` frontmatter
 ---
 modules: ['React', 'Component', 'Button']
 ---
 ```
+
+#### 指令
+待续。。。
+
+
 
 
 ## TODO: 

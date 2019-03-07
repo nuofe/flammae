@@ -1,18 +1,24 @@
 const chalk = require('chalk')
 
-const {newLine} = require('../new-line')
+const {
+    newLine,
+    space
+} = require('../new-line')
+
 // frontmatter
-const fmReg = `---${newLine}((${newLine}|.)*)${newLine}---`
+const fmReg = `---(?:${newLine})((${newLine}|.)*)(?:${newLine})---`
 // heading
-const headingReg = `(#|##|###|####)(.[^${newLine}]*)${newLine}`
+const headingReg = `(#{1,5})${space}+(.+)(?:${newLine})`
 
 module.exports = function (str, needWarning) {
     let frontmatter = null
     let headings = []
 
     // 提取 frontmatter
+
     const fmMatcher = str.match(new RegExp(fmReg))
     if (fmMatcher) {
+        // 截掉的frontmatter
         str = str.replace(fmMatcher[0], '')
         frontmatter = frontmatterParse(fmMatcher[1])
     }
@@ -32,7 +38,8 @@ module.exports = function (str, needWarning) {
 
 
     // 提取标题
-    const headingMatcher = str.match(new RegExp(headingReg, 'mg'))
+    const headingMatcher = str.match(new RegExp(headingReg, 'g'))
+
     if (headingMatcher) {
         headings = headingMatcher.map(headingParse).filter(Boolean)
     }
@@ -47,7 +54,7 @@ module.exports = function (str, needWarning) {
 
 // 解析frontmatter中的数据
 function frontmatterParse(str) {
-    const arr = str/* .replace(/('|")/gm, '') */.split(newLine).filter(Boolean)
+    const arr = str.match(/.*/g).filter(Boolean)
     const obj = {}
 
     arr.forEach(item => {
@@ -62,13 +69,15 @@ function frontmatterParse(str) {
     return obj
 }
 
-// 解析文档标题
+// 解析文档标题 
+// # title
+// ## title
 function headingParse(headingStr) {
-    const subArr = headingStr.replace(new RegExp(newLine), '').split(/ +/)
-    if (subArr.length) {
+    const subArr = headingStr.match(new RegExp(headingReg))
+    if (subArr) {
         return {
-            level: subArr[0].length,
-            text: subArr[1]
+            level: subArr[1].length,
+            text: subArr[3]
         }
     }
 }

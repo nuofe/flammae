@@ -5,6 +5,6 @@
 // mac \r
 
 module.exports = {
-    newLine: '\r\n',
+    newLine: `\\r\\n|\\n`,
     space: '(\u0020| )'
 }

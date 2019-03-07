@@ -1,6 +1,8 @@
 const parse = require('./parse')
-const babel = require("@babel/core")
-// const fs = require('fs-extra')
+
+const loaderMap = {
+    jsx: require('./jsx-loader')
+}
 
 // 空格  针对不同平台判断，不同换行符。
 const {
@@ -21,8 +23,7 @@ const codeBlockSym = ':::'
 const codeSym = '\`\`\`'
 
 function genReg(sym) {
-
-    return `${sym}(${space})*(.[^${newLine}]*)?${newLine}((?:(?!(${sym})).)*${newLine})*${sym}`
+    return `${sym}(${space}*)(.*)?(${newLine})((?:(?!(${sym})).)*(${newLine}))*${sym}`
 }
 
 const codeBlockReg = genReg(codeBlockSym)
@@ -30,9 +31,6 @@ const codeReg = genReg(codeSym)
 
 let mdStr;
 
-function editStr(newStr) {
-    mdStr = newStr
-}
 
 module.exports = function (fileStr) {
     // 解析frontmatter 和 headings
@@ -47,6 +45,7 @@ module.exports = function (fileStr) {
     let demos = null;
     // 提取代码块，并解析成一个组件
     const codeBlocks = mdStr.match(new RegExp(codeBlockReg, 'gm'))
+
     if (codeBlocks) {
         // flame在启动前会检测所有md文件的 frontmatter， 如果没有frontmatter， 则文件不会被加载
         // 所以这里frontmatter 是一定会存在的， 不用 做额外判断
@@ -67,32 +66,8 @@ module.exports = function (fileStr) {
 }
 
 
-
-const jsxLoader = (function () {
-    let id = 0
-    return function (codeStr, rawCodeStr, options, mdStr, callback) {
-        const modules = options.modules
-        if (!modules || !Array.isArray(modules)) {
-            console.log('你使用了demo功能，请确保frontmatter中存在modules属性，且为数组格式')
-            console.log('即使在Demo中没使用modules，也需要将modules设置为[]')
-            return null
-        }
-        const key = `demo-wrapper-${id++}`
-        callback(mdStr.replace(rawCodeStr, `<div id='${key}' ><\/div>\n\n`))
-        // 解析 jsx
-        const result = babel.transformSync(codeStr, {
-            presets: ["@babel/preset-env", "@babel/preset-react"]
-        })
-        return `{
-            elId: '${key}',
-            fn: function(${modules.join(',')}) { ${result.code};return Demo},
-            code: \`${rawCodeStr.replace(/\`/gm, '\\\`')}\`
-        }`
-    }
-})();
-
 /**
- * 
+ * 分析需要演示的代码
  * @param {array} codeBlocks 
  * @param {*} options 
  * 
@@ -100,40 +75,51 @@ const jsxLoader = (function () {
 // codeBlocks 是由下面格式的markdown文本组成的数组
 // ::: only （不加 only 就显示demo和代码, 加了就只显示demo）
 // 代码的一些说明写在这里
-// ``` jsx
+// \`\`\` jsx
 //  code here
-// ```
+// \`\`\`
 // :::
 // 
-
+const optObj = {
+    getStr: ()=>{return mdStr},
+    setStr: (newStr)=>{mdStr = newStr}
+}
 function codeParse(codeBlocks, options) {
-    return `[
-        ${
-            codeBlocks.map(codeBlock=>{
-                
-                console.log(codeBlock.match(new RegExp(`:::(.*)${newLine}(.*)\`\`\`(.*)\`\`\`${newLine}:::`)))
-                return 
-                const strBlock = codeBlock.replace(/:::/mg, '')
-        
-                // 分离 代码前缀信息 和 代码  jsx demo something
-                let [prefixInfo, ...codeLines] = strBlock.split(newLine)
-            
-                const codeStr = codeLines.join(newLine)
-                
-                prefixInfo = prefixInfo.trim()
+    const str = codeBlocks.map(codeBlock=>{
+                // 分离出
+                // \`\`\` jsx
+                // code here
+                // \`\`\`
+                const codeWrapStr = codeBlock.match(codeReg)[0]
+                // 分离出
+                // ::: only
+                // info text
+                // :::
+                const blockWrapStr = codeBlock.replace(codeWrapStr, '')
+                //    语言   代码                
+                const [lang, code] = split(codeWrapStr, codeSym)
+                //   演示指令     演示代码的附加信息
+                const [demoInfo, codeNote] = split(blockWrapStr, codeBlockSym)
 
-                // 分析语言
-                const lang = prefixInfo.match(/\S*/)[0]
-                // 分析 demo 标识符
-                const demoInfo = prefixInfo.split(/\s+/)[1]
-                if (demoInfo && demoInfo === 'demo') {
-        
-                    if(lang === 'jsx') {
+                const fn = loaderMap[lang.trim()]
+                return fn && fn(
+                    {
+                        code,
+                        codeNote,
+                        demoInfo,
+                        codeWrapStr,
+                        codeBlock
+                    },
+                    options,
+                    optObj
+                )
 
-                        return jsxLoader(codeStr, codeBlock, options, mdStr, editStr)
-                    }
-                }
             }).filter(Boolean).join(',')
-        }
-    ]`
+
+    return `[${str}]`
+}
+
+function split(str, sym) {
+    const arr = str.replace(new RegExp(sym,'g'),'').match(new RegExp(`(.*)(${newLine})((.|${newLine})*)`))
+    return [arr[1].trim(),arr[3]]
 }
