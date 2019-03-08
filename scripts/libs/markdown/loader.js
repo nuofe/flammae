@@ -1,14 +1,22 @@
 const parse = require('./parse')
-
 const loaderMap = {
     jsx: require('./jsx-loader')
 }
-
-// 空格  针对不同平台判断，不同换行符。
 const {
     space,
     newLine
 } = require('../new-line')
+
+const codeBlockSym = ':::'
+const codeSym = '\`\`\`'
+const codeBlockReg = genReg(codeBlockSym)
+const codeReg = genReg(codeSym)
+let mdText;
+
+function genReg(sym) {
+    return `${sym}(${space}*)(.*)?(${newLine})((?:(?!(${sym})).)*(${newLine}))*${sym}`
+}
+
 //
 // codeBlock 是下面格式的markdown文本
 //
@@ -19,50 +27,61 @@ const {
 // ```
 // :::
 //
-const codeBlockSym = ':::'
-const codeSym = '\`\`\`'
 
-function genReg(sym) {
-    return `${sym}(${space}*)(.*)?(${newLine})((?:(?!(${sym})).)*(${newLine}))*${sym}`
-}
-
-const codeBlockReg = genReg(codeBlockSym)
-const codeReg = genReg(codeSym)
-
-let mdStr;
-
-
-module.exports = function (fileStr) {
-    // 解析frontmatter 和 headings
+module.exports = function (source) {
+    const callback = this.async()
     const {
         frontmatter,
         headings,
         text
-    } = parse(fileStr);
-
-    mdStr = text;
-    
+    } = parse(source);  // 解析frontmatter 和 headings
+    mdText = text;
+    const publicPath = this.query.publicPath || '/'
+    const codeBlocks = mdText.match(new RegExp(codeBlockReg, 'g')) // 匹配所有代码块
+    const linkMatches = mdText.match(/(!\[.*\]\()(.*)(\))/g) //匹配所有图片引用
     let demos = null;
-    // 提取代码块，并解析成一个组件
-    const codeBlocks = mdStr.match(new RegExp(codeBlockReg, 'gm'))
 
+    // 提取代码块，并解析成一个组件
     if (codeBlocks) {
-        // flame在启动前会检测所有md文件的 frontmatter， 如果没有frontmatter， 则文件不会被加载
-        // 所以这里frontmatter 是一定会存在的， 不用 做额外判断
         demos = codeParse(codeBlocks, frontmatter)
+    } 
+
+    // 根据图片地址，请求图片模块
+    if(linkMatches) {
+        Promise.all(linkMatches.map(link=>(
+            new Promise((resolve,reject)=>{
+                const matcher = link.match(/(!\[.*\]\()(.*)(\))/)
+                this.loadModule(matcher[2], (err,result)=>{
+                    if(err) {
+                        reject(err)
+                    }
+                    const resolvedPath = result.split('+')[1].trim().slice(1,-2)
+                    mdText = mdText.replace(link, `${matcher[1]}${publicPath}${resolvedPath}${matcher[3]}`)
+                    resolve()
+                })
+            })
+        ))).then(emitResult).catch(err=>{
+            throw new Error(err)
+        })
+        return 
     }
 
-    // markdown中使用反引号包裹代码，在js中反引号为特殊符号，所以需要转义
-    return `export default {
-        ${
-            JSON.stringify({
-                frontmatter: frontmatter,
-                headings:headings,
-                text: mdStr
-            }).replace(/\`/gm, '\\\`').slice(1,-1)
-        },
-        demos: ${demos ? demos : '[]'}
-    }`
+    emitResult()
+
+    function emitResult() {
+        // markdown中使用反引号包裹代码，在js中反引号为特殊符号，所以需要转义
+        callback(null,`export default {
+            ${
+                JSON.stringify({
+                    frontmatter: frontmatter,
+                    headings:headings,
+                    text: mdText
+                }).replace(/\`/gm, '\\\`').slice(1,-1)
+            },
+            demos: ${demos ? demos : '[]'}
+        }`)
+    }
+
 }
 
 
@@ -81,8 +100,8 @@ module.exports = function (fileStr) {
 // :::
 // 
 const optObj = {
-    getStr: ()=>{return mdStr},
-    setStr: (newStr)=>{mdStr = newStr}
+    getStr: ()=>{return mdText},
+    setStr: (newStr)=>{mdText = newStr}
 }
 function codeParse(codeBlocks, options) {
     const str = codeBlocks.map(codeBlock=>{
@@ -102,6 +121,7 @@ function codeParse(codeBlocks, options) {
                 const [demoInfo, codeNote] = split(blockWrapStr, codeBlockSym)
 
                 const fn = loaderMap[lang.trim()]
+
                 return fn && fn(
                     {
                         code,

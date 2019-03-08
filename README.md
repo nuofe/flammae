@@ -194,8 +194,14 @@ modules: ['React', 'Component', 'Button']
 #### 指令
 待续。。。
 
-
-
+#### 其它
+我们现在可以在Demo的函数中引入样式，这样每个`.md`文件就可以拥有自己的样式了。
+```jsx
+function Demo(){
+    require('./style.css')
+    return null
+}
+```
 
 ## TODO: 
 - 自动化监听文件修改优化
