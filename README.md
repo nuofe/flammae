@@ -204,6 +204,9 @@ function Demo(){
 ```
 
 ## TODO: 
-- 自动化监听文件修改优化
-- markdown文件loader优化
 - 完善可配置项
+- 自动化监听文件部分功能代码优化
+
+## CONCEPT
+- 将site-flame改成webpack的插件
+- 提取loader跟模板，要求每个loader自带一套模板
