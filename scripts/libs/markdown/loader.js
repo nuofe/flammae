@@ -118,15 +118,23 @@ function codeParse(codeBlocks, options) {
                 //    语言   代码                
                 const [lang, code] = split(codeWrapStr, codeSym)
                 //   演示指令     演示代码的附加信息
-                const [demoInfo, codeNote] = split(blockWrapStr, codeBlockSym)
+                const [command, codeNote] = split(blockWrapStr, codeBlockSym)
 
+                // 判断是不是样式代码
+                if(command.trim() === 'style') {
+                    mdText = mdText.replace(codeBlock, `\n\n`)
+                    return `{
+                        fn: function() {${code}},
+                        isStyle: true
+                    }`
+                }
+                // 其它代码，用loader分析
                 const fn = loaderMap[lang.trim()]
-
                 return fn && fn(
                     {
                         code,
                         codeNote,
-                        demoInfo,
+                        command: command.trim(),
                         codeWrapStr,
                         codeBlock
                     },

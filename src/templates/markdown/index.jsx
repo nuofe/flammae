@@ -24,6 +24,10 @@ class Markdown extends Component {
     renderDemo() {
 
         this.props.md.demos.forEach(demo => {
+            if(demo.isStyle){
+                demo.fn()
+                return
+            }
             const Comp = demo.fn(...this.props.modules)
             const codeHtml = demo.code && marked(demo.code)
             const codeNoteHtml = codeHtml && marked(demo.codeNote) 

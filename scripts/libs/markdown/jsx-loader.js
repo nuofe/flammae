@@ -19,7 +19,7 @@ module.exports =  (function () {
         return `{
             elId: '${key}',
             fn: function(${modules.join(',')}) { ${result.code};return Demo},
-            ${obj.demoInfo ==='only' ? '': `code: \`${obj.codeWrapStr.replace(/\`/g, '\\\`')}\`,`}
+            ${obj.command ==='only' ? '': `code: \`${obj.codeWrapStr.replace(/\`/g, '\\\`')}\`,`}
             codeNote: \`${obj.codeNote.replace(/\`/g, '\\\`')}\`
         }`
     }
