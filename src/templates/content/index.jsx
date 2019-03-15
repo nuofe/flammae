@@ -2,9 +2,6 @@ import React, { Component } from 'react';
 import Markdown from '../markdown'
 
 
-
-
-
 class Content extends Component {
 
     render() {

@@ -207,6 +207,11 @@ function writeFile() {
                 ),
                 'Content'
             )
+            appStr = insertImport(
+                appStr,
+                '../templates/markdown',
+                'Markdown'
+            )
         }
 
         // 根据文件目录生成app.jsx文件，并配置内部路由
@@ -216,7 +221,7 @@ function writeFile() {
             const render = (
                 !isDoc ?
                 `component={${name}}` :
-                `render={()=><Content data={${name}}/>}`
+                `render={()=><Content markdown={<Markdown md={${name}}/>} data={${name}}/>}`
             );
             appStr = insertImport(appStr, resolvePath(item.filePath), name)
             appStr = insertRoute(render, item.path, appStr)

@@ -17,8 +17,11 @@ module.exports =  (function () {
         })
         
         return `{
+            codeLang: 'jsx',
             elId: '${key}',
-            fn: function(${modules.join(',')}) { ${result.code};return Demo}
+            fn: function(${modules.join(',')}) { ${result.code};return Demo},
+            ${obj.command ==='only' ? '': `code: \`${obj.codeWrapStr.replace(/\`/g, '\\\`')}\`,`}
+            codeNote: \`${obj.codeNote.replace(/\`/g, '\\\`')}\`
         }`
     }
 })();

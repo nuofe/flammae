@@ -44,7 +44,7 @@ module.exports = function (source) {
     // 提取代码块，并解析成一个组件
     if (codeBlocks) {
         demos = codeParse(codeBlocks, frontmatter)
-    } 
+    }
 
     // 根据图片地址，请求图片模块
     if(linkMatches) {
@@ -130,17 +130,23 @@ function codeParse(codeBlocks, options) {
                 }
                 // 其它代码，用loader分析
                 const fn = loaderMap[lang.trim()]
-                return fn && fn(
+                let result = fn && fn(
                     {
                         code,
-                        codeNote,
                         command: command.trim(),
                         codeWrapStr,
-                        codeBlock
+                        codeBlock,
+                        codeNote
                     },
                     options,
                     optObj
                 )
+                return `{
+                    lang: '${lang.trim()}',
+                    ${command.match(/(\s)+only(\s)+/) ? '': `code: \`${codeWrapStr.replace(/\`/g, '\\\`')}\`,`}
+                    codeNote: \`${codeNote.replace(/\`/g, '\\\`')}\`,
+                    loader : ${result}
+                }`
 
             }).filter(Boolean).join(',')
 

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './style.css'
 
 class CodeDemo extends Component {
     constructor(props) {
@@ -33,7 +34,6 @@ class CodeDemo extends Component {
                                                     dangerouslySetInnerHTML={{ __html: codeNote }}>
                                                 </div>
                                             )
-
                                         }
                                         <div className='code-text-demo'
                                             dangerouslySetInnerHTML={{ __html: this.props.codeHtml }}>

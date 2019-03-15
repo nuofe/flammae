@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom'
 import marked from '../../marked'
 import PropTypes from 'prop-types'
-import CodeDemo from './code'
-import './style.css'
+import jsxRender from './plugin-render'
+const renderMap = {}
 
 class Markdown extends Component {
-
     componentDidMount() {
         this.genHTML(this.props.md.text)
     }
@@ -22,23 +20,25 @@ class Markdown extends Component {
         })
     }
     renderDemo() {
-
         this.props.md.demos.forEach(demo => {
-            if(demo.isStyle){
+            if (demo.isStyle) {
                 demo.fn()
                 return
             }
-            const Comp = demo.fn(...this.props.modules)
             const codeHtml = demo.code && marked(demo.code)
-            const codeNoteHtml = codeHtml && marked(demo.codeNote) 
-            ReactDOM.render(
-                <CodeDemo
-                    demoComp={<Comp />}
-                    codeHtml={codeHtml}
-                    codeNoteHtml = {codeNoteHtml}
-                />,
-                document.getElementById(demo.elId)
-            )
+            const codeNoteHtml = codeHtml && marked(demo.codeNote)
+            let render = () => { }
+            if (demo.lang === 'jsx') {
+                render = jsxRender
+            } else {
+                render = renderMap[demo.lang]
+            }
+            render && render({
+                modules: this.props.modules,
+                codeHtml,
+                codeNoteHtml,
+                loader: demo.loader
+            })
         })
     }
     render() {
