@@ -1,6 +1,6 @@
 
 
-## **site-flame已改名为flammae!**
+## **site-flame已改名为flammae! 将停止更新此npm包，请更换成flammae**
 
 # site-flame
 基于React的静态网页创建工具(markdown)
