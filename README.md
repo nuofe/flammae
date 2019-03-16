@@ -53,31 +53,15 @@ src目录下又包括（_这些文件夹将被`flame`解析，其他命名文件
 ```jsx
 import React, { Component } from 'react';
 import {
-    // siteData,
-    Markdown  // 默认的site-flame提供的默认Markdown渲染组件，以后将提供可配置接口
+   siteData
 } from 'site-flame'
-import * as UI from '../ui' // 一些组件库，如果你想使用Demo的话
 
 class Content extends Component {
     render() {
-        const data = this.props.data // 包含着一个 .md 文件的所有信息
-
-        // 我们将根据在 .md 头部声明的modules来将对应的 modules传递给Demo
-        // 你可以暂时不用管这里，继续往下看
-        const modules = data.frontmatter.modules.map(item=>{
-            switch(item) {
-                case 'React':
-                return React
-                case 'Component':
-                return Component
-                default:
-                return UI[item]
-            }
-        })
         return (
             <div>
                 {/* 其他的一些代码 */}
-                <Markdown md={data} modules={modules}/>
+                {this.props.renderMarkdown()}
                 {/* 其他的一些代码 */}
             </div>
         );
@@ -95,7 +79,6 @@ export default Content;
 ---
 path: '/router'
 title: 'My first flame page'
-modules: ['React', 'Component', 'Button']
 ---
 ```
 这样，我们就可以在上面说到的`templates\content.js`中通过`this.props.data`来访问这些信息。
@@ -121,6 +104,15 @@ modules: ['React', 'Component', 'Button']
 待续。。。
 
 ## markdown 编写规范
+
+### 为markdown引入样式
+```
+::: style
+\`\`\` javascript
+require('./style.css')
+\`\`\`
+:::
+```
 
 ### 代码演示
 如果代码想要被演示（根据markdown中的代码块动态渲染内容，目前仅支持`jsx`）， 需要在代码标识符后加`lang`（根据不同的语言）和`demo`字符串 ，例如，我们想演示一个`React`组件，需要用`:::`将代码块包起来，像下面这样：

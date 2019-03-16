@@ -49,7 +49,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/LiZ2z/site-flame.git"
+        "url": "git+https://github.com/LiZ2z/flammae.git"
     },
     "keywords": [
         "react",
@@ -57,7 +57,7 @@
         "site"
     ],
     "bugs": {
-        "url": "https://github.com/LiZ2z/site-flame/issues"
+        "url": "https://github.com/LiZ2z/flammae/issues"
     },
-    "homepage": "https://github.com/LiZ2z/site-flame#readme"
+    "homepage": "https://github.com/LiZ2z/flammae#readme"
 }
