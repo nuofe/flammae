@@ -1,3 +1,4 @@
+const path = require('path')
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin'); // 压缩js code
@@ -8,8 +9,6 @@ const safePostCssParser = require('postcss-safe-parser');
 
 const paths = require('./paths');
 const config = require('./config');
-
-
 
 module.exports = function genConfig(webpackEnv) {
 
@@ -226,7 +225,10 @@ module.exports = function genConfig(webpackEnv) {
             // 路径解析别名
             alias: Object.assign({}, config.alias),
             // 告诉webpack 到哪里找 modules
-            modules: ['node_modules'],
+            modules: [
+                path.resolve(paths.flameDir, 'node_modules'),
+                'node_modules'
+            ],
             plugins: [
                 // Adds support for installing with Plug'n'Play, leading to faster installs and adding
                 // guards against forgotten dependencies and such.
@@ -255,11 +257,15 @@ module.exports = function genConfig(webpackEnv) {
                 {
                     test: /\.(js|jsx)$/,
                     enforce: 'pre',
-                    include: [paths.appSrc, paths.flameSrc],
+                    include: [
+                        paths.appSrc,
+                        paths.flameSrc,
+                        path.join(paths.flameDir, 'packages')
+                    ],
                     use: [{
                         options: {
                             eslintPath: require.resolve('eslint'),
-                            configFile: require.resolve('@78d6/eslint-config-react-app')
+                            configFile: path.join(paths.flameDir, '.eslintrc.js')
                         },
                         loader: require.resolve('eslint-loader')
                     }],
@@ -282,17 +288,21 @@ module.exports = function genConfig(webpackEnv) {
 
                         {
                             test: /\.md$/,
-                            loader: require.resolve('../scripts/libs/markdown/loader.js'),
+                            loader: require.resolve('../packages/flammae-utils/markdown/loader.js'),
                             options: {
                                 publicPath: './'
                             }
                         },
                         {
                             test: /\.(js|mjs|jsx|ts|tsx)$/,
-                            include: [paths.appSrc, paths.flameSrc],
+                            include: [
+                                paths.appSrc,
+                                paths.flameSrc,
+                                path.join(paths.flameDir, 'packages')
+                            ],
                             loader: require.resolve('babel-loader'),
                             options: {
-                                presets: ['react-app'],
+                                presets: [require.resolve('babel-preset-react-app')],
                                 // 启用缓存，这是webpack针对“babel-loader”的特性(不是babel本身的)。
                                 // 将会在./node_Module/.cache/babel-loader/目录中保存缓存结果
                                 // 对于多次的run build 会节省大量时间

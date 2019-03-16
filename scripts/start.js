@@ -16,12 +16,13 @@ process.on('exit', (code) => {
     console.log(`退出码: ${code}`)
 })
 
+const flammaePackagePath = '../packages/flammae-utils'
 
 const chalk = require('chalk')
 const path = require('path')
 const fs = require('fs-extra')
-const jsxParse = require('./libs/jsx-parse')
-const markdownParse = require('./libs/markdown/parse')
+const jsxParse = require(path.join(flammaePackagePath,'jsx-parse'))
+const markdownParse = require(path.join(flammaePackagePath,'markdown/parse'))
 const {
     appSrc,
     flameSrc
@@ -46,7 +47,7 @@ function resolvePath(p) {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // 确保flameRoot/src/temp目录存在且为空
 // 确保appRoot/src 目录存在
-console.log('初始化...\n')
+console.log('\n初始化...\n')
 fs.emptyDirSync(flameSrcJoin('temp'))
 fs.ensureDirSync(appSrc)
 

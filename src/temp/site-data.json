@@ -1,1 +1,1 @@
-{"pages":[{"path":"/page/one","filePath":"D:\\Code\\Test\\test\\src\\pages\\one.jsx","__type":"page"},{"path":"/test","title":"13","filePath":"D:\\Code\\Test\\test\\src\\pages\\test.jsx","__type":"page"}],"docs":[{"path":"/two","title":"two","filePath":"D:\\Code\\Test\\test\\src\\docs\\two.md","__type":"doc"}]}
+{"pages":[{"path":"/example-page","filePath":"D:\\Code\\Test\\t1\\src\\pages\\example.jsx","__type":"page"}],"docs":[{"path":"/example-doc","title":"123","filePath":"D:\\Code\\Test\\t1\\src\\docs\\example.md","__type":"doc"}]}

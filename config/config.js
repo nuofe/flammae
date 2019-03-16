@@ -17,15 +17,15 @@ const resolveApp = require('./paths').resolveApp
 
 // 开发者自定义的配置
 const userConfig = (
-    fs.existsSync(resolveApp('flame.config.js')) ?
-    require(resolveApp('flame.config.js')) :
+    fs.existsSync(resolveApp('flammae.config.js')) ?
+    require(resolveApp('flammae.config.js')) :
     null
 );
 
 // 默认配置
 const defaultConfig = {
     server: {
-        port: 8080,
+        port: 8090,
         host: '127.0.0.1'
     },
     alias: {
@@ -56,7 +56,7 @@ function merge(target, obj) {
             continue;
         }
         if (Object.prototype.toString.call(objItem) === '[object Array]') {
-            target[key] = onlyOne(targetItem, objItem);
+            target[key] = [...new Set(targetItem.concat(objItem))]
             continue;
         }
 

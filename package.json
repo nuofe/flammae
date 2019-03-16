@@ -1,15 +1,19 @@
 {
-    "name": "site-flame",
-    "version": "1.0.13",
+    "name": "flammae",
+    "version": "1.0.0",
     "author": "LiZ2z",
     "description": "基于React的静态网页创建工具(markdown)",
     "private": false,
     "license": "MIT",
     "main": "index.js",
     "bin": {
-        "flammae": "cmd/index.js"
+        "flammae": "cli/index.js"
     },
     "dependencies": {
+        "@babel/core": "7.2.2",
+        "@babel/preset-env": "7.3.1",
+        "@babel/preset-react": "^7.0.0",
+
         "@78d6/eslint-config-common": "0.1.5",
         "@78d6/eslint-config-react-app": "0.1.1",
         "@svgr/webpack": "4.1.0",
@@ -41,7 +45,10 @@
         "terser-webpack-plugin": "1.2.3",
         "url-loader": "1.1.2",
         "webpack": "4.29.5",
-        "webpack-dev-server": "3.2.1"
+        "webpack-dev-server": "3.2.1",
+        "commander": "^2.19.0",
+        "cross-spawn": "^6.0.5",
+        "inquirer": "^6.2.1"
     },
     "devDependencies": {},
     "scripts": {

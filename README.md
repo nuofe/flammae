@@ -1,27 +1,27 @@
 
 
-## **site-flame已改名为flammae! 将停止更新此npm包，请更换成flammae**
+## **flammae已改名为flammae! 将停止更新此npm包，请更换成flammae**
 
-# site-flame
+# flammae
 基于React的静态网页创建工具(markdown)
 
 ## 注意
 
 
-site-flame 还在开发阶段，可能存在bug，发现bug请及时反馈，多谢！
+flammae 还在开发阶段，可能存在bug，发现bug请及时反馈，多谢！
 
 issues: https://github.com/LiZ2z/flammae/issues
 
 ## 安装
 
 ```
-npm install site-flame
+npm install flammae
 ```
 在`package.json`中添加
 ```json
  "scripts": {
-    "start": "node node_modules/site-flame/scripts/start -dev",
-    "build": "node node_modules/site-flame/scripts/start -build"
+    "start": "node node_modules/flammae/scripts/start -dev",
+    "build": "node node_modules/flammae/scripts/start -build"
   }
 ```
 
@@ -54,7 +54,7 @@ src目录下又包括（_这些文件夹将被`flame`解析，其他命名文件
 import React, { Component } from 'react';
 import {
    siteData
-} from 'site-flame'
+} from 'flammae'
 
 class Content extends Component {
     render() {
@@ -92,7 +92,7 @@ title: 'My first flame page'
 
 >注意： path是必须的，path声明的值将作为访问这个页面的路由地址，如果没有path，该文件将不被显示。
 
->在flame的项目中你可以通过`import {siteData} from 'site-flame'`的方式访问到全部文件的头部数据
+>在flame的项目中你可以通过`import {siteData} from 'flammae'`的方式访问到全部文件的头部数据
 
 
 
@@ -200,5 +200,5 @@ class Demo extends Component {
 - 自动化监听文件部分功能代码优化
 
 ## CONCEPT
-- 将site-flame改成webpack的插件
+- 将flammae改成webpack的插件
 - 提取loader跟模板，要求每个loader自带一套模板
