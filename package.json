@@ -1,6 +1,6 @@
 {
     "name": "site-flame",
-    "version": "1.0.12",
+    "version": "1.0.13",
     "author": "LiZ2z",
     "description": "基于React的静态网页创建工具(markdown)",
     "private": false,
