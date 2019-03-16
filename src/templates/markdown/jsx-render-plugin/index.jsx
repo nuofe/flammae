@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom'
 import CodeDemo from './code'
 
 
-export default function ({ modules, codeHtml, codeNoteHtml, loader }) {
-    const Comp = loader.fn(...modules)
+export default function ({ codeHtml, codeNoteHtml, loader }) {
+    const Comp = loader.fn()
     ReactDOM.render(
         <CodeDemo
             demoComp={<Comp />}

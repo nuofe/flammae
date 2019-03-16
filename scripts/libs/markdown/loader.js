@@ -141,6 +141,7 @@ function codeParse(codeBlocks, options) {
                     options,
                     optObj
                 )
+                if(!result) return null
                 return `{
                     lang: '${lang.trim()}',
                     ${command.match(/(\s)+only(\s)+/) ? '': `code: \`${codeWrapStr.replace(/\`/g, '\\\`')}\`,`}

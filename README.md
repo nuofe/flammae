@@ -1,11 +1,16 @@
+
+
+## **site-flame已改名为flammae!**
+
 # site-flame
 基于React的静态网页创建工具(markdown)
 
 ## 注意
 
+
 site-flame 还在开发阶段，可能存在bug，发现bug请及时反馈，多谢！
 
-issues: https://github.com/LiZ2z/site-flame/issues
+issues: https://github.com/LiZ2z/flammae/issues
 
 ## 安装
 
@@ -17,9 +22,6 @@ npm install site-flame
  "scripts": {
     "start": "node node_modules/site-flame/scripts/start -dev",
     "build": "node node_modules/site-flame/scripts/start -build"
-  },
-  "eslintConfig": {
-    "extends": "@78d6/eslint-config-react-app"
   }
 ```
 
@@ -175,6 +177,8 @@ flame目前有一个自带指令：`style`，通过该指令，你就可以为�
 假如我们有如下需要演示的代码（当然，要使用`:::`包裹住。）：
 
 ```jsx
+import {Component} from 'react'
+import {Button} from 'ui'
 class Demo extends Component {
     handleClick() {
         console.log('clicked')
@@ -191,13 +195,9 @@ class Demo extends Component {
 ```
 
 1. class 的名称必须为 `Demo`。如果写成函数式的组件，那么函数名也必须为 `Demo`。
-2. 任何在demo代码块中使用到的`module`都需要在markdown头部的`frontmatter`块中声明：
 
-``` frontmatter
----
-modules: ['React', 'Component', 'Button']
----
-```
+
+
 
 #### 指令
 待续。。。

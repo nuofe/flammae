@@ -1,4 +1,5 @@
 node_modules/
+packages/
 
 *.lock
 
@@ -6,7 +7,9 @@ package-lock.json
 
 .gitignore
 
-.git/
+.git
 
 # 这两个文件是运行时动态生成的
 /src/temp
+
+

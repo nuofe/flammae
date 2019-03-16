@@ -1,22 +1,28 @@
 import React, { Component } from 'react';
 import marked from '../../marked'
 import PropTypes from 'prop-types'
-import jsxRender from './plugin-render'
+import jsxRender from './jsx-render-plugin'
 const renderMap = {}
 
 class Markdown extends Component {
+    state = {
+        opacity: 0
+    }
     componentDidMount() {
         this.genHTML(this.props.md.text)
     }
-    UNSAFE_componentWillReceiveProps(nextP) {
-        if (this.props.md.text !== nextP.md.text) {
-            this.genHTML(nextP.md.text)
+    componentDidUpdate(prevProps) {
+        if (this.props.md !== prevProps.md) {
+            this.genHTML(this.props.md.text)
         }
     }
     genHTML(str) {
+        // 解析markdown
         this.__html = marked(str)
+        // 执行demo
         this.forceUpdate(() => {
-            setTimeout(() => { this.renderDemo() })
+            this.renderDemo()
+            this.setState({ opacity: 1 })
         })
     }
     renderDemo() {
@@ -27,14 +33,13 @@ class Markdown extends Component {
             }
             const codeHtml = demo.code && marked(demo.code)
             const codeNoteHtml = codeHtml && marked(demo.codeNote)
-            let render = () => { }
+            let render = null
             if (demo.lang === 'jsx') {
                 render = jsxRender
             } else {
                 render = renderMap[demo.lang]
             }
             render && render({
-                modules: this.props.modules,
                 codeHtml,
                 codeNoteHtml,
                 loader: demo.loader
@@ -46,6 +51,7 @@ class Markdown extends Component {
             <div
                 className='markdown-content'
                 dangerouslySetInnerHTML={{ __html: this.__html }}
+                style={{ opacity: this.state.opacity }}
             />
         );
     }
@@ -56,8 +62,7 @@ Markdown.propTypes = {
     md: PropTypes.shape({
         text: PropTypes.string,
         demos: PropTypes.array
-    }).isRequired,
-    modules: PropTypes.array
+    }).isRequired
 }
 
 export default Markdown;

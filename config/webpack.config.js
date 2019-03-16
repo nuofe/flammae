@@ -259,6 +259,7 @@ module.exports = function genConfig(webpackEnv) {
                     use: [{
                         options: {
                             eslintPath: require.resolve('eslint'),
+                            configFile: require.resolve('@78d6/eslint-config-react-app')
                         },
                         loader: require.resolve('eslint-loader')
                     }],

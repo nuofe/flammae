@@ -1,19 +1,15 @@
 {
     "name": "site-flame",
     "version": "1.0.10",
-    "main": "index.js",
     "author": "LiZ2z",
     "description": "基于React的静态网页创建工具(markdown)",
     "private": false,
     "license": "MIT",
-    "eslintConfig": {
-        "extends": "@78d6/eslint-config-react-app",
-        "root": true
+    "main": "index.js",
+    "bin": {
+        "flammae": "cmd/index.js"
     },
     "dependencies": {
-        "react": "^16.8.3",
-        "react-dom": "^16.8.3",
-        "react-router-dom": "4.3.1",
         "@78d6/eslint-config-common": "0.1.5",
         "@78d6/eslint-config-react-app": "0.1.1",
         "@svgr/webpack": "4.1.0",
@@ -38,13 +34,14 @@
         "postcss-loader": "3.0.0",
         "postcss-preset-env": "6.5.0",
         "postcss-safe-parser": "4.0.1",
+        "react": "^16.8.3",
+        "react-dom": "^16.8.3",
+        "react-router-dom": "^4.4.0",
         "style-loader": "0.23.1",
         "terser-webpack-plugin": "1.2.3",
         "url-loader": "1.1.2",
         "webpack": "4.29.5",
-        "webpack-dev-server": "3.2.1",
-        "fast-sass-loader": "^1.4.7",
-        "node-sass": "^4.11.0"
+        "webpack-dev-server": "3.2.1"
     },
     "devDependencies": {},
     "scripts": {

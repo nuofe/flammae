@@ -110,7 +110,7 @@ function parseFiles(filePaths) {
         }).filter(Boolean)
     ).then(files => {
         console.log('开始提取文件信息...\n')
-        files.forEach((file,i) => {
+        files.forEach((file, i) => {
 
             const isJSX = file.path.match(/.*\.jsx$/)
             if (isJSX) {
@@ -190,9 +190,9 @@ function writeFile() {
         appStr = insertImport(
             appStr,
             (
-                fs.existsSync(templateIndexPath) ?
+                existsSyncFileOrDir(templateIndexPath) ?
                 resolvePath(templateIndexPath) :
-                '../templates/home'
+                '../templates/home/index.jsx'
             ),
             'Index'
         )
@@ -201,9 +201,9 @@ function writeFile() {
             appStr = insertImport(
                 appStr,
                 (
-                    fs.existsSync(templateContentPath) ?
+                    existsSyncFileOrDir(templateContentPath) ?
                     resolvePath(templateContentPath) :
-                    '../templates/content'
+                    '../templates/content/index.jsx'
                 ),
                 'Content'
             )
@@ -213,7 +213,6 @@ function writeFile() {
                 'Markdown'
             )
         }
-
         // 根据文件目录生成app.jsx文件，并配置内部路由
         siteData.pages.concat(siteData.docs).forEach((item, i) => {
             const isDoc = item.__type === 'doc'
@@ -221,7 +220,7 @@ function writeFile() {
             const render = (
                 !isDoc ?
                 `component={${name}}` :
-                `render={()=><Content markdown={<Markdown md={${name}}/>} data={${name}}/>}`
+                `render={()=><Content renderMarkdown={()=><Markdown md={${name}}/>} data={${name}}/>}`
             );
             appStr = insertImport(appStr, resolvePath(item.filePath), name)
             appStr = insertRoute(render, item.path, appStr)
@@ -354,4 +353,24 @@ function debounce(fn, time) {
             fn(...args)
         }, time || 300)
     }
+}
+
+/**
+ * 判断当前路径是否存在，无论是文件夹还是指定的文件
+ * @param {string} targetPath 目标路径
+ * @param {array} suffixs 文件后缀名
+ */
+function existsSyncFileOrDir(targetPath, suffixs = ['.jsx', '.js']) {
+    if (fs.existsSync(targetPath)) {
+        return true
+    }
+    return suffixs.some(suffix => {
+        try {
+            const file = fs.statSync(targetPath + suffix)
+            return file && file.isFile()
+        } catch (err) {
+            return false
+        }
+    })
+
 }
