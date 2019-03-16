@@ -1,6 +1,6 @@
 {
     "name": "flammae",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "author": "LiZ2z",
     "description": "基于React的静态网页创建工具(markdown)",
     "private": false,
@@ -13,7 +13,6 @@
         "@babel/core": "7.2.2",
         "@babel/preset-env": "7.3.1",
         "@babel/preset-react": "^7.0.0",
-
         "@78d6/eslint-config-common": "0.1.5",
         "@78d6/eslint-config-react-app": "0.1.1",
         "@svgr/webpack": "4.1.0",
