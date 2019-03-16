@@ -61,7 +61,11 @@
     "keywords": [
         "react",
         "markdown",
-        "site"
+        "site",
+        "静态网站生成工具",
+        "static site",
+        "static",
+        "flammae"
     ],
     "bugs": {
         "url": "https://github.com/LiZ2z/flammae/issues"
