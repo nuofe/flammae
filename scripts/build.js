@@ -39,6 +39,7 @@ module.exports = function () {
 
         if (!messages.errors.length && !messages.warnings.length) {
             console.log(chalk.green(`打包完成：${appBuild}`));
+            process.exit(0);
             console.log();
         } else {
             console.log(chalk.red('编译出错！\n'));

@@ -5,7 +5,7 @@ const TerserPlugin = require('terser-webpack-plugin'); // 压缩js code
 const MiniCssExtractPlugin = require("mini-css-extract-plugin"); // 分离 css
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin"); // 压缩 css
 const safePostCssParser = require('postcss-safe-parser');
-
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const paths = require('./paths');
 const config = require('./config');
@@ -227,7 +227,8 @@ module.exports = function genConfig(webpackEnv) {
             // 告诉webpack 到哪里找 modules
             modules: [
                 path.resolve(paths.flameDir, 'node_modules'),
-                'node_modules'
+                'node_modules',
+                path.resolve(paths.flameDir, 'flammae-data-provider'),
             ],
             plugins: [
                 // Adds support for installing with Plug'n'Play, leading to faster installs and adding
@@ -340,7 +341,9 @@ module.exports = function genConfig(webpackEnv) {
                 // 这里配置格式类似于 wepbackOptions.output
                 filename: 'static/css/[name].[contenthash:8].css',
                 chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
-            })
+            }),
+
+            // isProdEnv && new BundleAnalyzerPlugin()
 
         ].filter(Boolean)
     }
