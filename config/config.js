@@ -34,7 +34,11 @@ const defaultConfig = {
     extensions: [],
     // 暂时只支持 sass | less， 其他需要可向作者反馈
     // 在这里改了后，记得下载对应的 loader 
-    style: 'css'
+    style: {
+        lang: 'css',
+        loader: null,
+        rule: null
+    }
 };
 
 

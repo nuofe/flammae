@@ -71,13 +71,15 @@ module.exports = function genConfig(webpackEnv) {
                 }])
             }
         }
-        switch (config.style) {
+        const style = config.style;
+        switch (style.lang) {
             case 'sass':
-                return rule(/\.(sass|scss)$/, 'fast-sass-loader')
+            case 'scss':
+                return rule(/\.(sass|scss)$/, style.loader || 'sass-loader')
             case 'less':
-                return rule(/\.less$/, 'less-loader')
+                return rule(/\.less$/, style.loader || 'less-loader')
             default:
-                return
+                return rule(style.rule, style.loader)
         }
     })();
 
