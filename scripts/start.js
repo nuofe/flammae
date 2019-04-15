@@ -25,19 +25,19 @@ const jsxParse = require(path.join(flammaePackagePath,'jsx-parse'))
 const markdownParse = require(path.join(flammaePackagePath,'markdown/parse'))
 const {
     appSrc,
-    flameSrc
+    flammaeSrc
 } = require('../config/paths')
 
 function appSrcJoin(src) {
     return path.join(appSrc, src)
 }
 
-function flameSrcJoin(src) {
-    return path.join(flameSrc, src)
+function flammaeSrcJoin(src) {
+    return path.join(flammaeSrc, src)
 }
 
 // 将路径转换成js可以加载的路径
-// D:\flame\root\src =>  D:/flame/root/src
+// D:\flammae\root\src =>  D:/flammae/root/src
 function resolvePath(p) {
     return p.split(path.sep).join('/')
 }
@@ -45,10 +45,10 @@ function resolvePath(p) {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                  第一步
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// 确保flameRoot/src/temp目录存在且为空
+// 确保flammaeRoot/src/temp目录存在且为空
 // 确保appRoot/src 目录存在
 console.log('\n初始化...\n')
-fs.emptyDirSync(flameSrcJoin('temp'))
+fs.emptyDirSync(flammaeSrcJoin('temp'))
 fs.ensureDirSync(appSrc)
 
 
@@ -74,12 +74,12 @@ const pagesMap = {}
 // appRoot/src/docs 目录被规定专门存放 .md文件
 // appRoot/src/pages 目录被规定专门存放 .jsx文件
 // 将会根据每个文档的头部 信息 生成对应的 页面
-// .md文件通过在头部编写frontmatter来为 flame提供信息
+// .md文件通过在头部编写frontmatter来为 flammae提供信息
 // ---
 // path: '/one'
 // ---
 //
-// .jsx文件通过在头部编写行级注释来为 flame提供信息
+// .jsx文件通过在头部编写行级注释来为 flammae提供信息
 //
 // path: '/one'
 //
@@ -166,24 +166,24 @@ function patternMD(filePath) {
 //
 function writeStylesToIndexJs() {
     const stylePaths = getFilePaths(appSrcJoin('styles'))
-    const indexJsPath = flameSrcJoin('templates/index.js')
+    const indexJsPath = flammaeSrcJoin('templates/index.js')
     let indexJsStr = fs.readFileSync(indexJsPath, {
         encoding: 'utf8'
     })
     stylePaths.forEach(stylePath => {
         indexJsStr = insertImport(indexJsStr, resolvePath(stylePath))
     })
-    fs.writeFileSync(flameSrcJoin('temp/index.js'), indexJsStr)
+    fs.writeFileSync(flammaeSrcJoin('temp/index.js'), indexJsStr)
 }
 
 function writeFile() {
     console.log('正在写入数据...\n')
     try {
-        let appStr = fs.readFileSync(flameSrcJoin('templates/app.jsx'), {
+        let appStr = fs.readFileSync(flammaeSrcJoin('templates/app.jsx'), {
             encoding: 'utf8'
         })
-        const tempAppPath = flameSrcJoin('temp/app.jsx')
-        const tempStaticPath = flameSrcJoin('temp/site-data.json')
+        const tempAppPath = flammaeSrcJoin('temp/app.jsx')
+        const tempStaticPath = flammaeSrcJoin('temp/site-data.json')
 
         const templateIndexPath = appSrcJoin('templates/index')
         const templateContentPath = appSrcJoin('templates/content')

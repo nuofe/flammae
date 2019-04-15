@@ -58,28 +58,40 @@ module.exports = function genConfig(webpackEnv) {
         ].filter(Boolean)
     }
 
+
     // css 扩展语言 解析规则
     const cssExtensionRule = (function () {
-        function rule(regExp, loaderName) {
+        function genRule(rule, loaderName) {
+            // return null
             return {
-                test: regExp,
+                test: rule,
                 use: genStyleLoaders(2).concat([{
-                    loader: require.resolve(loaderName),
+                    loader: require.resolve(loaderName, {
+                        paths: [paths.appRoot]
+                    }),
                     options: {
                         sourceMap: !isDevEnv
                     }
                 }])
             }
         }
+            
         const style = config.style;
+        if(!style || !style.lang) {
+            return null;
+        }
+        if(!['sass','scss','less'].includes(style.lang) && (!style.loader||!style.rule)) {
+            return null;
+        }
+
         switch (style.lang) {
             case 'sass':
             case 'scss':
-                return rule(/\.(sass|scss)$/, style.loader || 'sass-loader')
+                return genRule(/\.(sass|scss)$/, style.loader || 'sass-loader')
             case 'less':
-                return rule(/\.less$/, style.loader || 'less-loader')
+                return genRule(/\.less$/, style.loader || 'less-loader')
             default:
-                return rule(style.rule, style.loader)
+                return genRule(style.rule, style.loader)
         }
     })();
 
@@ -94,7 +106,7 @@ module.exports = function genConfig(webpackEnv) {
         // ? 如果传递的是一个对象，则对象的每个key都会生成一个包（多入口）
         // ! Simple rule: one entry point per HTML page. SPA: one entry point, MPA: multiple entry points.
         // 一般只使用一个入口就ok
-        entry: paths.flameIndexJs,
+        entry: paths.flammaeIndexJs,
         output: {
             // 打包文件保存的文件夹路径
             path: paths.appBuild,
@@ -225,12 +237,14 @@ module.exports = function genConfig(webpackEnv) {
         resolve: {
             extensions: ['.js', '.json', '.jsx', 'css'].concat(config.extensions),
             // 路径解析别名
+
             alias: Object.assign({}, config.alias),
             // 告诉webpack 到哪里找 modules
             modules: [
-                path.resolve(paths.flameDir, 'node_modules'),
-                'node_modules',
-                path.resolve(paths.flameDir, 'flammae-data-provider'),
+                path.resolve(paths.flammaeRoot, 'node_modules'),
+                path.resolve(paths.appRoot, 'node_modules'),
+                // 'node_modules',
+                path.resolve(paths.flammaeRoot, 'flammae-data-provider'),
             ],
             plugins: [
                 // Adds support for installing with Plug'n'Play, leading to faster installs and adding
@@ -244,7 +258,7 @@ module.exports = function genConfig(webpackEnv) {
                 // please link the files into your node_modules/ and let module-resolution kick in.
                 // Make sure your source files are compiled, as they will not be processed in any way.
 
-                // new ModuleScopePlugin(paths.flameSrc, [paths.flamePackageJson]),
+                // new ModuleScopePlugin(paths.flammaeSrc, [paths.flammaePackageJson]),
 
             ],
         },
@@ -262,13 +276,13 @@ module.exports = function genConfig(webpackEnv) {
                     enforce: 'pre',
                     include: [
                         paths.appSrc,
-                        paths.flameSrc,
-                        path.join(paths.flameDir, 'packages')
+                        paths.flammaeSrc,
+                        path.join(paths.flammaeRoot, 'packages')
                     ],
                     use: [{
                         options: {
                             eslintPath: require.resolve('eslint'),
-                            configFile: path.join(paths.flameDir, '.eslintrc.js')
+                            configFile: path.join(paths.flammaeRoot, '.eslintrc.js')
                         },
                         loader: require.resolve('eslint-loader')
                     }],
@@ -300,8 +314,8 @@ module.exports = function genConfig(webpackEnv) {
                             test: /\.(js|mjs|jsx|ts|tsx)$/,
                             include: [
                                 paths.appSrc,
-                                paths.flameSrc,
-                                path.join(paths.flameDir, 'packages')
+                                paths.flammaeSrc,
+                                path.join(paths.flammaeRoot, 'packages')
                             ],
                             loader: require.resolve('babel-loader'),
                             options: {
@@ -331,7 +345,7 @@ module.exports = function genConfig(webpackEnv) {
             isDevEnv && new webpack.HotModuleReplacementPlugin(),
             // 
             new HtmlWebpackPlugin({
-                template: paths.flameHtml,
+                template: paths.flammaeHtml,
             }),
             // 允许你在js 代码中使用环境变量, 例如： if (process.env.NODE_ENV === 'production') { ... }
             // 如果在这里设置了，需要调整eslint检测规则，否则eslint会报错（毕竟eslint不知道有这个变量，他会觉得这个未定义）
