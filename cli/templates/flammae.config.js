@@ -1,5 +1,9 @@
 module.exports = {
-    style: 'css',
+    style: {
+        lang: null,
+        loader: null,
+        rule: null,
+    },
     alias: {},
     server: {},
     extensions: []
