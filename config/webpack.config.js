@@ -232,6 +232,10 @@ module.exports = function genConfig(webpackEnv) {
                     vendor: {
                         test: module => {
                             const context = module.context;
+                            if(context.indexOf(paths.appCacheRoot) > -1) {
+                                return false;
+                            }
+                            
                             return context.indexOf(paths.resolveApp('node_modules')) > -1 ||
                                 context.indexOf(paths.resolveFlammae('node_modules')) > -1;
                         },
