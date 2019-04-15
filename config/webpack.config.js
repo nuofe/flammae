@@ -10,6 +10,10 @@ const safePostCssParser = require('postcss-safe-parser');
 const paths = require('./paths');
 const config = require('./config');
 
+const {
+    resolveAppCache
+} = paths;
+
 module.exports = function genConfig(webpackEnv) {
 
     const isDevEnv = webpackEnv === 'development'
@@ -106,7 +110,7 @@ module.exports = function genConfig(webpackEnv) {
         // ? 如果传递的是一个对象，则对象的每个key都会生成一个包（多入口）
         // ! Simple rule: one entry point per HTML page. SPA: one entry point, MPA: multiple entry points.
         // 一般只使用一个入口就ok
-        entry: paths.flammaeIndexJs,
+        entry: paths.appIndexJs,
         output: {
             // 打包文件保存的文件夹路径
             path: paths.appBuild,
@@ -255,7 +259,7 @@ module.exports = function genConfig(webpackEnv) {
                 path.resolve(paths.appRoot, 'node_modules'),
                 path.resolve(paths.flammaeRoot, 'node_modules'),
                 // 'node_modules',
-                path.resolve(paths.flammaeRoot, 'flammae-data-provider'),
+                paths.appCacheRoot,
             ],
             plugins: [
                 // Adds support for installing with Plug'n'Play, leading to faster installs and adding
@@ -288,6 +292,7 @@ module.exports = function genConfig(webpackEnv) {
                     include: [
                         paths.appSrc,
                         paths.flammaeSrc,
+                        paths.appCacheTemp,
                         path.join(paths.flammaeRoot, 'packages')
                     ],
                     use: [{
@@ -326,6 +331,7 @@ module.exports = function genConfig(webpackEnv) {
                             include: [
                                 paths.appSrc,
                                 paths.flammaeSrc,
+                                paths.appCacheTemp,
                                 path.join(paths.flammaeRoot, 'packages')
                             ],
                             loader: require.resolve('babel-loader'),

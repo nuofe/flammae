@@ -8,6 +8,10 @@ const appRoot = fs.realpathSync(process.cwd());
 function resolveApp(src) {
     return path.resolve(appRoot, src);
 }
+const appCacheRoot = resolveApp('node_modules/.cache/flammae');
+function resolveAppCache(src) {
+    return path.resolve(appCacheRoot, src);
+}
 
 const flammaeRoot = path.resolve(__dirname, '../');
 function resolveFlammae(src) {
@@ -19,17 +23,23 @@ module.exports = {
     // 函数
     resolveApp: resolveApp,
     resolveFlammae: resolveFlammae,
+    resolveAppCache: resolveAppCache,
 
-    // flammae创建的项目的地址
+    // flammae创建的app的地址
     appRoot: appRoot,
+    appCacheRoot: appCacheRoot,
     appSrc: resolveApp('src'),
     appBuild: resolveApp('build'),
+
+    // flammae创建的app的缓存地址
+    appCacheTemp: resolveAppCache('temp'),
+    appIndexJs: resolveAppCache('temp/index.js'),
+
     
     // flammae自己的地址
     flammaeRoot: flammaeRoot,
     flammaeSrc: resolveFlammae('src'),
     flammaePublic: resolveFlammae('public'),
-    flammaeIndexJs: resolveFlammae('src/temp/index.js'),
     flammaeHtml: resolveFlammae('public/index.html'),
     flammaePackageJson: resolveFlammae('package.json'),
 }

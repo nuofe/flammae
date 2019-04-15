@@ -16,25 +16,24 @@ process.on('exit', (code) => {
     console.log(`退出码: ${code}`)
 })
 
-const flammaePackagePath = '../packages/flammae-utils'
 
 const chalk = require('chalk')
 const path = require('path')
 const fs = require('fs-extra')
+
+const flammaePackagePath = '../packages/flammae-utils'
 const jsxParse = require(path.join(flammaePackagePath,'jsx-parse'))
 const markdownParse = require(path.join(flammaePackagePath,'markdown/parse'))
+
 const {
     appSrc,
-    flammaeSrc
+    appCacheTemp,
+    resolveApp,
+    resolveAppCache,
+    resolveFlammae,
 } = require('../config/paths')
 
-function appSrcJoin(src) {
-    return path.join(appSrc, src)
-}
 
-function flammaeSrcJoin(src) {
-    return path.join(flammaeSrc, src)
-}
 
 // 将路径转换成js可以加载的路径
 // D:\flammae\root\src =>  D:/flammae/root/src
@@ -48,12 +47,12 @@ function resolvePath(p) {
 // 确保flammaeRoot/src/temp目录存在且为空
 // 确保appRoot/src 目录存在
 console.log('\n初始化...\n')
-fs.emptyDirSync(flammaeSrcJoin('temp'))
+fs.emptyDirSync(appCacheTemp)
 fs.ensureDirSync(appSrc)
 
 
-const docDir = appSrcJoin('docs')
-const pageDir = appSrcJoin('pages')
+const docDir = resolveApp('src/docs')
+const pageDir = resolveApp('src/pages')
 
 const siteData = {
     pages: [],
@@ -164,36 +163,40 @@ function patternMD(filePath) {
 // 写入路由
 // 写入网站的静态数据
 //
+function writeFlammeIndex() {
+    const code = `export {default as siteData} from './temp/site-data.json';`
+    fs.writeFileSync(resolveAppCache('flammae.js'), code)
+}
 function writeStylesToIndexJs() {
-    const stylePaths = getFilePaths(appSrcJoin('styles'))
-    const indexJsPath = flammaeSrcJoin('templates/index.js')
+    const stylePaths = getFilePaths(resolveApp('src/styles'))
+    const indexJsPath = resolveFlammae('src/templates/index.js')
     let indexJsStr = fs.readFileSync(indexJsPath, {
         encoding: 'utf8'
     })
     stylePaths.forEach(stylePath => {
         indexJsStr = insertImport(indexJsStr, resolvePath(stylePath))
     })
-    fs.writeFileSync(flammaeSrcJoin('temp/index.js'), indexJsStr)
+    fs.writeFileSync(resolveAppCache('temp/index.js'), indexJsStr)
 }
 
 function writeFile() {
     console.log('正在写入数据...\n')
     try {
-        let appStr = fs.readFileSync(flammaeSrcJoin('templates/app.jsx'), {
+        let appStr = fs.readFileSync(resolveFlammae('src/templates/app.jsx'), {
             encoding: 'utf8'
         })
-        const tempAppPath = flammaeSrcJoin('temp/app.jsx')
-        const tempStaticPath = flammaeSrcJoin('temp/site-data.json')
+        const tempAppPath = resolveAppCache('temp/app.jsx')
+        const tempStaticPath = resolveAppCache('temp/site-data.json')
 
-        const templateIndexPath = appSrcJoin('templates/index')
-        const templateContentPath = appSrcJoin('templates/content')
+        const templateIndexPath = resolveApp('src/templates/index')
+        const templateContentPath = resolveApp('src/templates/content')
 
         appStr = insertImport(
             appStr,
             (
                 existsSyncFileOrDir(templateIndexPath) ?
                 resolvePath(templateIndexPath) :
-                '../templates/home/index.jsx'
+                resolvePath(resolveFlammae('src/templates/home/index.jsx'))
             ),
             'Index'
         )
@@ -204,13 +207,13 @@ function writeFile() {
                 (
                     existsSyncFileOrDir(templateContentPath) ?
                     resolvePath(templateContentPath) :
-                    '../templates/content/index.jsx'
+                    resolvePath(resolveFlammae('src/templates/content/index.jsx'))
                 ),
                 'Content'
             )
             appStr = insertImport(
                 appStr,
-                '../templates/markdown',
+                resolvePath(resolveFlammae('src/templates/markdown')),
                 'Markdown'
             )
         }
@@ -253,6 +256,7 @@ function insertRoute(render, path, target) {
 // 启动webpack
 // 启动文件监听
 function startWepack() {
+    writeFlammeIndex();
     writeStylesToIndexJs()
     writeFile()
 
@@ -290,7 +294,7 @@ function watchDocDir() {
         } else if (['docs', 'pages'].includes(dir)) {
             siteData[dir] = []
             // 这里可以做diff优化            
-            parseFiles(getFilePaths(appSrcJoin(dir), pattern))
+            parseFiles(getFilePaths(resolveApp(`src/${dir}`), pattern))
         }
     }))
 }

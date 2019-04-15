@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
-import siteData from '../../temp/site-data'
+import {siteData} from 'flammae'
 import './style.css'
 
 const pages = siteData.pages
