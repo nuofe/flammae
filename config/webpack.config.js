@@ -75,12 +75,12 @@ module.exports = function genConfig(webpackEnv) {
                 }])
             }
         }
-            
+
         const style = config.style;
-        if(!style || !style.lang) {
+        if (!style || !style.lang) {
             return null;
         }
-        if(!['sass','scss','less'].includes(style.lang) && (!style.loader||!style.rule)) {
+        if (!['sass', 'scss', 'less'].includes(style.lang) && (!style.loader || !style.rule)) {
             return null;
         }
 
@@ -223,7 +223,18 @@ module.exports = function genConfig(webpackEnv) {
                 // 但是，开启了之后打包的js文件名称就很直观，所以还是开着
                 name: true,
                 // 文件名默认使用 '-' 做连接符
-                automaticNameDelimiter: '-'
+                automaticNameDelimiter: '-',
+                cacheGroups: {
+                    vendor: {
+                        test: module => {
+                            const context = module.context;
+                            return context.indexOf(paths.resolveApp('node_modules')) > -1 ||
+                                context.indexOf(paths.resolveFlammae('node_modules')) > -1;
+                        },
+                        name: 'vendor',
+                        chunks: 'all',
+                    }
+                }
             },
             // webpack生成的的runtime代码块，用于加载其他代码块
             // 分离出来让浏览器进行长时间缓存
@@ -235,14 +246,14 @@ module.exports = function genConfig(webpackEnv) {
         // 可以在根目录建立 cli.config.js文件，在其中修改extensions alias 配置
         // 除非必须，否则不要在这里改配置
         resolve: {
-            extensions: ['.js', '.json', '.jsx', 'css'].concat(config.extensions),
+            extensions: ['.js', '.json', '.jsx', '.css'].concat(config.extensions),
             // 路径解析别名
 
             alias: Object.assign({}, config.alias),
             // 告诉webpack 到哪里找 modules
             modules: [
-                path.resolve(paths.flammaeRoot, 'node_modules'),
                 path.resolve(paths.appRoot, 'node_modules'),
+                path.resolve(paths.flammaeRoot, 'node_modules'),
                 // 'node_modules',
                 path.resolve(paths.flammaeRoot, 'flammae-data-provider'),
             ],
