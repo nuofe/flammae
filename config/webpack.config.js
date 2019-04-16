@@ -10,10 +10,6 @@ const safePostCssParser = require('postcss-safe-parser');
 const paths = require('./paths');
 const config = require('./config');
 
-const {
-    resolveAppCache
-} = paths;
-
 module.exports = function genConfig(webpackEnv) {
 
     const isDevEnv = webpackEnv === 'development'
@@ -62,41 +58,37 @@ module.exports = function genConfig(webpackEnv) {
         ].filter(Boolean)
     }
 
+    const genExtensionRule = function (rule, loaderName) {
+        // return null
+        return {
+            test: rule,
+            use: genStyleLoaders(2).concat([{
+                loader: require.resolve(loaderName, {
+                    paths: [paths.appRoot]
+                }),
+                options: {
+                    sourceMap: !isDevEnv
+                }
+            }])
+        };
+    };
 
     // css 扩展语言 解析规则
     const cssExtensionRule = (function () {
-        function genRule(rule, loaderName) {
-            // return null
-            return {
-                test: rule,
-                use: genStyleLoaders(2).concat([{
-                    loader: require.resolve(loaderName, {
-                        paths: [paths.appRoot]
-                    }),
-                    options: {
-                        sourceMap: !isDevEnv
-                    }
-                }])
-            }
-        }
-
         const style = config.style;
-        if (!style || !style.lang) {
-            return null;
-        }
-        if (!['sass', 'scss', 'less'].includes(style.lang) && (!style.loader || !style.rule)) {
+        if (!style || !style.lang || style.lang === 'less') {
             return null;
         }
 
-        switch (style.lang) {
-            case 'sass':
-            case 'scss':
-                return genRule(/\.(sass|scss)$/, style.loader || 'sass-loader')
-            case 'less':
-                return genRule(/\.less$/, style.loader || 'less-loader')
-            default:
-                return genRule(style.rule, style.loader)
+        if (['sass', 'scss'].includes(style.lang)) {
+            return genExtensionRule(/\.(sass|scss)$/, style.loader || 'sass-loader');
+        } else {
+            if (!style.loader || !style.rule) {
+                return null;
+            }
+            return genExtensionRule(style.rule, style.loader);
         }
+
     })();
 
 
@@ -232,10 +224,10 @@ module.exports = function genConfig(webpackEnv) {
                     vendor: {
                         test: module => {
                             const context = module.context;
-                            if(context.indexOf(paths.appCacheRoot) > -1) {
+                            if (context.indexOf(paths.appCacheRoot) > -1) {
                                 return false;
                             }
-                            
+
                             return context.indexOf(paths.resolveApp('node_modules')) > -1 ||
                                 context.indexOf(paths.resolveFlammae('node_modules')) > -1;
                         },
@@ -319,6 +311,15 @@ module.exports = function genConfig(webpackEnv) {
                         {
                             test: /\.css$/,
                             use: genStyleLoaders(1)
+                        },
+                        {
+                            test: /\.less$/,
+                            use: genStyleLoaders(2).concat([{
+                                loader: require.resolve('less-loader'),
+                                options: {
+                                    sourceMap: !isDevEnv
+                                }
+                            }])
                         },
                         // css 扩展语言 loader
                         cssExtensionRule,

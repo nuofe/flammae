@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import marked from './marked'
 import PropTypes from 'prop-types'
 import jsxRender from '../../../packages/flammae-jsx-plugin/render'
-import './markdown.css'
+import './markdown.less'
 const renderMap = {}
 
 class Markdown extends Component {

@@ -8,7 +8,5 @@ package-lock.json
 
 .git
 
-# 这两个文件是运行时动态生成的
-/src/temp
 
 

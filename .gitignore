@@ -16,8 +16,3 @@ package-lock.json
 # 忽略打包后的文件
 build/
 dist/
-src/temp/
-src/temp/site-data.json
-
-
-src/temp/site-data.json
