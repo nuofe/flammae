@@ -1,3 +1,11 @@
+/*
+ * @Author: L.S
+ * @Email: fitz-i@foxmail.com
+ * @Description: 
+ * @Date: 2019-03-12 20:02:04
+ * @LastEditTime: 2019-04-18 10:01:57
+ */
+
 const babel = require("@babel/core")
 
 module.exports = (function () {

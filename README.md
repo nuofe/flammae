@@ -51,7 +51,7 @@ src目录下又包括（_这些文件夹将被`flammae`解析，其他命名文�
 import React, { Component } from 'react';
 import {
    siteData
-} from 'flammae'
+} from 'flammae';
 
 class Content extends Component {
     render() {

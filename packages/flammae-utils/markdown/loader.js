@@ -1,3 +1,11 @@
+/*
+ * @Author: L.S
+ * @Email: fitz-i@foxmail.com
+ * @Description: 
+ * @Date: 2019-03-18 09:09:36
+ * @LastEditTime: 2019-04-16 10:33:01
+ */
+
 const parse = require('./parse')
 const loaderMap = {
     jsx: require('../../flammae-jsx-plugin/loader')

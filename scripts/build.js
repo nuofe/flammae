@@ -1,3 +1,11 @@
+/*
+ * @Author: L.S
+ * @Email: fitz-i@foxmail.com
+ * @Description: 
+ * @Date: 2019-03-01 13:10:11
+ * @LastEditTime: 2019-04-16 10:36:15
+ */
+
 module.exports = function () {
     'use strict';
 
@@ -5,13 +13,12 @@ module.exports = function () {
     process.env.BABEL_ENV = 'production';
     process.env.NODE_ENV = 'production';
 
-
+    const fs = require('fs-extra');
     const chalk = require('chalk');
     const webpack = require('webpack');
     const webpackConfig = require('../config/webpack.config')('production');
     const appBuild = require('../config/paths').appBuild;
-    // https://www.npmjs.com/package/fs-extra
-    const fs = require('fs-extra');
+
 
     console.log();
     if (fs.existsSync(appBuild)) {
@@ -22,13 +29,11 @@ module.exports = function () {
         console.log(chalk.cyan('开始打包... \n'));
     }
 
-
     const compiler = webpack(webpackConfig);
-
 
     compiler.run((err, stats) => {
         if (err) {
-            throw err
+            throw err;
         }
         const messages = stats.toJson({
             all: false,

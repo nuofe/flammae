@@ -1,7 +1,12 @@
 {
     "name": "flammae",
     "version": "1.0.8",
-    "author": "LiZ2z",
+    "author": "L.S <fitz-i@foxmail.com>",
+    "maintainers": [
+        "LI SHUANG <fitz-i@foxmail.com>",
+        "L.S <fitz-i@foxmail.com>",
+        "LiZ2z <fitz-i@foxmail.com>"
+    ],
     "description": "基于React的静态网页创建工具(markdown)",
     "private": false,
     "license": "MIT",

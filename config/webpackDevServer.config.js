@@ -1,4 +1,11 @@
-'use strict';
+/*
+ * @Author: L.S
+ * @Email: fitz-i@foxmail.com
+ * @Description: 
+ * @Date: 2019-03-01 13:10:11
+ * @LastEditTime: 2019-04-16 10:35:00
+ */
+
 const paths = require('./paths')
 const config = require('./config')
 
