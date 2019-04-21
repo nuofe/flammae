@@ -1,7 +1,12 @@
 {
     "name": "flammae",
     "version": "1.0.8",
-    "author": "LiZ2z",
+    "author": "L.S <fitz-i@foxmail.com>",
+    "maintainers": [
+        "LI SHUANG <fitz-i@foxmail.com>",
+        "L.S <fitz-i@foxmail.com>",
+        "LiZ2z <fitz-i@foxmail.com>"
+    ],
     "description": "基于React的静态网页创建工具(markdown)",
     "private": false,
     "license": "MIT",
@@ -48,7 +53,9 @@
         "terser-webpack-plugin": "1.2.3",
         "url-loader": "1.1.2",
         "webpack": "4.29.5",
-        "webpack-dev-server": "3.2.1"
+        "webpack-dev-server": "3.2.1",
+        "less": "^3.9.0",
+        "less-loader": "^4.1.0"
     },
     "devDependencies": {},
     "scripts": {

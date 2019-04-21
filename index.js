@@ -1,20 +1,28 @@
+/*
+ * @Author: L.S
+ * @Email: fitz-i@foxmail.com
+ * @Description: 
+ * @Date: 2019-03-01 13:10:11
+ * @LastEditTime: 2019-04-18 09:56:14
+ */
+
 /**
- * Author: L.S
- * 2019-02-28
- * 
  * 在webpack启动前，解析项目目录，找到 .md文件，解析文件头部的frontmatter
  * 根据frontmatter中配置的path来生成路由
  * 
  */
+
 process.on('uncaughtException', err => {
-    throw err
-})
+    throw err;
+});
+
 process.on('unhandledRejection', err => {
-    throw err
-})
+    throw err;
+});
+
 process.on('exit', (code) => {
-    console.log(`退出码: ${code}`)
-})
+    console.log(`退出码: ${code}`);
+});
 
 
 const chalk = require('chalk')
@@ -34,34 +42,37 @@ const markdownParse = require(resolveFlammae('./packages/flammae-utils/markdown-
 
 
 
-
-// 将路径转换成js可以加载的路径
-// D:\flammae\root\src =>  D:/flammae/root/src
+/**
+ * 将系统路径转换成js 模块可以加载的路径
+ * D:\flammae\root\src =>  D:/flammae/root/src
+ * @param {string} path 
+ */
 function resolvePath(p) {
-    return p.split(path.sep).join('/')
+    return p.split(path.sep).join('/');
 }
+
+
+
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                  第一步
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // 确保flammaeRoot/src/temp目录存在且为空
 // 确保appRoot/src 目录存在
-console.log('\n初始化...\n')
-fs.emptyDirSync(appCacheTemp)
-fs.ensureDirSync(appSrc)
+console.log('\n初始化...\n');
+fs.emptyDirSync(appCacheTemp);
+fs.ensureDirSync(appSrc);
 
-
-const docDir = resolveApp('src/docs')
-const pageDir = resolveApp('src/pages')
+const docDir = resolveApp('src/docs');
+const pageDir = resolveApp('src/pages');
 
 const siteData = {
     pages: [],
     docs: []
-}
+};
 
-const docsMap = {}
-const pagesMap = {}
-
+const docsMap = {};
+const pagesMap = {};
 
 
 
@@ -69,26 +80,40 @@ const pagesMap = {}
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                  第二步
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// 读取appRoot/src文件夹下的内容
-// appRoot/src/docs 目录被规定专门存放 .md文件
-// appRoot/src/pages 目录被规定专门存放 .jsx文件
-// 将会根据每个文档的头部 信息 生成对应的 页面
-// .md文件通过在头部编写frontmatter来为 flammae提供信息
-// ---
-// path: '/one'
-// ---
-//
-// .jsx文件通过在头部编写行级注释来为 flammae提供信息
-//
-// path: '/one'
-//
+
+console.log('正在读取文件...\n');
+parseFiles(getFilePaths(docDir, pattern).concat(getFilePaths(pageDir, pattern)));
+
+
+/**
+ * 读取`appRoot/src`文件夹下的内容，
+ * `appRoot/src/docs`目录被规定专门存放`.md`文件，
+ * `appRoot/src/pages`目录被规定专门存放`.jsx`文件，
+ * 将会根据每个文档的头部信息生成对应的页面。
+ * 
+ * `.md`文件通过在头部编写frontmatter来为flammae提供信息：
+ * ```yaml
+ * ---
+ * path: '/doc-one'
+ * ---
+ * ```
+ * .jsx文件通过在头部编写行级注释来为 flammae提供信息：
+ * ```javascript
+ * // path: '/page-one'
+ * ```
+ * @param {array} filePaths 
+ */
 function parseFiles(filePaths) {
-    if (!filePaths || (Array.isArray(filePaths) && filePaths.length === 0)) {
-        startWepack()
-        return
+    if (
+        !filePaths ||
+        (Array.isArray(filePaths) &&
+            filePaths.length === 0)
+    ) {
+        startWepack();
+        return;
     }
     if (typeof filePaths === 'string') {
-        filePaths = [filePaths]
+        filePaths = [filePaths];
     }
     Promise.all(
         filePaths.map(filePath => {
@@ -97,96 +122,91 @@ function parseFiles(filePaths) {
                     encoding: 'utf8'
                 }, (err, data) => {
                     if (err) {
-                        console.log(err)
-                        resolve()
+                        console.log(err);
+                        resolve();
                     } else {
                         resolve({
                             data,
                             path: filePath
-                        })
+                        });
                     }
-                })
-            })
+                });
+            });
         }).filter(Boolean)
     ).then(files => {
-        console.log('开始提取文件信息...\n')
+        console.log('开始提取文件信息...\n');
+        
         files.forEach((file, i) => {
-
-            const isJSX = file.path.match(/.*\.jsx$/)
+            const isJSX = file.path.match(/.*\.jsx$/);
             if (isJSX) {
-                const pageData = jsxParse(file.data, file.path)
+                const pageData = jsxParse(file.data, file.path);
                 pageData && siteData.pages.push(Object.assign({}, pageData, {
                     filePath: file.path,
                     __type: 'page'
-                }))
+                }));
             } else {
-                const mdData = markdownParse(file.data, file.path)
+                const mdData = markdownParse(file.data, file.path);
                 mdData && siteData.docs.push(Object.assign({}, mdData.frontmatter, {
                     filePath: file.path,
                     __type: 'doc'
-                }))
-
+                }));
             }
-        })
+        });
 
-        startWepack()
+        startWepack();
     }).catch(err => {
-        console.log(err)
-        startWepack()
-    })
+        console.log(err);
+        startWepack();
+    });
 }
 
-console.log('正在读取文件...\n')
-parseFiles(getFilePaths(docDir, pattern).concat(getFilePaths(pageDir, pattern)));
-
 function pattern(filePath) {
-    return filePath.match(/.*\.(jsx|md)$/)
+    return filePath.match(/.*\.(jsx|md)$/);
 }
 
 function patternJSX(filePath) {
-    const isJSX = filePath.match(/.*\.jsx$/)
-    return isJSX
+    const isJSX = filePath.match(/.*\.jsx$/);
+    return isJSX;
 }
 
 function patternMD(filePath) {
-    const isMD = filePath.match(/.*\.md$/)
-    return isMD
+    const isMD = filePath.match(/.*\.md$/);
+    return isMD;
 }
 
 
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//                  第三步
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// 
-// 将静态数据写入临时文件中
-// 写入路由
-// 写入网站的静态数据
-//
+
+/**
+ * 将静态数据写入临时文件中
+ * 写入路由
+ * 写入网站的静态数据
+ */
 function writeFlammeIndex() {
-    const code = `export {default as siteData} from './temp/site-data.json';`
-    fs.writeFileSync(resolveAppCache('flammae.js'), code)
+    const code = `export {default as siteData} from './temp/site-data.json';`;
+    fs.writeFileSync(resolveAppCache('flammae.js'), code);
 }
+
 function writeStylesToIndexJs() {
     const stylePaths = getFilePaths(resolveApp('src/styles'))
     const indexJsPath = resolveFlammae('templates/index.js')
     let indexJsStr = fs.readFileSync(indexJsPath, {
         encoding: 'utf8'
-    })
+    });
     stylePaths.forEach(stylePath => {
         indexJsStr = insertImport(indexJsStr, resolvePath(stylePath))
-    })
-    fs.writeFileSync(resolveAppCache('temp/index.js'), indexJsStr)
+    });
+    fs.writeFileSync(resolveAppCache('temp/index.js'), indexJsStr);
 }
 
 function writeFile() {
-    console.log('正在写入数据...\n')
+    console.log('正在写入数据...\n');
     try {
         let appStr = fs.readFileSync(resolveFlammae('templates/app.jsx'), {
             encoding: 'utf8'
-        })
-        const tempAppPath = resolveAppCache('temp/app.jsx')
-        const tempStaticPath = resolveAppCache('temp/site-data.json')
+        });
+        const tempAppPath = resolveAppCache('temp/app.jsx');
+        const tempStaticPath = resolveAppCache('temp/site-data.json');
 
         const templateIndexPath = resolveApp('templates/index')
         const templateContentPath = resolveApp('templates/content')
@@ -199,8 +219,7 @@ function writeFile() {
                     resolvePath(resolveFlammae('templates/home/index.jsx'))
             ),
             'Index'
-        )
-
+        );
         if (siteData.docs.length) {
             appStr = insertImport(
                 appStr,
@@ -210,12 +229,12 @@ function writeFile() {
                         resolvePath(resolveFlammae('templates/content/index.jsx'))
                 ),
                 'Content'
-            )
+            );
             appStr = insertImport(
                 appStr,
                 resolvePath(resolveFlammae('templates/markdown')),
                 'Markdown'
-            )
+            );
         }
         // 根据文件目录生成app.jsx文件，并配置内部路由
         siteData.pages.concat(siteData.docs).forEach((item, i) => {
@@ -228,44 +247,48 @@ function writeFile() {
             );
             appStr = insertImport(appStr, resolvePath(item.filePath), name)
             appStr = insertRoute(render, item.path, appStr)
-        })
-
+        });
         // 向 site-data.json文件中存入静态数据
-        fs.writeFileSync(tempStaticPath, JSON.stringify(siteData))
+        fs.writeFileSync(tempStaticPath, JSON.stringify(siteData));
         // 生成 app.jsx
-        fs.writeFileSync(tempAppPath, appStr)
+        fs.writeFileSync(tempAppPath, appStr);
     } catch (err) {
-        throw err
+        throw err;
     }
 }
 
 function insertImport(target, path, name) {
     if (name) {
-        return target.replace('/* import */', `import ${name} from '${path}';\n/* import */`)
+        return target.replace('/* import */', `import ${name} from '${path}';\n/* import */`);
     }
-    return target.replace('/* import */', `import '${path}';\n/* import */`)
+    return target.replace('/* import */', `import '${path}';\n/* import */`);
 }
 
 function insertRoute(render, path, target) {
-    return target.replace('{/* route */}', `<Route path='${path}' ${render} />\n{/* route */}`)
+    return target.replace('{/* route */}', `<Route path='${path}' ${render} />\n{/* route */}`);
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//                  第四步
+//                  第三步
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// 启动webpack
-// 启动文件监听
+
+/**
+ * 启动webpack
+ * 启动文件监听
+ */
 function startWepack() {
     writeFlammeIndex();
-    writeStylesToIndexJs()
-    writeFile()
+    writeStylesToIndexJs();
+    writeFile();
 
-    if (this.webpackStarted) return
-    this.webpackStarted = true
+    if (this.webpackStarted) {
+        return;
+    }
+    this.webpackStarted = true;
 
-    console.log('启动webpack...\n')
+    console.log('启动webpack...\n');
     // 监听文件添加修改
-    watchDocDir()
+    watchDocDir();
 
     const mode = process.argv[2].slice(1)
     require(`./scripts/${mode}.js`)()
@@ -275,11 +298,12 @@ function startWepack() {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                  第五步
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// 监听文件 创建修改
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// 待优化，监听特定文件，因此没必要改一个之后其他都分析，只要分析改的哪个
 
-// 这里可能导致bug， writeFile会重新触发 watchDocDir。目前用 debounce 解决
+/**
+ * 监听文件 创建修改
+ * 待优化，监听特定文件，因此没必要改一个之后其他都分析，只要分析改的哪个
+ * 这里可能导致bug， writeFile会重新触发 watchDocDir。目前用 debounce 解决
+ */
 function watchDocDir() {
     fs.watch(appSrc, {
         encoding: 'utf8',
@@ -292,15 +316,12 @@ function watchDocDir() {
         } else if (dir === 'styles') {
             writeStylesToIndexJs()
         } else if (['docs', 'pages'].includes(dir)) {
-            siteData[dir] = []
+            siteData[dir] = [];
             // 这里可以做diff优化            
-            parseFiles(getFilePaths(resolveApp(`src/${dir}`), pattern))
+            parseFiles(getFilePaths(resolveApp(`src/${dir}`), pattern));
         }
-    }))
+    }));
 }
-
-
-
 
 
 
@@ -326,22 +347,22 @@ function watchDocDir() {
  */
 function getFilePaths(dir, callback) {
     callback = callback || (() => true);
-    let filesPaths = []
+    let filesPaths = [];
     const direntArr = fs.existsSync(dir) ? fs.readdirSync(dir, {
         withFileTypes: true
-    }) : []
+    }) : [];
     direntArr.length && direntArr.forEach(dirent => {
         if (dirent.isFile()) {
-            const absolutePath = path.resolve(dir, dirent.name)
+            const absolutePath = path.resolve(dir, dirent.name);
             if (!callback(absolutePath)) {
-                return
+                return;
             }
-            filesPaths.push(absolutePath)
+            filesPaths.push(absolutePath);
         } else if (dirent.isDirectory()) {
-            filesPaths = filesPaths.concat(getFilePaths(path.resolve(dir, dirent.name), callback))
+            filesPaths = filesPaths.concat(getFilePaths(path.resolve(dir, dirent.name), callback));
         }
-    })
-    return filesPaths
+    });
+    return filesPaths;
 }
 
 
@@ -351,12 +372,12 @@ function getFilePaths(dir, callback) {
  * @param {number} time 
  */
 function debounce(fn, time) {
-    let timer
+    let timer;
     return function (...args) {
-        clearTimeout(timer)
+        clearTimeout(timer);
         timer = setTimeout(() => {
-            fn(...args)
-        }, time || 300)
+            fn(...args);
+        }, time || 300);
     }
 }
 
@@ -367,14 +388,14 @@ function debounce(fn, time) {
  */
 function existsSyncFileOrDir(targetPath, suffixs = ['.jsx', '.js']) {
     if (fs.existsSync(targetPath)) {
-        return true
+        return true;
     }
     return suffixs.some(suffix => {
         try {
-            const file = fs.statSync(targetPath + suffix)
-            return file && file.isFile()
+            const file = fs.statSync(targetPath + suffix);
+            return file && file.isFile();
         } catch (err) {
-            return false
+            return false;
         }
     })
 

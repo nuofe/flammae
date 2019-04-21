@@ -1,5 +1,14 @@
 #!/usr/bin/env node
 
+/*
+ * @Author: L.S
+ * @Email: fitz-i@foxmail.com
+ * @Description: 
+ * @Date: 2019-04-16 10:33:28
+ * @LastEditTime: 2019-04-18 09:55:51
+ */
+
+
 process.on('unhandledRejection', err => {
     throw err;
 });
@@ -41,10 +50,18 @@ program
 program
     .command('run <cmd>')
     .action(function (cmd) {
-        const child = spawn('node', [path.resolve(ownPath, `index.js`), `-${cmd}`], {
-            cwd: path.resolve(process.cwd()),
-            stdio: 'inherit'
-        });
+        let child = null;
+        if (['dev', 'build'].includes(cmd)) {
+            child = spawn('node', [path.resolve(ownPath, `index.js`), `-${cmd}`], {
+                cwd: path.resolve(process.cwd()),
+                stdio: 'inherit'
+            });
+        } else {
+            child = spawn('npm', ['run', cmd], {
+                cwd: path.resolve(process.cwd()),
+                stdio: 'inherit'
+            });
+        }
 
         child.on('close', code => {
             if (code !== 0) {
