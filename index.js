@@ -20,18 +20,18 @@ process.on('exit', (code) => {
 const chalk = require('chalk')
 const path = require('path')
 const fs = require('fs-extra')
-
-const flammaePackagePath = '../packages/flammae-utils'
-const jsxParse = require(path.join(flammaePackagePath,'jsx-parse'))
-const markdownParse = require(path.join(flammaePackagePath,'markdown/parse'))
-
 const {
     appSrc,
     appCacheTemp,
     resolveApp,
     resolveAppCache,
     resolveFlammae,
-} = require('../config/paths')
+} = require('./config/paths')
+
+const jsxParse = require(resolveFlammae( './packages/flammae-utils/jsx-parse'))
+const markdownParse = require(resolveFlammae('./packages/flammae-utils/markdown-parse'))
+
+
 
 
 
@@ -169,7 +169,7 @@ function writeFlammeIndex() {
 }
 function writeStylesToIndexJs() {
     const stylePaths = getFilePaths(resolveApp('src/styles'))
-    const indexJsPath = resolveFlammae('src/templates/index.js')
+    const indexJsPath = resolveFlammae('templates/index.js')
     let indexJsStr = fs.readFileSync(indexJsPath, {
         encoding: 'utf8'
     })
@@ -182,21 +182,21 @@ function writeStylesToIndexJs() {
 function writeFile() {
     console.log('正在写入数据...\n')
     try {
-        let appStr = fs.readFileSync(resolveFlammae('src/templates/app.jsx'), {
+        let appStr = fs.readFileSync(resolveFlammae('templates/app.jsx'), {
             encoding: 'utf8'
         })
         const tempAppPath = resolveAppCache('temp/app.jsx')
         const tempStaticPath = resolveAppCache('temp/site-data.json')
 
-        const templateIndexPath = resolveApp('src/templates/index')
-        const templateContentPath = resolveApp('src/templates/content')
+        const templateIndexPath = resolveApp('templates/index')
+        const templateContentPath = resolveApp('templates/content')
 
         appStr = insertImport(
             appStr,
             (
                 existsSyncFileOrDir(templateIndexPath) ?
-                resolvePath(templateIndexPath) :
-                resolvePath(resolveFlammae('src/templates/home/index.jsx'))
+                    resolvePath(templateIndexPath) :
+                    resolvePath(resolveFlammae('templates/home/index.jsx'))
             ),
             'Index'
         )
@@ -206,14 +206,14 @@ function writeFile() {
                 appStr,
                 (
                     existsSyncFileOrDir(templateContentPath) ?
-                    resolvePath(templateContentPath) :
-                    resolvePath(resolveFlammae('src/templates/content/index.jsx'))
+                        resolvePath(templateContentPath) :
+                        resolvePath(resolveFlammae('templates/content/index.jsx'))
                 ),
                 'Content'
             )
             appStr = insertImport(
                 appStr,
-                resolvePath(resolveFlammae('src/templates/markdown')),
+                resolvePath(resolveFlammae('templates/markdown')),
                 'Markdown'
             )
         }
@@ -223,8 +223,8 @@ function writeFile() {
             const name = isDoc ? `Md${i}` : `Comp${i}`
             const render = (
                 !isDoc ?
-                `component={${name}}` :
-                `render={()=><Content renderMarkdown={()=><Markdown md={${name}}/>} data={${name}}/>}`
+                    `component={${name}}` :
+                    `render={()=><Content renderMarkdown={()=><Markdown md={${name}}/>} data={${name}}/>}`
             );
             appStr = insertImport(appStr, resolvePath(item.filePath), name)
             appStr = insertRoute(render, item.path, appStr)
@@ -268,7 +268,7 @@ function startWepack() {
     watchDocDir()
 
     const mode = process.argv[2].slice(1)
-    require(`./${mode}.js`)()
+    require(`./scripts/${mode}.js`)()
 }
 
 

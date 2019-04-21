@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import marked from './marked'
 import PropTypes from 'prop-types'
-import jsxRender from '../../../packages/flammae-jsx-plugin/render'
+import jsxRender from '../../../flammae-jsx-plugin/render'
 import './markdown.css'
 const renderMap = {}
 

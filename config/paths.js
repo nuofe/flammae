@@ -38,7 +38,7 @@ module.exports = {
     
     // flammae自己的地址
     flammaeRoot: flammaeRoot,
-    flammaeSrc: resolveFlammae('src'),
+    flammaeSrc: resolveFlammae('templates'),
     flammaePublic: resolveFlammae('public'),
     flammaeHtml: resolveFlammae('public/index.html'),
     flammaePackageJson: resolveFlammae('package.json'),

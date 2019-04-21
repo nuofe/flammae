@@ -3,7 +3,7 @@ const chalk = require('chalk')
 const {
     newLine,
     space
-} = require('../new-line')
+} = require('./new-line')
 
 // frontmatter
 const fmReg = `---(?:${newLine})((${newLine}|.)*)(?:${newLine})---`

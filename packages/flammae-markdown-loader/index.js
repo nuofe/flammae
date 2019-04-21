@@ -1,11 +1,9 @@
-const parse = require('./parse')
-const loaderMap = {
-    jsx: require('../../flammae-jsx-plugin/loader')
-}
+const parse = require('../flammae-utils/markdown-parse')
+
 const {
     space,
     newLine
-} = require('../new-line')
+} = require('../flammae-utils/new-line')
 
 const codeBlockSym = ':::'
 const codeSym = '\`\`\`'
@@ -43,7 +41,10 @@ module.exports = function (source) {
 
     // 提取代码块，并解析成一个组件
     if (codeBlocks) {
-        demos = codeParse(codeBlocks, frontmatter)
+        const loaderMap = Object.assign({}, {
+            jsx: require('../flammae-jsx-plugin/loader'),
+        }, this.query.loaders);
+        demos = codeParse(codeBlocks, frontmatter, loaderMap)
     }
 
     // 根据图片地址，请求图片模块
@@ -81,11 +82,11 @@ module.exports = function (source) {
         // markdown中使用反引号包裹代码，在js中反引号为特殊符号，所以需要转义
         callback(null, `export default {
             ${
-                JSON.stringify({
-                    frontmatter: frontmatter,
-                    headings:headings,
-                    text: mdText
-                }).replace(/\`/gm, '\\\`').slice(1,-1)
+            JSON.stringify({
+                frontmatter: frontmatter,
+                headings: headings,
+                text: mdText
+            }).replace(/\`/gm, '\\\`').slice(1, -1)
             },
             demos: ${demos ? demos : '[]'}
         }`)
@@ -117,58 +118,58 @@ const optObj = {
     }
 }
 
-function codeParse(codeBlocks, options) {
+function codeParse(codeBlocks, options, loaderMap) {
     const str = codeBlocks.map(codeBlock => {
-                // 分离出
-                // \`\`\` jsx
-                // code here
-                // \`\`\`
-                const codeWrapStr = codeBlock.match(codeReg)[0]
-                // 分离出
-                // ::: only
-                // info text
-                // :::
-                const blockWrapStr = codeBlock.replace(codeWrapStr, '')
-                //    语言   代码                
-                const [lang, code] = split(codeWrapStr, codeSym)
-                //   演示指令     演示代码的附加信息
-                const [command, codeNote] = split(blockWrapStr, codeBlockSym)
+        // 分离出
+        // \`\`\` jsx
+        // code here
+        // \`\`\`
+        const codeWrapStr = codeBlock.match(codeReg)[0]
+        // 分离出
+        // ::: only
+        // info text
+        // :::
+        const blockWrapStr = codeBlock.replace(codeWrapStr, '')
+        //    语言   代码                
+        const [lang, code] = split(codeWrapStr, codeSym)
+        //   演示指令     演示代码的附加信息
+        const [command, codeNote] = split(blockWrapStr, codeBlockSym)
 
-                // 判断是不是样式代码
-                if (command.trim() === 'style') {
-                    mdText = mdText.replace(codeBlock, `\n\n`)
-                    return `{
+        // 判断是不是样式代码
+        if (command.trim() === 'style') {
+            mdText = mdText.replace(codeBlock, `\n\n`)
+            return `{
                         fn: function() {${code}},
                         isStyle: true
                     }`
-                }
-                // 其它代码，用loader分析
-                const fn = loaderMap[lang.trim()]
-                let result = fn && fn({
-                        code,
-                        command: command.trim(),
-                        codeWrapStr,
-                        codeBlock,
-                        codeNote
-                    },
-                    options,
-                    optObj
-                )
-                if (!result) return null
+        }
+        // 其它代码，用loader分析
+        const fn = loaderMap[lang.trim()]
+        let result = fn && fn({
+            code,
+            command: command.trim(),
+            codeWrapStr,
+            codeBlock,
+            codeNote
+        },
+            options,
+            optObj
+        )
+        if (!result) return null
 
-                return `{
+        return `{
                     lang: '${lang.trim()}',
-                    ${command.split(space).includes('only') ? '': `code: \`${codeWrapStr.replace(/\`/g, '\\\`')}\`,`}
+                    ${command.split(space).includes('only') ? '' : `code: \`${codeWrapStr.replace(/\`/g, '\\\`')}\`,`}
                     codeNote: \`${codeNote.replace(/\`/g, '\\\`')}\`,
                     loader : ${result}
                 }`
 
-            }).filter(Boolean).join(',')
+    }).filter(Boolean).join(',')
 
     return `[${str}]`
-            }
+}
 
-            function split(str, sym) {
-                const arr = str.replace(new RegExp(sym, 'g'), '').match(new RegExp(`(.*)(${newLine})((.|${newLine})*)`))
-                return [arr[1].trim(), arr[3]]
-            }
+function split(str, sym) {
+    const arr = str.replace(new RegExp(sym, 'g'), '').match(new RegExp(`(.*)(${newLine})((.|${newLine})*)`))
+    return [arr[1].trim(), arr[3]]
+}

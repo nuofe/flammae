@@ -6,7 +6,7 @@
     "private": false,
     "license": "MIT",
     "bin": {
-        "flammae": "cli/index.js"
+        "flammae": "bin/index.js"
     },
     "dependencies": {
         "@78d6/eslint-config-common": "0.1.5",

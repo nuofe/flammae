@@ -41,7 +41,7 @@ program
 program
     .command('run <cmd>')
     .action(function (cmd) {
-        const child = spawn('node', [path.resolve(ownPath, `scripts/start`), `-${cmd}`], {
+        const child = spawn('node', [path.resolve(ownPath, `index.js`), `-${cmd}`], {
             cwd: path.resolve(process.cwd()),
             stdio: 'inherit'
         });

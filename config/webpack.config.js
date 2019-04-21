@@ -325,7 +325,7 @@ module.exports = function genConfig(webpackEnv) {
 
                         {
                             test: /\.md$/,
-                            loader: require.resolve('../packages/flammae-utils/markdown/loader.js'),
+                            loader: require.resolve('../packages/flammae-markdown-loader'),
                             options: {
                                 publicPath: './'
                             }
