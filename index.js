@@ -3,7 +3,7 @@
  * @Email: fitz-i@foxmail.com
  * @Description: 
  * @Date: 2019-03-01 13:10:11
- * @LastEditTime: 2019-04-18 09:56:14
+ * @LastEditTime: 2019-05-03 13:47:09
  */
 
 /**
@@ -31,7 +31,7 @@ const fs = require('fs-extra')
 const {
     appSrc,
     appCacheTemp,
-    resolveApp,
+    resolveAppSrc,
     resolveAppCache,
     resolveFlammae,
 } = require('./config/paths')
@@ -63,8 +63,8 @@ console.log('\n初始化...\n');
 fs.emptyDirSync(appCacheTemp);
 fs.ensureDirSync(appSrc);
 
-const docDir = resolveApp('src/docs');
-const pageDir = resolveApp('src/pages');
+const docDir = resolveAppSrc('docs');
+const pageDir = resolveAppSrc('pages');
 
 const siteData = {
     pages: [],
@@ -188,7 +188,7 @@ function writeFlammeIndex() {
 }
 
 function writeStylesToIndexJs() {
-    const stylePaths = getFilePaths(resolveApp('src/styles'))
+    const stylePaths = getFilePaths(resolveAppSrc('styles'))
     const indexJsPath = resolveFlammae('templates/index.js')
     let indexJsStr = fs.readFileSync(indexJsPath, {
         encoding: 'utf8'
@@ -208,8 +208,8 @@ function writeFile() {
         const tempAppPath = resolveAppCache('temp/app.jsx');
         const tempStaticPath = resolveAppCache('temp/site-data.json');
 
-        const templateIndexPath = resolveApp('templates/index')
-        const templateContentPath = resolveApp('templates/content')
+        const templateIndexPath = resolveAppSrc('templates/index')
+        const templateContentPath = resolveAppSrc('templates/content')
 
         appStr = insertImport(
             appStr,
@@ -318,7 +318,7 @@ function watchDocDir() {
         } else if (['docs', 'pages'].includes(dir)) {
             siteData[dir] = [];
             // 这里可以做diff优化            
-            parseFiles(getFilePaths(resolveApp(`src/${dir}`), pattern));
+            parseFiles(getFilePaths(resolveAppSrc(dir), pattern));
         }
     }));
 }

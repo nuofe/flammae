@@ -3,7 +3,7 @@
  * @Email: fitz-i@foxmail.com
  * @Description: 
  * @Date: 2019-03-01 13:10:11
- * @LastEditTime: 2019-04-16 10:34:39
+ * @LastEditTime: 2019-05-03 13:46:51
  */
 
 const path = require('path')
@@ -13,8 +13,8 @@ const fs = require('fs');
 // 因为执行npm start的时候是在项目根目录，也就是工作目录是根目录，
 // 所以process.cwd()返回的是根目录
 const appRoot = fs.realpathSync(process.cwd());
-function resolveApp(src) {
-    return path.resolve(appRoot, src);
+function resolveApp(...src) {
+    return path.resolve(appRoot, ...src);
 }
 const appCacheRoot = resolveApp('node_modules/.cache/flammae');
 function resolveAppCache(src) {
@@ -30,8 +30,9 @@ function resolveFlammae(src) {
 module.exports = {
     // 函数
     resolveApp: resolveApp,
-    resolveFlammae: resolveFlammae,
+    resolveAppSrc: resolveApp.bind(null, 'src'),
     resolveAppCache: resolveAppCache,
+    resolveFlammae: resolveFlammae,
 
     // flammae创建的app的地址
     appRoot: appRoot,

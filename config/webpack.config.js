@@ -3,7 +3,7 @@
  * @Email: fitz-i@foxmail.com
  * @Description: 
  * @Date: 2019-03-01 13:10:11
- * @LastEditTime: 2019-04-16 10:34:53
+ * @LastEditTime: 2019-05-03 17:15:37
  */
 
 const path = require('path')
@@ -254,7 +254,7 @@ module.exports = function genConfig(webpackEnv) {
         // 可以在根目录建立 cli.config.js文件，在其中修改extensions alias 配置
         // 除非必须，否则不要在这里改配置
         resolve: {
-            extensions: ['.js', '.json', '.jsx', '.css'].concat(config.extensions),
+            extensions: ['.js', '.json', '.jsx', ].concat(config.extensions),
             // 路径解析别名
 
             alias: Object.assign({}, config.alias),
@@ -262,7 +262,6 @@ module.exports = function genConfig(webpackEnv) {
             modules: [
                 path.resolve(paths.appRoot, 'node_modules'),
                 path.resolve(paths.flammaeRoot, 'node_modules'),
-                // 'node_modules',
                 paths.appCacheRoot,
             ],
             plugins: [

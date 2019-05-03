@@ -3,7 +3,7 @@
  * @Email: fitz-i@foxmail.com
  * @Description: 
  * @Date: 2019-03-01 13:10:11
- * @LastEditTime: 2019-04-16 10:34:34
+ * @LastEditTime: 2019-05-03 17:03:44
  */
 
 // ------------------------------
@@ -31,7 +31,7 @@ const userConfig = (
 const defaultConfig = {
     server: {
         port: 8090,
-        host: '127.0.0.1'
+        host: '127.0.0.1',
     },
     alias: {
         '@': resolveApp('src')
