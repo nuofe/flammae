@@ -1,6 +1,6 @@
-//path: '/example-page'
+// path: '/example-page'
 
-import React, { Component } from 'react';
+import React, { Component } from 'react'; /* eslint-disable-line */
 
 class ExamplePage extends Component {
     render() {

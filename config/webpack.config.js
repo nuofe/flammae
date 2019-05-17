@@ -1,17 +1,17 @@
 /*
  * @Author: L.S
  * @Email: fitz-i@foxmail.com
- * @Description: 
+ * @Description:
  * @Date: 2019-03-01 13:10:11
- * @LastEditTime: 2019-05-03 17:15:37
+ * @LastEditTime: 2019-05-17 17:57:24
  */
 
-const path = require('path')
+const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin'); // 压缩js code
-const MiniCssExtractPlugin = require("mini-css-extract-plugin"); // 分离 css
-const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin"); // 压缩 css
+const MiniCssExtractPlugin = require('mini-css-extract-plugin'); // 分离 css
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin'); // 压缩 css
 const safePostCssParser = require('postcss-safe-parser');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
@@ -19,11 +19,10 @@ const paths = require('./paths');
 const config = require('./config');
 
 module.exports = function genConfig(webpackEnv) {
+    const isDevEnv = webpackEnv === 'development';
+    const isProdEnv = webpackEnv === 'production';
 
-    const isDevEnv = webpackEnv === 'development'
-    const isProdEnv = webpackEnv === 'production'
-
-    const genStyleLoaders = function (importLoaders) {
+    const genStyleLoaders = function genStyleLoaders(importLoaders) {
         return [
             // 将解析后的css通过style标签写入 html
             isDevEnv && require.resolve('style-loader'),
@@ -42,8 +41,8 @@ module.exports = function genConfig(webpackEnv) {
                     // 在 css-loader 前应用的 loader 的数
                     importLoaders: importLoaders || 1,
                     // 生产环境再启用map, 开发时禁用优化打包响应速度
-                    sourceMap: !isDevEnv
-                }
+                    sourceMap: !isDevEnv,
+                },
             },
             {
                 loader: require.resolve('postcss-loader'),
@@ -52,19 +51,19 @@ module.exports = function genConfig(webpackEnv) {
                     plugins: [
                         require('postcss-preset-env')({
                             browsers: [
-                                "defaults",
-                                "not ie < 9",
-                                "last 4 versions", // 搭配not ie < 9
-                                "> 1%",
-                                "last 3 iOS versions"
-                            ]
-                        })
+                                'defaults',
+                                'not ie < 9',
+                                'last 4 versions', // 搭配not ie < 9
+                                '> 1%',
+                                'last 3 iOS versions',
+                            ],
+                        }),
                     ],
-                    sourceMap: !isDevEnv
-                }
-            }
-        ].filter(Boolean)
-    }
+                    sourceMap: !isDevEnv,
+                },
+            },
+        ].filter(Boolean);
+    };
 
     const genExtensionRule = function (rule, loaderName) {
         // return null
@@ -72,32 +71,30 @@ module.exports = function genConfig(webpackEnv) {
             test: rule,
             use: genStyleLoaders(2).concat([{
                 loader: require.resolve(loaderName, {
-                    paths: [paths.appRoot]
+                    paths: [paths.appRoot],
                 }),
                 options: {
-                    sourceMap: !isDevEnv
-                }
-            }])
+                    sourceMap: !isDevEnv,
+                },
+            }]),
         };
     };
 
     // css 扩展语言 解析规则
     const cssExtensionRule = (function () {
-        const style = config.style;
+        const { style } = config;
         if (!style || !style.lang || style.lang === 'less') {
             return null;
         }
 
         if (['sass', 'scss'].includes(style.lang)) {
             return genExtensionRule(/\.(sass|scss)$/, style.loader || 'sass-loader');
-        } else {
-            if (!style.loader || !style.rule) {
-                return null;
-            }
-            return genExtensionRule(style.rule, style.loader);
         }
-
-    })();
+        if (!style.loader || !style.rule) {
+            return null;
+        }
+        return genExtensionRule(style.rule, style.loader);
+    }());
 
 
     return {
@@ -137,7 +134,7 @@ module.exports = function genConfig(webpackEnv) {
             publicPath: './',
             // 告诉webpack在打包的代码中通过注释 指明 所引入模块的信息。
             // 此选项在开发中默认为true，在生产模式中为false。
-            pathinfo: isDevEnv
+            pathinfo: isDevEnv,
         },
         // webpack 会根据默认的optimization 配置 自动优化代码
         // 但是我们可以自定义一些我们想要的功能
@@ -174,7 +171,7 @@ module.exports = function genConfig(webpackEnv) {
                             // 从代码中删掉 console.*
                             drop_console: true,
                             // 默认就是true
-                            drop_debugger: true
+                            drop_debugger: true,
                         },
                         mangle: {
                             // 绕过 safari10循环迭代器 bug, 不能连续声明变量两次
@@ -199,7 +196,7 @@ module.exports = function genConfig(webpackEnv) {
                     cache: true,
                     // 启用sourceMap 以将错误信息映射到对应模块。类似于 devtool: sourceMap
                     // 虽然启用会拖慢打包速度，但是非常有必要打开，便于打包后的错误调试
-                    sourceMap: true
+                    sourceMap: true,
                 }),
                 // 使用OptimizeCSSAssetsPlugin来压缩css 代码
                 // 文档：https://github.com/NMFR/optimize-css-assets-webpack-plugin
@@ -211,9 +208,9 @@ module.exports = function genConfig(webpackEnv) {
                             inline: false,
                             // 设置为true , 会将 sourceMappingURL 放在css 文件末尾，以帮助浏览器找到 sourceMap
                             annotation: true,
-                        }
-                    }
-                })
+                        },
+                    },
+                }),
             ],
             // webpack4默认使用 SplitChunksPlugin 插件进行js代码分割
             // 文档：https://webpack.js.org/plugins/split-chunks-plugin/
@@ -222,39 +219,39 @@ module.exports = function genConfig(webpackEnv) {
                 // 提取公用代码块， 设为 'all' 意味着可以提取 异步加载模块和非异步加载的模块 的公用代码
                 chunks: 'all',
                 // webpack4推荐不开启：
-                //> It is recommended to set splitChunks.name to false for production builds
-                //> so that it doesn't change names unnecessarily.
+                // > It is recommended to set splitChunks.name to false for production builds
+                // > so that it doesn't change names unnecessarily.
                 // 但是，开启了之后打包的js文件名称就很直观，所以还是开着
                 name: true,
                 // 文件名默认使用 '-' 做连接符
                 automaticNameDelimiter: '-',
                 cacheGroups: {
                     vendor: {
-                        test: module => {
-                            const context = module.context;
+                        test: (module) => {
+                            const { context } = module;
                             if (context.indexOf(paths.appCacheRoot) > -1) {
                                 return false;
                             }
 
-                            return context.indexOf(paths.resolveApp('node_modules')) > -1 ||
-                                context.indexOf(paths.resolveFlammae('node_modules')) > -1;
+                            return context.indexOf(paths.resolveApp('node_modules')) > -1
+                                || context.indexOf(paths.resolveFlammae('node_modules')) > -1;
                         },
                         name: 'vendor',
                         chunks: 'all',
-                    }
-                }
+                    },
+                },
             },
             // webpack生成的的runtime代码块，用于加载其他代码块
             // 分离出来让浏览器进行长时间缓存
             runtimeChunk: {
-                name: 'runtime'
-            }
+                name: 'runtime',
+            },
         },
         // 配置 webpack 如何解析模块
         // 可以在根目录建立 cli.config.js文件，在其中修改extensions alias 配置
         // 除非必须，否则不要在这里改配置
         resolve: {
-            extensions: ['.js', '.json', '.jsx', ].concat(config.extensions),
+            extensions: ['.js', '.json', '.jsx'].concat(config.extensions),
             // 路径解析别名
 
             alias: Object.assign({}, config.alias),
@@ -285,8 +282,8 @@ module.exports = function genConfig(webpackEnv) {
                 // 禁止使用require.ensure(), 这是个不标准的语法，不要用
                 {
                     parser: {
-                        requireEnsure: false
-                    }
+                        requireEnsure: false,
+                    },
                 },
                 // 代码静态语法检测, 在根目录的 .eslintrc.js 中配置规则
                 {
@@ -296,83 +293,83 @@ module.exports = function genConfig(webpackEnv) {
                         paths.appSrc,
                         paths.flammaeSrc,
                         paths.appCacheTemp,
-                        path.join(paths.flammaeRoot, 'packages')
+                        path.join(paths.flammaeRoot, 'packages'),
                     ],
                     use: [{
                         options: {
                             eslintPath: require.resolve('eslint'),
-                            configFile: path.join(paths.flammaeRoot, '.eslintrc.js')
+                            configFile: path.join(paths.flammaeRoot, '.eslintrc.js'),
                         },
-                        loader: require.resolve('eslint-loader')
+                        loader: require.resolve('eslint-loader'),
                     }],
                 },
                 {
                     oneOf: [{
-                            test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
-                            loader: require.resolve('url-loader'),
+                        test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
+                        loader: require.resolve('url-loader'),
+                        options: {
+                            limit: 10000,
+                            name: 'static/media/[name].[hash:8].[ext]',
+                        },
+                    },
+                    {
+                        test: /\.css$/,
+                        use: genStyleLoaders(1),
+                    },
+                    {
+                        test: /\.less$/,
+                        use: genStyleLoaders(2).concat([{
+                            loader: require.resolve('less-loader'),
                             options: {
-                                limit: 10000,
-                                name: 'static/media/[name].[hash:8].[ext]',
+                                sourceMap: !isDevEnv,
                             },
-                        },
-                        {
-                            test: /\.css$/,
-                            use: genStyleLoaders(1)
-                        },
-                        {
-                            test: /\.less$/,
-                            use: genStyleLoaders(2).concat([{
-                                loader: require.resolve('less-loader'),
-                                options: {
-                                    sourceMap: !isDevEnv
-                                }
-                            }])
-                        },
+                        }]),
+                    },
                         // css 扩展语言 loader
                         cssExtensionRule,
 
-                        {
-                            test: /\.md$/,
-                            loader: require.resolve('../packages/flammae-markdown-loader'),
-                            options: {
-                                publicPath: './'
-                            }
+                    {
+                        test: /\.md$/,
+                        loader: require.resolve('../packages/flammae-markdown-loader'),
+                        options: {
+                            publicPath: './',
                         },
-                        {
-                            test: /\.(js|mjs|jsx|ts|tsx)$/,
-                            include: [
-                                paths.appSrc,
-                                paths.flammaeSrc,
-                                paths.appCacheTemp,
-                                path.join(paths.flammaeRoot, 'packages')
-                            ],
-                            loader: require.resolve('babel-loader'),
-                            options: {
-                                presets: [require.resolve('babel-preset-react-app')],
-                                // 启用缓存，这是webpack针对“babel-loader”的特性(不是babel本身的)。
-                                // 将会在./node_Module/.cache/babel-loader/目录中保存缓存结果
-                                // 对于多次的run build 会节省大量时间
-                                cacheDirectory: true,
-                                cacheCompression: isProdEnv,
-                                compact: isProdEnv,
-                            }
+                    },
+                    {
+                        test: /\.(js|mjs|jsx|ts|tsx)$/,
+                        include: [
+                            paths.appSrc,
+                            paths.flammaeSrc,
+                            paths.appCacheTemp,
+                            path.join(paths.flammaeRoot, 'packages'),
+                        ],
+                        loader: require.resolve('babel-loader'),
+                        options: {
+                            presets: [require.resolve('babel-preset-react-app')],
+                            // 启用缓存，这是webpack针对“babel-loader”的特性(不是babel本身的)。
+                            // 将会在./node_Module/.cache/babel-loader/目录中保存缓存结果
+                            // 对于多次的run build 会节省大量时间
+                            cacheDirectory: true,
+                            cacheCompression: isProdEnv,
+                            compact: isProdEnv,
                         },
-                        {
-                            loader: require.resolve('file-loader'),
-                            exclude: [/\.(js|jsx)$/, /\.html$/, /\.json$/],
-                            options: {
-                                name: 'static/media/[name].[hash:8].[ext]',
-                            },
+                    },
+                    {
+                        loader: require.resolve('file-loader'),
+                        exclude: [/\.(js|jsx)$/, /\.html$/, /\.json$/],
+                        options: {
+                            name: 'static/media/[name].[hash:8].[ext]',
                         },
-                    ].filter(Boolean)
-                }
-            ]
+                    },
+                    ].filter(Boolean),
+                },
+            ],
         },
         plugins: [
             // 必须使用此插件才能使hmr生效。当更改css文件的时候浏览器不会刷新就可使新代码生效
             // 更改js时会触发浏览器刷新，以生效新代码。
             isDevEnv && new webpack.HotModuleReplacementPlugin(),
-            // 
+            //
             new HtmlWebpackPlugin({
                 template: paths.flammaeHtml,
             }),
@@ -390,6 +387,6 @@ module.exports = function genConfig(webpackEnv) {
 
             // isProdEnv && new BundleAnalyzerPlugin()
 
-        ].filter(Boolean)
-    }
-}
+        ].filter(Boolean),
+    };
+};

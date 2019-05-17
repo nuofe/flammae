@@ -3,20 +3,19 @@ import {
     Switch,
     HashRouter,
     Route,
-    Redirect
+    Redirect,
 } from 'react-router-dom';
 /* import */
 
 class App extends Component {
-    
     render() {
         return (
             <HashRouter>
                 <Switch>
                     {/* route */}
-                    
-                     <Route path={'/index'} component={Index}/>
-                     <Redirect from='*' to='/index'/>
+
+                    <Route path={'/index'} component={Index}/>
+                    <Redirect from='*' to='/index'/>
                 </Switch>
             </HashRouter>
         );

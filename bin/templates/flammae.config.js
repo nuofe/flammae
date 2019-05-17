@@ -6,5 +6,5 @@ module.exports = {
     },
     alias: {},
     server: {},
-    extensions: []
-}
+    extensions: [],
+};

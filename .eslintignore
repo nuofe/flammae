@@ -1,0 +1,16 @@
+*.lock
+*.log
+*.json
+LICENSE
+
+# 样式文件
+*.less
+*.css
+*.sass
+*.scss
+
+# HTML
+*.html
+
+# markdown
+*.md

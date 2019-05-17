@@ -1,24 +1,20 @@
 /*
  * @Author: L.S
  * @Email: fitz-i@foxmail.com
- * @Description: 
+ * @Description:
  * @Date: 2019-03-01 13:10:11
- * @LastEditTime: 2019-04-16 10:36:15
+ * @LastEditTime: 2019-05-17 15:42:31
  */
 
 module.exports = function () {
-    'use strict';
-
     // 在程序执行的最开始配置环境变量
     process.env.BABEL_ENV = 'production';
     process.env.NODE_ENV = 'production';
-
     const fs = require('fs-extra');
     const chalk = require('chalk');
     const webpack = require('webpack');
     const webpackConfig = require('../config/webpack.config')('production');
-    const appBuild = require('../config/paths').appBuild;
-
+    const { appBuild } = require('../config/paths');
 
     console.log();
     if (fs.existsSync(appBuild)) {
@@ -38,9 +34,8 @@ module.exports = function () {
         const messages = stats.toJson({
             all: false,
             warnings: true,
-            errors: true
+            errors: true,
         });
-
 
         if (!messages.errors.length && !messages.warnings.length) {
             console.log(chalk.green(`打包完成：${appBuild}`));
@@ -50,12 +45,12 @@ module.exports = function () {
             console.log(chalk.red('编译出错！\n'));
             if (messages.errors.length) {
                 console.log(chalk.red('错误信息：\n'));
-                messages.errors.forEach(error => console.log(error + '\n'));
+                messages.errors.forEach(error => console.log(`${error}\n`));
             }
             if (messages.warnings.length) {
                 console.log(chalk.yellow('警告信息：\n'));
-                messages.warnings.forEach(warning => console.log(warning + '\n'));
+                messages.warnings.forEach(warning => console.log(`${warning}\n`));
             }
         }
     });
-}
+};

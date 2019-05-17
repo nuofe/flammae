@@ -1,13 +1,13 @@
 /*
  * @Author: L.S
  * @Email: fitz-i@foxmail.com
- * @Description: 
+ * @Description:
  * @Date: 2019-03-01 13:10:11
  * @LastEditTime: 2019-04-16 10:35:00
  */
 
-const paths = require('./paths')
-const config = require('./config')
+const paths = require('./paths');
+const config = require('./config');
 
 module.exports = {
     // 对生成的文件启用gzip压缩
@@ -30,7 +30,7 @@ module.exports = {
     publicPath: '/',
 
     // public: true,
-    
+
     // webpackDevServer的默认配置会在控制台输出太多信息，所以设置quiet: true 来禁用
     // 同时，我们通过node.js api方式开启服务，并在 `compiler.hooks[...].tap` 钩子被调用时，自定义日志信息
     quiet: true,
@@ -40,13 +40,13 @@ module.exports = {
     // 当路径中使用点(dot)（常见于 Angular），你可能需要使用：
     // historyApiFallback: {
     //   disableDotRule: true
-    // }  
+    // }
     historyApiFallback: true,
     // 当出现编译器错误或警告时，禁止在浏览器中显示全屏覆盖层
     // 如果想要显示警告和错误  overlay: { warnings: true, errors: true }
     overlay: false,
 
     host: config.server.host,
-    port: config.server.port
- 
-}
+    port: config.server.port,
+
+};

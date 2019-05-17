@@ -1,8 +1,8 @@
-import marked from 'marked'
+import marked from 'marked';
 import hljs from 'highlight.js/lib/highlight';
 import javascript from 'highlight.js/lib/languages/javascript';
 import xml from 'highlight.js/lib/languages/xml';
-import './code-highlight.css'
+import './code-highlight.css';
 
 
 hljs.registerLanguage('javascript', javascript);
@@ -31,6 +31,6 @@ const renderer = new marked.Renderer();
 
 export default function (str) {
     return marked(str, {
-        renderer: renderer
-    })
+        renderer,
+    });
 }

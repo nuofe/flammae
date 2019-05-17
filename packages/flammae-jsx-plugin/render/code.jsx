@@ -1,30 +1,32 @@
 /*
  * @Author: L.S
  * @Email: fitz-i@foxmail.com
- * @Description: 
+ * @Description:
  * @Date: 2019-03-18 09:09:36
  * @LastEditTime: 2019-04-16 10:33:30
  */
 
 import React, { Component } from 'react';
-import './style.css'
+import './style.css';
 
 class CodeDemo extends Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
-            showCode: false
-        }
-        this.toggle = this.toggle.bind(this)
+            showCode: false,
+        };
+        this.toggle = this.toggle.bind(this);
     }
+
     toggle() {
         this.setState({
-            showCode: !this.state.showCode
-        })
+            showCode: !this.state.showCode,
+        });
     }
+
     render() {
-        const show = this.state.showCode
-        const codeNote = this.props.codeNoteHtml
+        const show = this.state.showCode;
+        const codeNote = this.props.codeNoteHtml;
         return (
             <React.Fragment>
                 <div className='code-running-demo'>
@@ -32,7 +34,7 @@ class CodeDemo extends Component {
                 </div>
                 {
                     this.props.codeHtml && (
-                        <div className={'code-text-demo-wrapper' + (show?' _active':'')}>
+                        <div className={`code-text-demo-wrapper${show ? ' _active' : ''}`}>
                             {
                                 show && (
                                     <React.Fragment>
@@ -50,7 +52,7 @@ class CodeDemo extends Component {
                                 )
                             }
                             <div className='toggle-btn-wrapper' >
-                                <span  className='toggle-btn'  onClick={this.toggle}>{show ? '隐藏代码' : '显示代码'}</span>
+                                <span className='toggle-btn' onClick={this.toggle}>{show ? '隐藏代码' : '显示代码'}</span>
                             </div>
                         </div>
                     )

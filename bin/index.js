@@ -3,17 +3,17 @@
 /*
  * @Author: L.S
  * @Email: fitz-i@foxmail.com
- * @Description: 
+ * @Description:
  * @Date: 2019-04-16 10:33:28
  * @LastEditTime: 2019-04-18 09:55:51
  */
 
 
-process.on('unhandledRejection', err => {
+process.on('unhandledRejection', (err) => {
     throw err;
 });
 
-process.on('uncaughtException', err => {
+process.on('uncaughtException', (err) => {
     throw err;
 });
 
@@ -22,14 +22,14 @@ const program = require('commander');
 const chalk = require('chalk');
 const spawn = require('cross-spawn');
 const packageJSON = require('../package.json');
-const createProject = require('./create-project')
+const createProject = require('./create-project');
 
 if (!process.argv.slice(2).length) {
     printCliHelp();
 }
 
 const ownPath = path.dirname(
-    require.resolve(path.join(__dirname, '..', 'package.json'))
+    require.resolve(path.join(__dirname, '..', 'package.json')),
 ); // cli根目录
 
 // flammae create prooject-name
@@ -37,40 +37,40 @@ program
     .version(packageJSON.version)
     .command('create [project-directory]')
     .description('创建一个flammae项目')
-    .action(projectName => {
+    .action((projectName) => {
         console.log();
         if (!projectName) {
             console.log(chalk.yellow('给你的项目起个名字，例如：'), chalk.cyan('flammae create 我的项目名 \n'));
             process.exit(1);
         }
-        createProject(ownPath, projectName, path.resolve(process.cwd(), projectName))
+        createProject(ownPath, projectName, path.resolve(process.cwd(), projectName));
     });
 
 // flammae run ...
 program
     .command('run <cmd>')
-    .action(function (cmd) {
+    .action((cmd) => {
         let child = null;
         if (['dev', 'build'].includes(cmd)) {
-            child = spawn('node', [path.resolve(ownPath, `index.js`), `-${cmd}`], {
+            child = spawn('node', [path.resolve(ownPath, 'index.js'), `-${cmd}`], {
                 cwd: path.resolve(process.cwd()),
-                stdio: 'inherit'
+                stdio: 'inherit',
             });
         } else {
             child = spawn('npm', ['run', cmd], {
                 cwd: path.resolve(process.cwd()),
-                stdio: 'inherit'
+                stdio: 'inherit',
             });
         }
 
-        child.on('close', code => {
+        child.on('close', (code) => {
             if (code !== 0) {
                 console.log(`执行 run ${cmd} 失败`);
                 return;
             }
-            console.log('已退出')
+            console.log('已退出');
         });
-    })
+    });
 
 
 program.on('command:*', printCliHelp);

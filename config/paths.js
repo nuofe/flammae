@@ -1,12 +1,12 @@
 /*
  * @Author: L.S
  * @Email: fitz-i@foxmail.com
- * @Description: 
+ * @Description:
  * @Date: 2019-03-01 13:10:11
  * @LastEditTime: 2019-05-03 13:46:51
  */
 
-const path = require('path')
+const path = require('path');
 const fs = require('fs');
 
 
@@ -29,14 +29,14 @@ function resolveFlammae(src) {
 
 module.exports = {
     // 函数
-    resolveApp: resolveApp,
+    resolveApp,
     resolveAppSrc: resolveApp.bind(null, 'src'),
-    resolveAppCache: resolveAppCache,
-    resolveFlammae: resolveFlammae,
+    resolveAppCache,
+    resolveFlammae,
 
     // flammae创建的app的地址
-    appRoot: appRoot,
-    appCacheRoot: appCacheRoot,
+    appRoot,
+    appCacheRoot,
     appSrc: resolveApp('src'),
     appBuild: resolveApp('build'),
 
@@ -44,11 +44,11 @@ module.exports = {
     appCacheTemp: resolveAppCache('temp'),
     appIndexJs: resolveAppCache('temp/index.js'),
 
-    
+
     // flammae自己的地址
-    flammaeRoot: flammaeRoot,
+    flammaeRoot,
     flammaeSrc: resolveFlammae('templates'),
     flammaePublic: resolveFlammae('public'),
     flammaeHtml: resolveFlammae('public/index.html'),
     flammaePackageJson: resolveFlammae('package.json'),
-}
+};
