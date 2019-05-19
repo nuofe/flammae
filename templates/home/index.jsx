@@ -1,10 +1,18 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { siteData } from 'flammae'; /* eslint-disable-line */
 import './style.css';
 
 const { pages } = siteData;
 const { docs } = siteData;
+
+export default function Index() {
+    return (
+        (pages.length || docs.length)
+            ? <Content />
+            : <Empty />
+    );
+}
 
 function Content() {
     return (
@@ -59,15 +67,3 @@ function Empty() {
 
     );
 }
-
-class Index extends Component {
-    render() {
-        return (
-            (pages.length || docs.length)
-                ? <Content />
-                : <Empty />
-        );
-    }
-}
-
-export default Index;

@@ -6,7 +6,7 @@
  * @LastEditTime: 2019-04-16 10:35:00
  */
 
-const paths = require('./paths');
+const paths = require('../../shared/paths');
 const config = require('./config');
 
 module.exports = {

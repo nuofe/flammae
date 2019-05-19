@@ -11,5 +11,9 @@ module.exports = {
     rules: {
         'no-console': 'off',
         'indent': ['warn', 4],
+        'max-len': ['warn', 150, {
+            ignoreTrailingComments: true,
+            comments: 200
+        }],
     }
 };

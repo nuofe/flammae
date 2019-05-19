@@ -9,12 +9,16 @@
  */
 
 
+process.on('uncaughtException', (err) => {
+    throw err;
+});
+
 process.on('unhandledRejection', (err) => {
     throw err;
 });
 
-process.on('uncaughtException', (err) => {
-    throw err;
+process.on('exit', (code) => {
+    console.log(`exit code: ${code}`);
 });
 
 const path = require('path');
@@ -47,12 +51,14 @@ program
     });
 
 // flammae run ...
+// 启动引擎
 program
     .command('run <cmd>')
     .action((cmd) => {
         let child = null;
         if (['dev', 'build'].includes(cmd)) {
-            child = spawn('node', [path.resolve(ownPath, 'index.js'), `-${cmd}`], {
+            const engineEntry = path.resolve(ownPath, 'engine/index.js');
+            child = spawn('node', [engineEntry, `-${cmd}`], {
                 cwd: path.resolve(process.cwd()),
                 stdio: 'inherit',
             });
@@ -65,10 +71,8 @@ program
 
         child.on('close', (code) => {
             if (code !== 0) {
-                console.log(`执行 run ${cmd} 失败`);
-                return;
+                console.log(`run ${cmd} failed`);
             }
-            console.log('已退出');
         });
     });
 

@@ -5,16 +5,18 @@
  * @Date: 2019-03-01 13:10:11
  * @LastEditTime: 2019-05-17 15:42:31
  */
+const fs = require('fs-extra');
+const chalk = require('chalk');
+const webpack = require('webpack');
+const webpackConfig = require('../config/webpack.config')('production');
+const {
+    appBuild,
+} = require('../../shared/paths');
 
-module.exports = function () {
+module.exports = function startTheBuildProgram() {
     // 在程序执行的最开始配置环境变量
     process.env.BABEL_ENV = 'production';
     process.env.NODE_ENV = 'production';
-    const fs = require('fs-extra');
-    const chalk = require('chalk');
-    const webpack = require('webpack');
-    const webpackConfig = require('../config/webpack.config')('production');
-    const { appBuild } = require('../config/paths');
 
     console.log();
     if (fs.existsSync(appBuild)) {

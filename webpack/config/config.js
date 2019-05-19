@@ -18,14 +18,14 @@
 // ------------------------------
 
 const fs = require('fs-extra');
-const { resolveApp } = require('./paths');
+const {
+    resolveApp,
+} = require('../../shared/paths');
 
 // 开发者自定义的配置
-const userConfig = (
-    fs.existsSync(resolveApp('flammae.config.js'))
-        ? require(resolveApp('flammae.config.js'))
-        : null
-);
+const userConfig = fs.existsSync(resolveApp('flammae.config.js'))
+    ? require(resolveApp('flammae.config.js')) /* eslint-disable-line */
+    : null;
 
 // 默认配置
 const defaultConfig = {

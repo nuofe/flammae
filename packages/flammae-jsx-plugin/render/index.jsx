@@ -8,7 +8,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import CodeDemo from './code';
+import CodeDemo from './code.jsx';
 
 
 export default function ({ codeHtml, codeNoteHtml, loader }) {

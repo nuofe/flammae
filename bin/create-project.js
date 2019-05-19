@@ -7,21 +7,26 @@
  */
 
 const fs = require('fs-extra');
-const chalk = require('chalk');
-// const spawn = require('cross-spawn');
-const inquirer = require('inquirer');
 const path = require('path');
+const chalk = require('chalk');
+const inquirer = require('inquirer');
+// const spawn = require('cross-spawn');
 
 // const useYarn = !spawn.sync('yarn', ['-v']).error;
+
 module.exports = function createProject(ownPath, projectName, projectRoot) {
     // 判断文件夹是否已被占用
     //  -- 占用。退出程序
     //  -- 没占用。创建文件夹
     (function existDir() {
         process.once('exit', (code) => {
-            if (code === -1) return;
+            if (code === -1) {
+                return;
+            }
             fs.remove(projectRoot, (err) => {
-                if (err) throw err;
+                if (err) {
+                    throw err;
+                }
             });
         });
 
@@ -60,7 +65,7 @@ module.exports = function createProject(ownPath, projectName, projectRoot) {
         // 拷贝文件夹
         try {
             fs.copySync(
-                path.resolve(ownPath, 'bin/templates'),
+                path.resolve(ownPath, 'project-base-templates'),
                 projectRoot,
             );
         } catch (err) {

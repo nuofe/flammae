@@ -10,6 +10,7 @@ const {
     space,
     newLine,
 } = require('../flammae-utils/new-line');
+const jsxLoader = require('../flammae-jsx-plugin/loader');
 
 const codeBlockSym = ':::';
 const codeSym = '```';
@@ -32,7 +33,7 @@ function genReg(sym) {
 // :::
 //
 
-module.exports = function (source) {
+module.exports = function compileMarkdown(source) {
     const callback = this.async();
     const {
         frontmatter,
@@ -48,7 +49,7 @@ module.exports = function (source) {
     // 提取代码块，并解析成一个组件
     if (codeBlocks) {
         const loaderMap = Object.assign({}, {
-            jsx: require('../flammae-jsx-plugin/loader'),
+            jsx: jsxLoader,
         }, this.query.loaders);
         demos = codeParse(codeBlocks, frontmatter, loaderMap);
     }
@@ -65,7 +66,7 @@ module.exports = function (source) {
                             return;
                         }
                         if (!result) {
-                            reject('没有找到图片路径');
+                            reject(new Error('you may need provide a src for image !'));
                             return;
                         }
                         const resolvedPath = result.split('+')[1].trim().slice(1, -2);
@@ -85,17 +86,12 @@ module.exports = function (source) {
     emitResult();
 
     function emitResult() {
-    // markdown中使用反引号包裹代码，在js中反引号为特殊符号，所以需要转义
-        callback(null, `export default {
-            ${
-    JSON.stringify({
-        frontmatter,
-        headings,
-        text: mdText,
-    }).replace(/`/gm, '\\`').slice(1, -1)
-},
+        // markdown中使用反引号包裹代码，在js中反引号为特殊符号，所以需要转义
+        const resultText = `export default {
+            ${JSON.stringify({ frontmatter, headings, text: mdText }).replace(/`/gm, '\\`').slice(1, -1)},
             demos: ${demos || '[]'}
-        }`);
+        }`;
+        callback(null, resultText);
     }
 };
 
@@ -109,9 +105,9 @@ module.exports = function (source) {
 // codeBlocks 是由下面格式的markdown文本组成的数组
 // ::: only （不加 only 就显示demo和代码, 加了就只显示demo）
 // 代码的一些说明写在这里
-// \`\`\` jsx
+// ``` jsx
 //  code here
-// \`\`\`
+// ```
 // :::
 //
 const optObj = {
@@ -124,9 +120,9 @@ const optObj = {
 function codeParse(codeBlocks, options, loaderMap) {
     const str = codeBlocks.map((codeBlock) => {
     // 分离出
-    // \`\`\` jsx
+    // ``` jsx
     // code here
-    // \`\`\`
+    // ```
         const codeWrapStr = codeBlock.match(codeReg)[0];
         // 分离出
         // ::: only
@@ -147,24 +143,33 @@ function codeParse(codeBlocks, options, loaderMap) {
                     }`;
         }
         // 其它代码，用loader分析
-        const fn = loaderMap[lang.trim()];
-        const result = fn && fn({
-            code,
-            command: command.trim(),
-            codeWrapStr,
-            codeBlock,
-            codeNote,
-        },
-        options,
-        optObj);
-        if (!result) return null;
+        const compileCode = loaderMap[lang.trim()];
+        let result = null;
+        if (compileCode) {
+            result = compileCode(
+                {
+                    code,
+                    command: command.trim(),
+                    codeWrapStr,
+                    codeBlock,
+                    codeNote,
+                },
+                options,
+                optObj,
+            );
+        }
 
-        return `{
-                    lang: '${lang.trim()}',
-                    ${command.split(space).includes('only') ? '' : `code: \`${codeWrapStr.replace(/`/g, '\\`')}\`,`}
-                    codeNote: \`${codeNote.replace(/`/g, '\\`')}\`,
-                    loader : ${result}
-                }`;
+        if (!result) {
+            return null;
+        }
+        return (
+            `{
+                lang: '${lang.trim()}',
+                ${command.split(space).includes('only') ? '' : `code: \`${codeWrapStr.replace(/`/g, '\\`')}\`,`}
+                codeNote: \`${codeNote.replace(/`/g, '\\`')}\`,
+                loader : ${result}
+            }`
+        );
     }).filter(Boolean).join(',');
 
     return `[${str}]`;

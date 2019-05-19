@@ -6,25 +6,23 @@
  * @LastEditTime: 2019-04-16 10:18:52
  */
 
-module.exports = function () {
+const chalk = require('chalk');
+const webpack = require('webpack');
+const WebpackDevServer = require('webpack-dev-server');
+// webpack 开发环境配置
+const webpackConfig = require('../config/webpack.config')('development');
+// webpack-dev-server配置
+const serverConfig = require('../config/webpackDevServer.config');
+const config = require('../config/config');
+
+module.exports = function startTheDevProgram() {
     // 在程序执行的最开始配置环境变量
     process.env.BABEL_ENV = 'development';
     process.env.NODE_ENV = 'development';
 
-    const chalk = require('chalk');
-    const webpack = require('webpack');
-    const WebpackDevServer = require('webpack-dev-server');
-    // webpack 开发环境配置
-    const webpackConfig = require('../config/webpack.config')('development');
-    // webpack-dev-server配置
-    const serverConfig = require('../config/webpackDevServer.config');
-
-    const config = require('../config/config');
-
     // 返回一个webpack的compiler实例
-    function createCompiler(webpack, webpackConfig) {
+    function createCompiler() {
         const compiler = webpack(webpackConfig);
-
 
         // 注意 "invalid" 是 "bundle invalidated" 的缩写，并不意味着任何错误。
         // invalid 事件会在你修改文件（改代码）时会触发，此时，webpack会重新打包。
@@ -76,14 +74,15 @@ module.exports = function () {
 
     WebpackDevServer.addDevServerEntrypoints(webpackConfig, serverConfig);
 
-    const compiler = createCompiler(webpack, webpackConfig);
+    const compiler = createCompiler();
 
     const devServer = new WebpackDevServer(compiler, serverConfig);
 
     // 开启 devServer
     devServer.listen(config.server.port, config.server.host, (err) => {
         if (err) {
-            return console.log(err);
+            console.log(err);
+            return;
         }
 
         console.log(chalk.cyan('-------------------------\n'));

@@ -18,16 +18,17 @@ const fmReg = `---(?:${newLine})((${newLine}|.)*)(?:${newLine})---`;
 // heading
 const headingReg = `(#{1,5})${space}+(.+)(?:${newLine})`;
 
-module.exports = function (str, needWarning) {
+module.exports = function parseMarkdown(str, needWarning) {
     let frontmatter = null;
     let headings = [];
+    let markdownText = str;
 
     // 提取 frontmatter
 
-    const fmMatcher = str.match(new RegExp(fmReg));
+    const fmMatcher = markdownText.match(new RegExp(fmReg));
     if (fmMatcher) {
-    // 截掉的frontmatter
-        str = str.replace(fmMatcher[0], '');
+        // 截掉的frontmatter
+        markdownText = markdownText.replace(fmMatcher[0], '');
         frontmatter = frontmatterParse(fmMatcher[1]);
     }
     if (needWarning) {
@@ -35,18 +36,19 @@ module.exports = function (str, needWarning) {
             console.warn(chalk.yellow('>>>>>>>>>>>>>>>>'));
             console.warn(`${chalk.yellow('注意：')}未能从${chalk.yellow(needWarning)}文件中找到frontmatter，该文档将不被显示`);
             console.warn();
-            return;
-        } if (!frontmatter.path) {
+            return false;
+        }
+        if (!frontmatter.path) {
             console.warn(chalk.yellow('>>>>>>>>>>>>>>>>'));
             console.warn(`${chalk.yellow('注意：')}未能从${chalk.yellow(needWarning)}文件中找到路径（path）信息，该文档将不被显示`);
             console.warn();
-            return;
+            return false;
         }
     }
 
 
     // 提取标题
-    const headingMatcher = str.match(new RegExp(headingReg, 'g'));
+    const headingMatcher = markdownText.match(new RegExp(headingReg, 'g'));
 
     if (headingMatcher) {
         headings = headingMatcher.map(headingParse).filter(Boolean);
@@ -55,7 +57,7 @@ module.exports = function (str, needWarning) {
     return {
         frontmatter,
         headings,
-        text: str,
+        text: markdownText,
     };
 };
 
@@ -67,7 +69,7 @@ function frontmatterParse(str) {
     arr.forEach((item) => {
         const subArr = item.split(':');
         try {
-      obj[subArr[0].trim()] = eval(subArr[1].trim()); /* eslint-disable-line */
+            obj[subArr[0].trim()] = eval(subArr[1].trim()); /* eslint-disable-line */
         } catch (err) {
             console.log(`\n${chalk.red('frontmatter格式不正确！')}\n`);
         }
@@ -86,4 +88,5 @@ function headingParse(headingStr) {
             text: subArr[3],
         };
     }
+    return false;
 }

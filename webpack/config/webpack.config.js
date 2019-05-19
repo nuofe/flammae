@@ -13,9 +13,10 @@ const TerserPlugin = require('terser-webpack-plugin'); // 压缩js code
 const MiniCssExtractPlugin = require('mini-css-extract-plugin'); // 分离 css
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin'); // 压缩 css
 const safePostCssParser = require('postcss-safe-parser');
+const postCssEnv = require('postcss-preset-env');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
-const paths = require('./paths');
+const paths = require('../../shared/paths');
 const config = require('./config');
 
 module.exports = function genConfig(webpackEnv) {
@@ -49,7 +50,7 @@ module.exports = function genConfig(webpackEnv) {
                 options: {
                     ident: 'postcss',
                     plugins: [
-                        require('postcss-preset-env')({
+                        postCssEnv({
                             browsers: [
                                 'defaults',
                                 'not ie < 9',
@@ -65,7 +66,7 @@ module.exports = function genConfig(webpackEnv) {
         ].filter(Boolean);
     };
 
-    const genExtensionRule = function (rule, loaderName) {
+    const genExtensionRule = function genExtensionRule(rule, loaderName) {
         // return null
         return {
             test: rule,
@@ -81,7 +82,7 @@ module.exports = function genConfig(webpackEnv) {
     };
 
     // css 扩展语言 解析规则
-    const cssExtensionRule = (function () {
+    const cssExtensionRule = (function () { /* eslint-disable-line */
         const { style } = config;
         if (!style || !style.lang || style.lang === 'less') {
             return null;
@@ -103,9 +104,9 @@ module.exports = function genConfig(webpackEnv) {
         // 设置为true, webpack 在遇到错误时 立即停止编译
         // 当然只在 在打包时 开启
         bail: isProdEnv,
-        // ? 如果传递的是字符串或字符串数组，则只会打包成一个文件（一个入口文件），默认名称为 main
-        // ? 如果传递的是一个对象，则对象的每个key都会生成一个包（多入口）
-        // ! Simple rule: one entry point per HTML page. SPA: one entry point, MPA: multiple entry points.
+        // 如果传递的是字符串或字符串数组，则只会打包成一个文件（一个入口文件），默认名称为 main
+        // 如果传递的是一个对象，则对象的每个key都会生成一个包（多入口）
+        // Simple rule: one entry point per HTML page. SPA: one entry point, MPA: multiple entry points.
         // 一般只使用一个入口就ok
         entry: paths.appIndexJs,
         output: {
@@ -325,12 +326,12 @@ module.exports = function genConfig(webpackEnv) {
                             },
                         }]),
                     },
-                        // css 扩展语言 loader
-                        cssExtensionRule,
+                    // css 扩展语言 loader
+                    cssExtensionRule,
 
                     {
                         test: /\.md$/,
-                        loader: require.resolve('../packages/flammae-markdown-loader'),
+                        loader: require.resolve('../../packages/flammae-markdown-loader'),
                         options: {
                             publicPath: './',
                         },
