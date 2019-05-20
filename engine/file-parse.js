@@ -1,8 +1,7 @@
-const { resolveFlammae } = require('../shared/paths');
 const { readFiles } = require('./utils');
 
-const jsxParse = require(resolveFlammae('./packages/flammae-utils/jsx-parse')); /* eslint-disable-line */
-const markdownParse = require(resolveFlammae('./packages/flammae-utils/markdown-parse')); /* eslint-disable-line */
+const jsxParse = require('../packages/flammae-utils/jsx-parse');
+const markdownParse = require('../packages/flammae-utils/markdown-parse');
 
 /**
  * 读取`appRoot/src`文件夹下的内容，

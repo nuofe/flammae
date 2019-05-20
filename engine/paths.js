@@ -1,4 +1,6 @@
-
+/**
+ * 路径统一管理
+ */
 const {
     resolveAppCache,
     resolveApp,
