@@ -6,10 +6,10 @@ const {
 } = require('../shared/paths');
 
 module.exports = {
-    
+
     // 模板文件路径
-    templateAppJsx: resolveFlammae('templates/temp/app.jsx'),
-    templateIndexJsx: resolveFlammae('templates/temp/index.jsx'),
+    templateAppTpl: resolveFlammae('templates/temp/app.tpl'),
+    templateIndexTpl: resolveFlammae('templates/temp/index.tpl'),
     templateHomeJsx: resolveFlammae('templates/home/index.jsx'),
     templateContentJsx: resolveFlammae('templates/content/index.jsx'),
 
@@ -24,5 +24,8 @@ module.exports = {
     tempFlammaeModuleFile: resolveAppCache('flammae.js'),
     tempAppJsx: resolveAppCache('temp/app.jsx'),
     tempIndexJs: resolveAppCache('temp/index.js'),
-    
+
+    // markdown 组件
+    markdown: resolveFlammae('templates/components/markdown/index.jsx'),
+
 };

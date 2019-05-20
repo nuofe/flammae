@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React from 'react';
 import {
     Switch,
@@ -6,24 +5,27 @@ import {
     Route,
     Redirect,
 } from 'react-router-dom';
-<% 
 
+<%
 $data.map(item=>(
     item.name
-    ?`import ${item.name} from ${item.path};`
-    : `import ${item.path};`
-));
-
+    ?`import ${item.name} from '${item.path}';`
+    : `import '${item.path}';`
+))
 %>
-/* import */
 
 export default function App() {
     return (
         <HashRouter>
             <Switch>
-                {/* route */}
-
-                <Route path={'/index'} component={Index} /> {/* eslint-disable-line */}
+<% 
+$data.map(item=>(
+    item.name
+    ? `<Route path={'${item.path}'} component={${item.name}}/>`
+    : null
+)).filter(Boolean)
+%>
+                <Route path={'/index'} component={Index} />
                 <Redirect from='*' to='/index' />
             </Switch>
         </HashRouter>

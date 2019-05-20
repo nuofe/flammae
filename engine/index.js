@@ -2,11 +2,10 @@
  * Author: L.S <fitz-i@foxmail.com>
  */
 
-
 const fs = require('fs-extra');
 const parseFiles = require('./file-parse');
 const {
-    // appRoot,
+    appRoot,
     appCacheTemp,
     resolveAppSrc,
 } = require('../shared/paths');
@@ -49,7 +48,7 @@ parseFiles(filePaths).then((siteData) => {
     writeTempAppFileSync(siteData);
     writeTempSiteDataFileSync(siteData);
     // 监听文件添加修改
-    watchFile(appSrc);
+    watchFile(appRoot);
     console.log();
     console.log('启动webpack...');
     const mode = process.argv[2].slice(1);

@@ -14,3 +14,6 @@ LICENSE
 
 # markdown
 *.md
+
+# 模板文件
+*.tpl

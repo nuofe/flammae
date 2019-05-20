@@ -6,5 +6,5 @@ const targetText = `
 <% 5>1 ? '<Route path="123"/>': '' %>
 </Route>
 
-`
+`;
 viewGenerator(targetText);

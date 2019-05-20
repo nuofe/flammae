@@ -74,7 +74,7 @@ function getFilePaths(dir, pathValidator = () => true) {
         : null;
 
     if (!direntArr || !direntArr.length) {
-        return filesPaths;
+        return [];
     }
     direntArr.forEach((dirent) => {
         const absolutePath = path.resolve(dir, dirent.name);
