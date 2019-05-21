@@ -1,7 +1,7 @@
 const path = require('path');
 const {
     watchFile,
-} = require('./utils');
+} = require('../shared/utils');
 const writeTempIndexFileSync = require('./write-temp-index');
 const writeTempAppFileSync = require('./write-temp-app');
 

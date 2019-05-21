@@ -11,7 +11,7 @@ const {
 } = require('../shared/paths');
 const {
     getFilePaths,
-} = require('./utils');
+} = require('../shared/utils');
 const runWebpack = require('../webpack/index');
 const writeFlammeModuleFileSync = require('./write-flammae');
 const writeTempAppFileSync = require('./write-temp-app');

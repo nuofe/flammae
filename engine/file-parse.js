@@ -1,4 +1,4 @@
-const { readFiles } = require('./utils');
+const { readFiles } = require('../shared/utils');
 
 const jsxParse = require('../packages/flammae-utils/jsx-parse');
 const markdownParse = require('../packages/flammae-utils/markdown-parse');

@@ -7,7 +7,7 @@ const {
 const {
     getFilePaths,
     resolvePath,
-} = require('./utils');
+} = require('../shared/utils');
 const viewGen = require('../tpl-engine');
 
 /**

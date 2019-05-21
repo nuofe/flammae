@@ -10,6 +10,23 @@ module.exports = {
     pathExistSync,
 };
 
+
+/**
+ * 防抖
+ * @param {function} fn
+ * @param {number} time
+ */
+function debounce(fn, time) {
+    let timer;
+    return function debouncedFunction(...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            fn(...args);
+        }, time || 300);
+    };
+}
+
+
 /**
  * 读取文件
  * @param {array|string} filePaths
@@ -93,20 +110,6 @@ function getFilePaths(dir, pathValidator = () => true) {
     return filesPaths;
 }
 
-/**
- * 防抖
- * @param {function} fn
- * @param {number} time
- */
-function debounce(fn, time) {
-    let timer;
-    return function debouncedFunction(...args) {
-        clearTimeout(timer);
-        timer = setTimeout(() => {
-            fn(...args);
-        }, time || 300);
-    };
-}
 
 /**
  * 判断**给定的路径是否存在**，无论是文件夹还是指定的文件
