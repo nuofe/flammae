@@ -1,13 +1,13 @@
 const fs = require('fs');
 const path = require('path');
-const { debounce } = require('./utils');
 
 /**
  * 监听文件夹内部操作
  */
 function watchDir(dirPath, listener) {
-    // 检测路径 存在 且 为文件
-
+    /**
+     * 检测路径 存在 且 为文件
+     */
     const map = getDirMap(dirPath);
 
     fs.watch(
@@ -61,6 +61,7 @@ function listenerFactory(map, dirPath, callback) {
     // listener 接收两个参数 eventType filename
     // eventType 是 'rename' 或 'change'， filename 是触发事件的文件的名称。
     return function listener(eventType, filename) {
+        // 有的系统可能不传filename
         if (!filename) {
             console.log('unknown file change');
             return;
@@ -74,32 +75,70 @@ function listenerFactory(map, dirPath, callback) {
             const statsOrDirent = obj[curFileName];
             if (statsOrDirent) {
                 return statsOrDirent.children ? statsOrDirent.children : statsOrDirent;
-            } else { /* eslint-disable-line */
-                // 重命名了
-                return null;
             }
+            return null;
         }, map);
 
-        if (target.isDirectory()) {
-            /* eslint-disable */
-            if (eventType === 'change') {
+        const isPathExists = target && fs.existsSync(path.resolve(dirPath, target.path));
+        const isDir = target && target.isDirectory();
 
-            } else {
-                // rename
-
-            }
-            /* eslint-enable */
-        } else if (eventType === 'change') {
-            callback('change', target.path);
-        } else if (eventType === 'rename') {
-            if (fs.existsSync(path.resolve(dirPath, target.path))) {
+        /**
+         * filename：任意，eventType: rename
+         *
+         * 对于rename事件，文件跟文件夹是相同的
+         */
+        if (eventType === 'rename') {
+            /**
+             * 路径存在，即，创建
+             */
+            if (isPathExists) {
                 lastObj[lastName] = fs.statSync(target.path);
-                callback('createFile', target.path);
-            } else {
-                delete lastObj[lastName];
-                callback('deleteFile', target.path);
+                const type = isDir ? 'mkdir' : 'createFile';
+                callback(type, target.path);
             }
+            // 删除
+            else {
+                delete lastObj[lastName];
+                const type = isDir ? 'rmdir' : 'deleteFile';
+                callback(type, target.path);
+            }
+            return;
         }
+
+        /**
+         * filename：文件，eventType: change
+         */
+        if (!isDir) {
+            callback('change', target.path);
+            return;
+        }
+
+        /**
+         * filename：文件夹，eventType: change
+         *
+         * 可能的情况：
+         * - 在文件夹中新建文件或文件夹
+         * - 删除文件夹内文件或文件夹
+         * - 重命名文件夹
+         *
+         */
+
+        /**
+         * 之前不存在这个文件夹，即，重命名
+         */
+        if (!target) {
+            // disable
+        }
+        /**
+         * 判断是否文件夹多了一个文件或文件夹，即，新建文件或文件夹
+         */
+        else if (!lastObj[target]) {
+            //
+        }
+
+        /**
+         * 删除文件或文件夹，啥都不用做
+         */
     };
 }
 
