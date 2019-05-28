@@ -35,7 +35,8 @@ function getDirMap(dirPath) {
             encoding: 'utf8',
             withFileTypes: true,
         });
-    } catch (err) {
+    }
+    catch (err) {
         throw err;
     }
 
