@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = function traverse(filename) {
-    const paths = filename.split(path.sep);
+    const paths = filename.split(/\\\\|\\|\//);
     const fsMap = this;
     // eslint-disable-next-line no-shadow
     const result = paths.reduce(([subFsMap, result], curFilename) => {

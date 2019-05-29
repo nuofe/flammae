@@ -66,7 +66,7 @@ function listenerFactory(fsMap, callback) {
         /**
          * filename：文件，eventType: change
          *
-         * 修改文件内容
+         * 修改文件内内容
          */
         if (!isDir) {
             callback('fileChange', target.absPath);
@@ -78,23 +78,26 @@ function listenerFactory(fsMap, callback) {
          *
          * 可能的情况：
          * - 在文件夹中新建文件或文件夹
-         * - 删除文件夹内文件或文件夹
          * - 重命名文件夹
          *
          */
 
+        const siblings = parent.readdirSync();
+
         /**
-         * 之前不存在这个文件夹，即，重命名
+         * 重命名
          */
         if (!target) {
 
             // disable
+            return;
         }
+
         /**
          * 判断是否文件夹多了一个文件或文件夹，即，新建文件或文件夹
          */
-        else if (!lastObj[target]) {
-            //
+        if (!siblings.includes(target)) {
+
         }
 
         /**

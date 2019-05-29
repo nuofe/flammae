@@ -15,6 +15,5 @@ module.exports = {
             ignoreTrailingComments: true,
             comments: 200
         }],
-        'brace-style': ["warn", "stroustrup"],
     }
 };
