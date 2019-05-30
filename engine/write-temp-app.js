@@ -12,7 +12,7 @@ const {
     resolvePath,
     pathExistSync,
 } = require('../shared/utils');
-const viewGen = require('../tpl-engine');
+const viewGen = require('../packages/tpl-engine');
 
 
 module.exports = function writeTempAppFileSync(siteData) {

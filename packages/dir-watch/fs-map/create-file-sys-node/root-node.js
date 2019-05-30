@@ -6,5 +6,6 @@ module.exports = class RootNode {
         this.absPath = absPath;
         this.sortPath = sortPath;
         this.rootNode = true;
+        this.children = [];
     }
 };

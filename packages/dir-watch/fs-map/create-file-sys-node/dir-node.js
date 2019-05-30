@@ -4,11 +4,12 @@ const FsNode = require('./fs-node');
 const createFsNode = require('./index');
 
 /**
- * 文件夹
+ * DirNode
  */
 module.exports = class DirNode extends FsNode {
     /**
-     * 创建文件
+     * make file or dir
+     * @param {string} filename a filename, best be basename
      */
     make(filename) {
         const basename = path.basename(filename);
@@ -21,6 +22,7 @@ module.exports = class DirNode extends FsNode {
 
     /**
      * 读取文件夹
+     * @param {object} options options for fs.readdirSync
      */
     readdirSync(options) {
         try {
@@ -29,31 +31,6 @@ module.exports = class DirNode extends FsNode {
             });
         } catch (err) {
             throw err;
-        }
-    }
-
-    compute(filename) {
-        // '/a/b/c' => 'c'
-        const basename = path.basename(filename);
-        const lastChildren = this.children ? Object.keys(this.children) : [];
-        const curChildren = this.readdirSync();
-        const curLen = curChildren.length;
-        const lastLen = lastChildren.length;
-        if (curLen > lastLen) {
-            // 多了文件
-            if (curChildren.includes(basename)) {
-                // 新建文件
-                this.make(basename);
-            }
-        } else if (curLen < lastLen) {
-            // 少了文件
-            if (lastChildren.includes(basename)) {
-                // 删除文件
-                this.children[basename].remove();
-            }
-        } else {
-            // 重命名
-            this.children[basename].rename();
         }
     }
 };

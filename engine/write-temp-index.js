@@ -8,7 +8,7 @@ const {
     getFilePaths,
     resolvePath,
 } = require('../shared/utils');
-const viewGen = require('../tpl-engine');
+const viewGen = require('../packages/tpl-engine');
 
 /**
  * 在项目的**node_modules/.cache/flammae/temp**文件夹下创建**index.js**文件，

@@ -3,5 +3,6 @@ const FileNode = require('./file-node');
 
 module.exports = function createFileNode(dirent, parentNode) {
     const Constructor = dirent.isDirectory() ? DirNode : FileNode;
-    return new Constructor(dirent, parentNode);
+    const fileNode = new Constructor(dirent, parentNode);
+    return fileNode;
 };

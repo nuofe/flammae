@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const createFsMap = require('./fs-map/create-fs-map');
+const createFsMap = require('./fs-map');
 
 /**
  * 监听文件夹内部操作
@@ -53,9 +53,8 @@ function listenerFactory(fsMap, callback) {
                 parent.make(filename);
                 const eType = isDir ? 'mkDir' : 'mkFile';
                 callback(eType, target.absPath);
-            }
-            // 删除
-            else {
+            } else {
+                // 删除
                 target.remove();
                 const eType = isDir ? 'rmDir' : 'rmFile';
                 callback(eType, target.absPath);

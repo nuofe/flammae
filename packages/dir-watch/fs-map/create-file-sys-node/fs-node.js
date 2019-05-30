@@ -2,14 +2,15 @@ const path = require('path');
 
 module.exports = class FsNode {
     constructor(dirent, parentNode, customFn) {
-        const { name, isDirectory } = dirent;
+        // const { name, isDirectory } = dirent;
+        const isDirectory = dirent.isDirectory();
         this.dirent = dirent;
-        this.isDirectory = isDirectory();
-        this.name = name;
-        this.sortPath = path.join(parentNode.sortPath, name);
-        this.absPath = path.join(parentNode.absPath, name);
+        this.isDirectory = isDirectory;
+        this.name = dirent.name;
+        this.sortPath = path.join(parentNode.sortPath, dirent.name);
+        this.absPath = path.join(parentNode.absPath, dirent.name);
         this.parent = parentNode;
-        this.children = null;
+        this.children = isDirectory ? [] : null;
         this.customFn = (...args) => customFn && customFn.apply(this, args);
     }
 
@@ -18,10 +19,14 @@ module.exports = class FsNode {
      * @param {String} newName
      */
     rename(newName) {
-        this.parent[newName] = this;
+        const { children, sortPath, absPath } = this.parent;
+
+        this.remove();
+        children[newName] = this;
+
         this.name = newName;
-        this.sortPath = path.join(this.parent.sortPath, newName);
-        this.absPath = path.join(this.parent.absPath, newName);
+        this.sortPath = path.join(sortPath, newName);
+        this.absPath = path.join(absPath, newName);
         console.log('rename', this.dirent.name);
     }
 
@@ -29,6 +34,6 @@ module.exports = class FsNode {
      * 删除文件
      */
     remove() {
-        delete this.parent[this.name];
+        delete this.parent.children[this.name];
     }
 };
