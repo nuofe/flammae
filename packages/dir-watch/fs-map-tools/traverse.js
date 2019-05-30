@@ -37,15 +37,19 @@ function recursionTraverse(fsArr, visitor, state) {
              * 执行visitor
              */
             visitor[file.name](file, state.break);
+            /**
+             * 如果用户在visitor中调用了break, 则停止整个traverse
+             */
+            if (state.shouldBreak) {
+                return;
+            }
         }
-        /**
-         * 如果用户在visitor中调用了break, 则停止整个traverse
-         */
-        if (state.shouldBreak) {
-            return;
-        }
+
         if (file.children) {
             recursionTraverse(file.children, visitor, state);
+            if (state.shouldBreak) {
+                return;
+            }
         }
     }
 }
