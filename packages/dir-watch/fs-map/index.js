@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const createFsNode = require('./create-file-sys-node');
-const RootNode = require('./create-file-sys-node/root-node');
+const DirNode = require('./create-file-sys-node/dir-node');
 
 module.exports = function createFileSysMap(absPath, parent) {
     /**
@@ -12,26 +12,24 @@ module.exports = function createFileSysMap(absPath, parent) {
     }
 
     /**
-     * if parent is not exists create RootNode
+     * if parent is not exists create Root Node
      * TODO: validate type of parent
      */
-    const parentNode = parent || new RootNode(absPath);
-
+    const parentNode = parent || createRootDirNode(absPath);
     /**
      * 读取文件夹第一级目录，生成dirent数组
      */
-    const direntList = (() => {
+    const filenameArr = (() => {
         try {
             return fs.readdirSync(absPath, {
                 encoding: 'utf8',
-                withFileTypes: true,
             });
         } catch (err) {
             throw err;
         }
     })();
 
-    if (!direntList.length) {
+    if (!filenameArr.length) {
         return null;
     }
 
@@ -40,9 +38,20 @@ module.exports = function createFileSysMap(absPath, parent) {
      *
      * eslint: https://eslint.org/docs/rules/no-param-reassign
      */
-    direntList.forEach((dirent) => {
-        const fileNode = createFsNode(dirent, parentNode);
+    filenameArr.forEach((filename) => {
+        let fileStats = null;
+        try {
+            fileStats = fs.statSync(path.join(absPath, filename));
+        } catch (err) {
+            throw err;
+        }
+        if (!fileStats) {
+            return;
+        }
+        const fileNode = createFsNode(filename, fileStats, parentNode);
+
         parentNode.children.push(fileNode);
+
         if (fileNode.isDirectory) {
             createFileSysMap(fileNode.absPath, fileNode);
         }
@@ -50,3 +59,13 @@ module.exports = function createFileSysMap(absPath, parent) {
 
     return parentNode;
 };
+
+function createRootDirNode(absPath) {
+    const stats = fs.statSync(absPath);
+    const basename = path.basename(absPath);
+
+    return new DirNode(basename, stats, {
+        absPath,
+        root: true,
+    });
+}

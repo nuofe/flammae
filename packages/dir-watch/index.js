@@ -6,8 +6,11 @@ const createFsMap = require('./fs-map');
  * 监听文件夹内部操作
  */
 function watchDir(absDirPath, listener) {
+    if (typeof listener !== 'function') {
+        throw new Error('Expected the listener to be a function.');
+    }
     /**
-     * 检测路径 存在 且 为文件
+     * 根据给定的dirPath 创建这个文件夹的map
      */
     const fsMap = createFsMap(absDirPath);
 
@@ -34,74 +37,10 @@ function listenerFactory(fsMap, callback) {
             console.log('unknown file change');
             return;
         }
+        const absPath = path.resolve(fsMap.absPath, filename);
+        fsMap.clearDiff(absPath, () => {
 
-        const [target, parent] = fsMap.traverse(filename);
-
-        const isPathExists = target && fs.existsSync(target.absPath);
-        const isDir = target && target.isDirectory;
-
-        /**
-         * filename：任意，eventType: rename
-         * 创建跟删除会触发 rename 事件
-         * 对于rename事件，文件跟文件夹是相同的
-         */
-        if (eventType === 'rename') {
-            /**
-             * 路径存在，即，创建
-             */
-            if (isPathExists) {
-                parent.make(filename);
-                const eType = isDir ? 'mkDir' : 'mkFile';
-                callback(eType, target.absPath);
-            } else {
-                // 删除
-                target.remove();
-                const eType = isDir ? 'rmDir' : 'rmFile';
-                callback(eType, target.absPath);
-            }
-            return;
-        }
-
-        /**
-         * filename：文件，eventType: change
-         *
-         * 修改文件内内容
-         */
-        if (!isDir) {
-            callback('fileChange', target.absPath);
-            return;
-        }
-
-        /**
-         * filename：文件夹，eventType: change
-         *
-         * 可能的情况：
-         * - 在文件夹中新建文件或文件夹
-         * - 重命名文件夹
-         *
-         */
-
-        const siblings = parent.readdirSync();
-
-        /**
-         * 重命名
-         */
-        if (!target) {
-
-            // disable
-            return;
-        }
-
-        /**
-         * 判断是否文件夹多了一个文件或文件夹，即，新建文件或文件夹
-         */
-        if (!siblings.includes(target)) {
-
-        }
-
-        /**
-         * 删除文件或文件夹，啥都不用做
-         */
+        });
     };
 }
 

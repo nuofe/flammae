@@ -1,10 +1,9 @@
 const path = require('path');
-const createFsMap = require('../fs-map');
-const traverse = require('../fs-map-tools/traverse');
+const createFsMap = require('..');
 
 const fsMap = createFsMap(path.resolve(__dirname, '../'));
 
-traverse(fsMap, {
+fsMap.traverse({
     'create-file-sys-node': (v) => {
         console.log(v);
     },
