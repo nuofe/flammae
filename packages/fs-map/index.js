@@ -1,9 +1,6 @@
-const fs = require('fs');
-const path = require('path');
-const createFsNode = require('./create-file-sys-node');
-const DirNode = require('./create-file-sys-node/dir-node');
 
-module.exports = function createFileSysMap(absPath, parent) {
+
+module.exports = function createFileSysMap(absPath, nodeHook, parent) {
     /**
      * path must be absolute
      */
@@ -15,7 +12,7 @@ module.exports = function createFileSysMap(absPath, parent) {
      * if parent is not exists create Root Node
      * TODO: validate type of parent
      */
-    const parentNode = parent || createRootDirNode(absPath);
+    const parentNode = parent || createRootDirNode(absPath, nodeHook);
     /**
      * 读取文件夹第一级目录，生成dirent数组
      */
@@ -48,24 +45,29 @@ module.exports = function createFileSysMap(absPath, parent) {
         if (!fileStats) {
             return;
         }
-        const fileNode = createFsNode(filename, fileStats, parentNode);
+        const fileNode = createFsNode(filename, fileStats, parentNode, nodeHook);
 
         parentNode.children.push(fileNode);
 
         if (fileNode.isDirectory) {
-            createFileSysMap(fileNode.absPath, fileNode);
+            createFileSysMap(fileNode.absPath, nodeHook, fileNode);
         }
     });
 
     return parentNode;
 };
 
-function createRootDirNode(absPath) {
+const fs = require('fs');
+const path = require('path');
+const createFsNode = require('./create-file-sys-node');
+const DirNode = require('./create-file-sys-node/dir-node');
+
+function createRootDirNode(absPath, nodeHook) {
     const stats = fs.statSync(absPath);
     const basename = path.basename(absPath);
 
     return new DirNode(basename, stats, {
         absPath,
         root: true,
-    });
+    }, nodeHook);
 }

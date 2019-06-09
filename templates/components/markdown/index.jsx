@@ -21,6 +21,10 @@ class Markdown extends Component {
         }
     }
 
+    /**
+     * 根据markdown文本生成html，待更新后渲染demo
+     * @param {string} str
+     */
     genHTML(str) {
         // 解析markdown
         this.html = marked(str);
@@ -31,12 +35,22 @@ class Markdown extends Component {
         });
     }
 
+    /**
+     * 渲染demo
+     */
     renderDemo() {
         this.props.md.demos.forEach((demo) => {
+            /**
+             * markdown style
+             */
             if (demo.isStyle) {
                 demo.fn();
                 return;
             }
+
+            /**
+             * 匹配正确的语言render
+             */
             const codeHtml = demo.code && marked(demo.code);
             const codeNoteHtml = codeHtml && marked(demo.codeNote);
             let render = null;
@@ -45,6 +59,10 @@ class Markdown extends Component {
             } else {
                 render = renderMap[demo.lang];
             }
+
+            /**
+             * 动态渲染代码块
+             */
             if (render) {
                 render({
                     codeHtml,

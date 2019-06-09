@@ -1,4 +1,4 @@
-const FsNode = require('./fs-base-node');
+const FsNode = require('./fs-node');
 /**
  * 非文件夹文件
  */

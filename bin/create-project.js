@@ -65,7 +65,7 @@ module.exports = function createProject(ownPath, projectName, projectRoot) {
         // 拷贝文件夹
         try {
             fs.copySync(
-                path.resolve(ownPath, 'project-base-templates'),
+                path.resolve(ownPath, 'templates/create-project'),
                 projectRoot,
             );
         } catch (err) {

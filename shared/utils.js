@@ -2,7 +2,6 @@ const fs = require('fs-extra');
 const path = require('path');
 
 module.exports = {
-    watchFile,
     readFiles,
     resolvePath,
     getFilePaths,
@@ -128,23 +127,4 @@ function pathExistSync(targetPath, suffixs = ['.jsx', '.js']) {
             return false;
         }
     });
-}
-
-/**
- * 监听文件 创建修改
- * 这里可能导致bug， writeFile会重新触发 watchFile。目前用 debounce 解决
- */
-function watchFile(filename, callback) {
-    // listener 接收两个参数 eventType filename
-    // eventType 是 'rename' 或 'change'， filename 是触发事件的文件的名称。
-    // 在大多数平台上，每当文件名在目录中出现或消失时，就会触发 'rename' 事件。
-    const debouncedListener = debounce(callback);
-    fs.watch(
-        filename, {
-            encoding: 'utf8', // 指定用于传给监听器的文件名的字符编码
-            recursive: true, // 指示应该监视所有子目录，还是仅监视当前目录，仅在 macOS 和 Windows 上有效
-            persistent: true, // 指示如果文件已正被监视，进程是否应继续运行
-        },
-        debouncedListener,
-    );
 }

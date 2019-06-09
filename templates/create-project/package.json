@@ -1,15 +1,11 @@
 {
     "name": "flammae-app",
     "version": "1.0.0",
-    "description": "",
-    "author": "",
-    "license": "ISC",
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "dev": "flammae run dev",
         "start": "flammae run dev",
         "build": "flammae run build"
-    },
-    "devDependencies": {}
+    }
 }
