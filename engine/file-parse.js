@@ -1,7 +1,13 @@
 const { readFiles } = require('../shared/utils');
+const createFsMap = require('../packages/fs-map');
+const paths = require('../shared/paths');
 
 const jsxParse = require('../packages/flammae-utils/jsx-parse');
 const markdownParse = require('../packages/flammae-utils/markdown-parse');
+
+const {
+    appRoot,
+} = paths;
 
 /**
  * 读取`appRoot/src`文件夹下的内容，
@@ -21,6 +27,27 @@ const markdownParse = require('../packages/flammae-utils/markdown-parse');
  * ```
  * @param {array} filePaths
  */
+const fsMap = createFsMap(appRoot, (node) => {
+    if (node.isDirectory) {
+        let arr = [];
+        node.children.forEach((child) => {
+            const result = child.hook();
+            if (child.isDirectory) {
+                arr = arr.concat(result);
+            } else if (result !== false) {
+                arr.push(child.hook());
+            }
+        });
+        return arr;
+    }
+
+    if (/\.md$/.test(node.name)) {
+        return node.absPath;
+    }
+
+    return false;
+});
+
 module.exports = async function parseFiles(filePaths) {
     const siteData = {
         pages: [],

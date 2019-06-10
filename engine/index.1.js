@@ -4,64 +4,40 @@
 
 const fs = require('fs-extra');
 const parseFiles = require('./file-parse');
-const paths = require('../shared/paths');
-const utils = require('../shared/utils');
+const {
+    appRoot,
+    appCacheTemp,
+    resolveAppSrc,
+} = require('../shared/paths');
+const {
+    getFilePaths,
+} = require('../shared/utils');
 const runWebpack = require('../webpack/index');
 const writeFlammeModuleFileSync = require('./write-flammae');
 const writeTempAppFileSync = require('./write-temp-app');
 const writeTempIndexFileSync = require('./write-temp-index');
 const writeTempSiteDataFileSync = require('./write-temp-site-data');
 const watchFile = require('./watch-file');
-const createFsMap = require('../packages/fs-map');
 
 const pattern = function pattern(filePath) {
     return filePath.match(/.*\.(jsx|md)$/);
 };
 
-const {
-    getFilePaths,
-} = utils;
-const {
-    appRoot,
-    appDocs,
-    appCacheTemp,
-    resolveApp,
-} = paths;
 
 // 第一步
 //
-// 确保appRoot/docs 目录存在
+// 确保appRoot/src 目录存在
 // 确保appRoot/node_modules/.cache/flammae存在
 console.log();
 console.log('初始化...');
 fs.emptyDirSync(appCacheTemp);
-fs.ensureDirSync(appDocs);
+// fs.ensureDirSync(appRoot);
 
 
 // 第二步
-const fsMap = createFsMap(appRoot, (node) => {
-    if (node.isDirectory) {
-        let arr = [];
-        node.children.forEach((child) => {
-            const result = child.hook();
-            if (child.isDirectory) {
-                arr = arr.concat(result);
-            } else if (result !== false) {
-                arr.push(child.hook());
-            }
-        });
-        return arr;
-    }
-
-    if (/\.md$/.test(node.name)) {
-        return node.absPath;
-    }
-
-    return false;
-});
-
-const docDir = resolveApp('docs');
-const filePaths = [...getFilePaths(docDir, pattern)];
+const docDir = resolveAppSrc('docs');
+const pageDir = resolveAppSrc('pages');
+const filePaths = [...getFilePaths(docDir, pattern), ...getFilePaths(pageDir, pattern)];
 
 parseFiles(filePaths).then((siteData) => {
     // 写文件

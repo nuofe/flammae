@@ -25,19 +25,15 @@ function resolveAppCache(src) {
 }
 
 module.exports = {
-    // 函数
-    resolveApp,
-    resolveAppSrc: resolveApp.bind(null, 'src'),
-    resolveAppCache,
-    resolveFlammae,
 
     // flammae创建的app的地址
     appRoot,
-    appCacheRoot,
-    appSrc: resolveApp('src'),
+    appTheme: resolveApp('.theme'),
+    appDocs: resolveApp('src'),
     appBuild: resolveApp('build'),
 
     // flammae创建的app的缓存地址
+    appCacheRoot,
     appCacheTemp: resolveAppCache('temp'),
     appIndexJs: resolveAppCache('temp/index.js'),
 
