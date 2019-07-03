@@ -1,74 +1,6 @@
 {
     "name": "flammae",
     "version": "1.0.8",
-    "author": "L.S <fitz-i@foxmail.com>",
-    "maintainers": [
-        "LI SHUANG <fitz-i@foxmail.com>",
-        "L.S <fitz-i@foxmail.com>",
-        "LiZ2z <fitz-i@foxmail.com>"
-    ],
-    "description": "基于React的静态网页创建工具(markdown)",
-    "private": false,
-    "license": "MIT",
-    "bin": {
-        "flammae": "bin/index.js"
-    },
-    "dependencies": {
-        "@babel/core": "7.2.2",
-        "@babel/plugin-transform-runtime": "7.3.4",
-        "@babel/preset-env": "7.3.1",
-        "@babel/preset-react": "^7.0.0",
-        "@babel/runtime": "7.3.4",
-        "@svgr/webpack": "^4.2.0",
-        "babel-eslint": "10.0.1",
-        "babel-loader": "8.0.5",
-        "babel-plugin-named-asset-import": "0.3.1",
-        "babel-preset-react-app": "7.0.1",
-        "chalk": "2.4.2",
-        "commander": "^2.19.0",
-        "cross-spawn": "^6.0.5",
-        "css-loader": "2.1.0",
-        "eslint": "5.14.1",
-        "eslint-config-airbnb-base": "^13.1.0",
-        "eslint-config-react-app": "^4.0.1",
-        "eslint-loader": "2.1.2",
-        "eslint-plugin-flowtype": "^3.9.0",
-        "eslint-plugin-import": "2.16.0",
-        "eslint-plugin-jsx-a11y": "6.2.1",
-        "eslint-plugin-react": "7.12.4",
-        "eslint-plugin-react-hooks": "^1.6.0",
-        "file-loader": "3.0.1",
-        "fs-extra": "7.0.1",
-        "highlight.js": "^9.15.6",
-        "html-webpack-plugin": "3.2.0",
-        "inquirer": "^6.2.1",
-        "less": "^3.9.0",
-        "less-loader": "^4.1.0",
-        "marked": "^0.6.2",
-        "mini-css-extract-plugin": "0.5.0",
-        "optimize-css-assets-webpack-plugin": "5.0.1",
-        "postcss-loader": "3.0.0",
-        "postcss-preset-env": "6.5.0",
-        "postcss-safe-parser": "4.0.1",
-        "prop-types": "^15.7.2",
-        "react": "^16.8.3",
-        "react-dom": "^16.8.3",
-        "react-router-dom": "^4.3.1",
-        "style-loader": "0.23.1",
-        "terser-webpack-plugin": "1.2.3",
-        "url-loader": "1.1.2",
-        "webpack": "4.29.5",
-        "webpack-dev-server": "3.2.1"
-    },
-    "devDependencies": {},
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "lint": "npx eslint ** --fix"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/LiZ2z/flammae.git"
-    },
     "keywords": [
         "react",
         "markdown",
@@ -78,11 +10,37 @@
         "static",
         "flammae"
     ],
+    "description": "基于React的静态网页创建工具(markdown)",
+    "author": "L.S <fitz-i@foxmail.com>",
+    "license": "MIT",
+    "bin": {
+        "flammae": "bin/index.js"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "lint": "npx eslint ** --fix"
+    },
+    "homepage": "https://github.com/LiZ2z/flammae#readme",
     "bugs": {
         "url": "https://github.com/LiZ2z/flammae/issues"
     },
-    "homepage": "https://github.com/LiZ2z/flammae#readme",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/LiZ2z/flammae.git"
+    },
     "engines": {
         "node": ">10.0"
+    },
+    "dependencies": {
+        "chalk": "2.4.2",
+        "commander": "^2.19.0",
+        "cross-spawn": "^6.0.5",
+        "fs-extra": "^8.1.0",
+        "inquirer": "^6.4.1"
+    },
+    "devDependencies": {
+        "eslint": "5.14.1",
+        "eslint-config-airbnb-base": "^13.1.0",
+        "eslint-plugin-import": "2.16.0"
     }
 }

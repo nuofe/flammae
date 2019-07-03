@@ -1,13 +1,5 @@
 #!/usr/bin/env node
 
-/*
- * @Author: L.S
- * @Email: fitz-i@foxmail.com
- * @Description:
- * @Date: 2019-04-16 10:33:28
- * @LastEditTime: 2019-04-18 09:55:51
- */
-
 process.on('uncaughtException', (err) => {
     throw err;
 });
@@ -26,6 +18,7 @@ const chalk = require('chalk');
 const spawn = require('cross-spawn');
 const packageJSON = require('../package.json');
 const createProject = require('./create-project');
+const flammae = require('../src/index');
 
 if (!process.argv.slice(2).length) {
     printCliHelp();
@@ -54,25 +47,20 @@ program
 program
     .command('run <cmd>')
     .action((cmd) => {
-        let child = null;
         if (['dev', 'build'].includes(cmd)) {
-            const engineEntry = path.resolve(ownPath, 'engine/index.js');
-            child = spawn('node', [engineEntry, `-${cmd}`], {
-                cwd: path.resolve(process.cwd()),
-                stdio: 'inherit',
-            });
+            flammae.start();
         } else {
+            let child = null;
             child = spawn('npm', ['run', cmd], {
                 cwd: path.resolve(process.cwd()),
                 stdio: 'inherit',
             });
+            child.on('close', (code) => {
+                if (code !== 0) {
+                    console.log(`run ${cmd} failed`);
+                }
+            });
         }
-
-        child.on('close', (code) => {
-            if (code !== 0) {
-                console.log(`run ${cmd} failed`);
-            }
-        });
     });
 
 
