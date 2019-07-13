@@ -1,17 +1,22 @@
-/* eslint-disable */
-const dynamicEntry = require('@flammae/dynamic-entry');
-// const execWebpack = require('webpack-execter');
-const webpackConfigFactory = require('./webpack.config');
+/* eslint-disable no-underscore-dangle */
+const execWebpack = require('@flammae/webpack-execter');
+const dynamicEntry = require('./dynamic-entry');
+const webpackConfigFactory = require('./webpack-config');
 
-function startFlammae() {
-    dynamicEntry();
-    return;
-    const webpackConfig = webpackConfigFactory('development', {
+/**
+ * 启动flammae
+ * @param {'production'|'development'} mode webpack模式
+ */
+function startFlammae(mode) {
+    const __DEV__ = mode === 'development';
+    // 生成webpack配置
+    const webpackConfig = webpackConfigFactory({
+        mode,
         entry: dynamicEntry(),
     });
-    execWebpack.runServer(webpackConfig);
+    // 运行webpack
+    const exector = __DEV__ ? execWebpack.runServer : execWebpack.runBuild;
+    exector(webpackConfig);
 }
 
-module.exports = {
-    start: startFlammae,
-};
+module.exports = startFlammae;

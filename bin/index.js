@@ -3,11 +3,9 @@
 process.on('uncaughtException', (err) => {
     throw err;
 });
-
 process.on('unhandledRejection', (err) => {
     throw err;
 });
-
 process.on('exit', (code) => {
     console.log(`exit code: ${code}`);
 });
@@ -18,15 +16,30 @@ const chalk = require('chalk');
 const spawn = require('cross-spawn');
 const packageJSON = require('../package.json');
 const createProject = require('./create-project');
-const flammae = require('../src/index');
+const flammaeStart = require('../src/index');
+
+/**
+ * 打印帮助信息
+ * @param {string} command
+ */
+function printCliHelp(command) {
+    if (command) {
+        console.log(`无效的指令：${command}\n`);
+    }
+    console.log(`使用 ${chalk.cyan('flammae create 项目名')} 指令创建一个flammae项目。\n`);
+    console.log(`使用 ${chalk.cyan('flammae run <cmd>')} 执行指令。\n`);
+    console.log(`输入 ${chalk.cyan('flammae -h')} 查看更多\n`);
+    process.exit(1);
+}
 
 if (!process.argv.slice(2).length) {
     printCliHelp();
 }
 
+// cli根目录
 const ownPath = path.dirname(
     require.resolve(path.join(__dirname, '..', 'package.json')),
-); // cli根目录
+);
 
 // flammae create prooject-name
 program
@@ -44,11 +57,16 @@ program
 
 // flammae run ...
 // 启动引擎
+const cmdMap = {
+    dev: 'development',
+    build: 'production',
+};
+
 program
     .command('run <cmd>')
     .action((cmd) => {
         if (['dev', 'build'].includes(cmd)) {
-            flammae.start();
+            flammaeStart(cmdMap[cmd]);
         } else {
             let child = null;
             child = spawn('npm', ['run', cmd], {
@@ -63,15 +81,6 @@ program
         }
     });
 
-
 program.on('command:*', printCliHelp);
 
 program.parse(process.argv);
-
-function printCliHelp(command) {
-    command && console.log(`无效的指令：${command}\n`);
-    console.log(`使用 ${chalk.cyan('flammae create 项目名')} 指令创建一个flammae项目。\n`);
-    console.log(`使用 ${chalk.cyan('flammae run <cmd>')} 执行指令。\n`);
-    console.log(`输入 ${chalk.cyan('flammae -h')} 查看更多\n`);
-    process.exit(1);
-}
