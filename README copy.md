@@ -20,23 +20,79 @@ flammae run dev
 
 项目目录一般为：
 ```
-|-.theme
 |-docs
-|-flammae.config.js
+|-flame.config.js
+```
+src目录下又包括（_这些文件夹将被`flammae`解析，其他命名文件夹不会被解析_）：
+```
+|-templates     用于存放 .jsx 文件
+|-docs          用于存放 .md  文件
+|-pages         用于存放 .jsx 文件
+|-styles        用于存放 .css 文件
 ```
 
-#### `docs`
-`docs`目录下的每个文件都会作为一个单独的页面进行处理，且都可以在文件的头部做信息的声明。
+
+#### 1. `templates`
+`templates`用于存放模板文件，目前可选的有`index.js`和`content.js`。
+
+`index.js`将会作为网站的首页，可通过`#/index`访问到。
+
+`content.js`将被用作每个`.md`文件的渲染模板。
+例如：
+```jsx
+import React, { Component } from 'react';
+import {
+   siteData
+} from 'flammae';
+
+class Content extends Component {
+    render() {
+        return (
+            <div>
+                {/* 其他的一些代码 */}
+                {this.props.renderMarkdown()}
+                {/* 其他的一些代码 */}
+            </div>
+        );
+    }
+}
+
+export default Content;
+```
+
+#### 2. `pages`和`docs`
+其中`pages`和`docs`目录下的每个文件都会作为一个单独的页面进行处理，且都需要在文件的头部做信息的声明。
 
 对于`.md`文件，需要在头部使用类似`yaml`语言的方式书写信息：
 ``` frontmatter
 ---
+path: '/router'
 title: 'My first flammae page'
 ---
 ```
+这样，我们就可以在上面说到的`templates/content.js`中通过`this.props.data`来访问这些信息。
+
+对于`.jsx`文件，需要在头部使用行级注释（`//`）的方式书写信息：
+```jsx
+// path: '/router'
+// title: 'My first flammae page'
+```
+同样，这些信息可以在`this.props.data`中访问到。
+
+>注意： path是必须的，path声明的值将作为访问这个页面的路由地址，如果没有path，该文件将不被显示。
+
+>在flammae的项目中你可以通过`import {siteData} from 'flammae'`的方式访问到全部文件的头部数据
 
 
-## **.md** 文件编写规范
+
+#### 3. `styles`
+`styles`下只能用来存放样式文件（`.css`、`.less`或`.scss`），否则会导致错误。这些文件将会作为全局的样式文件，放在项目的入口处。对于`.less`或`.scss`之类的文件，需要在`root/flammae.config.js`中添加配置，并安装相应的`loader`。
+
+## `flammae.config.js`的配置
+
+_待续。。。_
+
+## markdown 编写规范
 
 ### 为markdown引入样式
 
@@ -125,10 +181,13 @@ class Demo extends Component {
 }
 ```
 
-## `flammae.config.js`的配置
 
-_待续。。。_
 
 
 ## TODO: 
 - 完善可配置项
+- 自动化监听文件部分功能代码优化
+
+## CONCEPT
+- 将flammae改成webpack的插件
+- 提取loader跟模板，要求每个loader自带一套模板

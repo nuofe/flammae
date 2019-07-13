@@ -5,8 +5,6 @@
         "react",
         "markdown",
         "site",
-        "静态网站生成工具",
-        "static site",
         "static",
         "flammae"
     ],
@@ -20,13 +18,13 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "lint": "npx eslint ** --fix"
     },
-    "homepage": "https://github.com/LiZ2z/flammae#readme",
+    "homepage": "https://github.com/flammae/flammae#readme",
     "bugs": {
-        "url": "https://github.com/LiZ2z/flammae/issues"
+        "url": "https://github.com/flammae/flammae/issues"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/LiZ2z/flammae.git"
+        "url": "git+https://github.com/flammae/flammae.git"
     },
     "engines": {
         "node": ">10.0"
