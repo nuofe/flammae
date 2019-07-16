@@ -12,6 +12,8 @@ const {
     ownNodeModules,
     appTemplateHtml,
     flammae,
+    appCache,
+    templates,
 } = paths;
 
 module.exports = function flammaeWebpackConfigFactory({
@@ -78,7 +80,11 @@ module.exports = function flammaeWebpackConfigFactory({
                         },
                         {
                             test: /\.(js|jsx)$/,
-                            exclude: /node_module/,
+                            include: [
+                                appTheme,
+                                appCache,
+                                templates,
+                            ],
                             loader: require.resolve('babel-loader'),
                             options: {
                                 presets: [require.resolve('babel-preset-react-app')],

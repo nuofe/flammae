@@ -9,6 +9,8 @@ const resolveApp = src => path.resolve(appRoot, src);
 const resolveAppCache = src => path.resolve(appRoot, '.flammae', src);
 const resolveAppTheme = src => path.resolve(appRoot, '.theme', src);
 
+const templates = resolveOwn('./templates');
+
 module.exports = {
     // TODO: 找一个好的地方来存放缓存信息
 
@@ -17,6 +19,7 @@ module.exports = {
     appDocs: resolveApp('docs'),
     appTheme: resolveAppTheme('.'),
     appCache: resolveAppCache('.'),
+    templates,
     appNodeModules: resolveApp('node_modules'),
     ownNodeModules: resolveOwn('node_modules'),
 
