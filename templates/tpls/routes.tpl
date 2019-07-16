@@ -5,6 +5,7 @@ import {
     Route,
     Redirect,
 } from 'react-router-dom';
+import { isValidElementType } from 'react-is';
 <%
 [...$data.siteData.pages,...$data.siteData.docs].map((item,i)=>{
     const __DOC__ = item.type === 'doc';
@@ -28,7 +29,7 @@ export default function Routes() {
     const moduleName = __DOC__ ? `Markdown${i}` : `Page${i}`;
     return __DOC__ 
         ?`                <Route exact path={'${item.routePath}'} render={getMarkdownRender(${moduleName})}  />`
-        : `                <Route exact path={'${item.routePath}'} component={${moduleName}}/>`;
+        : `                { isValidElementType(${moduleName}) && <Route exact path={'${item.routePath}'} component={${moduleName}}/> }`;
 })
 %>
                 <Redirect from='*' to='/index' />
