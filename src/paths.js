@@ -1,6 +1,19 @@
 const fs = require('fs');
 const path = require('path');
 
+/**
+ * 1. 全局安装
+ * flammae有自己的node_modules
+ *
+ * 2. 局部安装时
+ * flammae没有自己的node_modules
+ * flammae跟项目共用一个node_modules
+ *
+ *
+ *
+ */
+
+
 const appRoot = fs.realpathSync(process.cwd());
 const ownRoot = path.resolve(__dirname, '../');
 
@@ -20,9 +33,11 @@ module.exports = {
     appTheme: resolveAppTheme('.'),
     appCache: resolveAppCache('.'),
     templates,
-    appNodeModules: resolveApp('node_modules'),
-    ownNodeModules: resolveOwn('node_modules'),
-
+    nodeModules: [
+        'node_modules',
+        resolveApp('node_modules'),
+        resolveOwn('node_modules'),
+    ],
     // 运行时临时文件
     flammae: resolveAppCache('flammae.js'),
     appTempIndex: resolveAppCache('index.js'),

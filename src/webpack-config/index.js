@@ -8,8 +8,7 @@ const paths = require('../paths');
 
 const {
     appTheme,
-    appNodeModules,
-    ownNodeModules,
+    nodeModules,
     appTemplateHtml,
     flammae,
     appCache,
@@ -31,7 +30,7 @@ module.exports = function flammaeWebpackConfigFactory({
         mode,
         style,
         publicPath,
-        paths: [appNodeModules, ownNodeModules],
+        paths: nodeModules,
     });
 
     const config = {
@@ -39,10 +38,7 @@ module.exports = function flammaeWebpackConfigFactory({
             alias: {
                 flammae: sepToModuleSystem(flammae),
             },
-            modules: [
-                appNodeModules,
-                ownNodeModules,
-            ],
+            modules: nodeModules,
         },
         module: {
             rules: [
