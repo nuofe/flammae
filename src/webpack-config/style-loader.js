@@ -218,37 +218,35 @@ module.exports = function getStyleLoader({
     style,
     ...options
 }) {
-    return {
-        oneOf: [
-            /**
-             * 普通css文件
-             */
-            {
-                test: cssRegExp,
-                exclude: cssModuleRegExp,
-                use: getBaseStyleLoaders(null, options),
-            },
-            {
-                test: cssModuleRegExp,
-                use: getBaseStyleLoaders({
-                    modules: true,
-                    localIdentName,
-                }, options),
-            },
-
-            /**
-             * less文件
-             */
-            ...genExtensionStyleLoaders({
-                regExp: lessRegExp,
-                moduleRegExp: lessModuleRegExp,
-                loaderName: 'less-loader',
+    return [
+        /**
+         * 普通css文件
+         */
+        {
+            test: cssRegExp,
+            exclude: cssModuleRegExp,
+            use: getBaseStyleLoaders(null, options),
+        },
+        {
+            test: cssModuleRegExp,
+            use: getBaseStyleLoaders({
+                modules: true,
+                localIdentName,
             }, options),
+        },
 
-            /**
-             * 用户自定义预处理语言
-             */
-            ...(style ? genCustomStyleLoaders(style, options) : []),
-        ].filter(Boolean),
-    };
+        /**
+         * less文件
+         */
+        ...genExtensionStyleLoaders({
+            regExp: lessRegExp,
+            moduleRegExp: lessModuleRegExp,
+            loaderName: 'less-loader',
+        }, options),
+
+        /**
+         * 用户自定义预处理语言
+         */
+        ...(style ? genCustomStyleLoaders(style, options) : []),
+    ].filter(Boolean);
 };

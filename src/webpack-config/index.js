@@ -94,7 +94,7 @@ module.exports = function flammaeWebpackConfigFactory({
                                 compact: __PROD__,
                             },
                         },
-                        stylesLoader,
+                        ...stylesLoader,
                         {
                             loader: require.resolve('file-loader'),
                             exclude: [/\.(js|jsx)$/, /\.html$/, /\.json$/],
