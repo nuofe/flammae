@@ -46,10 +46,10 @@ function Empty() {
         <div className='jumbotron'>
             <div className='dir-emtpy-tip'>
                 <p>
-                    flame 依赖<span className='_yellow'>src/docs</span>文件夹下的markdown文件（以<span className='_yellow'>.md</span>做后缀的文件），
+                    flammae 依赖<span className='_yellow'>/docs</span>文件夹下的markdown文件（以<span className='_yellow'>.md</span>做后缀的文件），
                 </p>
                 <p>
-                    或<span className='_yellow'>src/pages</span>文件夹下的jsx文件（以 <span className='_yellow'>.jsx</span>做后缀的文件）以生成页面，
+                    或<span className='_yellow'>.theme/pages</span>文件夹下的jsx文件（以 <span className='_yellow'>.jsx</span>做后缀的文件）以生成页面，
                 </p>
                 <p>
                     请确保至少有一个上述文件夹存在，且文件夹内部存在有效文件。
