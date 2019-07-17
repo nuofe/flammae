@@ -4,6 +4,7 @@ const {
     pathExistSync,
     sepToModuleSystem,
 } = require('@flammae/helpers');
+const FileRender = require('./render');
 const getRoutesData = require('./models/get-routes-data');
 const getStylesData = require('./models/get-styles-data');
 const parseRouteFiles = require('./controllers/handle-routes');
@@ -42,56 +43,93 @@ function getModulesPathMap() {
     };
 }
 
-module.exports = function createDynamicEntry() {
-    // 初始化
-    fs.ensureDirSync(appCache);
-    renderFlammae();
-    renderSiteDataJson();
-    renderGlobalStyles();
-    renderRoutes();
-    renderMarkdownRenderer(getModulesPathMap());
+class DynamicEntryRender extends FileRender {
+    constructor() {
+        // 初始化
+        fs.ensureDirSync(appCache);
 
+        this.state = {
+            siteData: {
+                docs: [],
+                pages: [],
+            },
+            modulePathMap: getModulesPathMap(),
+            stylePaths: [],
+        };
 
-    /**
-     * 读取 .theme\\styles\\*.{css,less,scss}
-     * 将样式数据写入 index.js
-     */
-    const getGlobalStylesDataAndWriteFiles = () => {
-        const stylePaths = getStylesData(fsMap);
-        renderGlobalStyles(stylePaths);
-    };
+        fs.ensureDirSync(appCache);
+        this.fsMap = createFsMap(appRoot);
 
-    /**
-     * 读取并分析文件夹获取路由数据，写入routes.jsx文件
-     */
-    const getRoutesDataAndWriteInFiles = (callback = () => null) => {
-        getRoutesData(fsMap).then((files) => {
+        return appTempIndex;
+    }
+
+    didRender() {
+        this.getStylesData();
+        this.getRoutesData();
+        this.fsMap.watch({
+            /**
+             * TODO: 不准确
+             * 路由
+             */
+            '{/docs,/docs/**,/docs/**/*.md,/.theme/pages,/.theme/pages/**,/.theme/pages/*/**/index.jsx}': () => {
+                this.getRoutesData();
+            },
+
+            /**
+             * 主题样式
+             */
+            '/.theme/styles,.theme/styles/*.{less,css,scss,sass}': () => {
+                this.getStylesData();
+            },
+
+            '/.theme': () => {
+                this.getStylesData();
+                this.getRoutesData();
+            },
+
+            /**
+             * 主题模板
+             */
+            '/.theme/templates/{content.jsx,demo.jsx,content/index.js,demo.jsx}': () => {
+                this.setState({
+                    stylePaths: getModulesPathMap(),
+                });
+            },
+        });
+    }
+    getRoutesData() {
+        getRoutesData(this.fsMap).then((files) => {
             const siteData = parseRouteFiles(files);
-            renderRoutes(siteData);
-            renderSiteDataJson(siteData);
-            callback();
+            this.setState({
+                siteData,
+            });
         }).catch((err) => {
             console.log(err);
             process.exit(1);
         });
-    };
-
-    getGlobalStylesDataAndWriteFiles();
-
-    getRoutesDataAndWriteInFiles(() => {
-
-    });
-
-    return appTempIndex;
-};
-
-
-class Render() {
-    constructor() {
-
+    }
+    getStylesData() {
+        const stylePaths = getStylesData(fsMap);
+        this.setState({
+            stylePaths,
+        });
     }
 
     render() {
+        const {
+            siteData,
+            stylePaths,
+            modulePathMap,
+        } = this.state;
 
+        renderFlammae();
+        renderRoutes(siteData);
+        renderSiteDataJson(siteData);
+        renderMarkdownRenderer(modulePathMap);
+        renderGlobalStyles(stylePaths);
     }
 }
+
+module.exports = function createDynamicEntry() {
+    return new DynamicEntryRender();
+};
