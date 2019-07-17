@@ -18,12 +18,12 @@ const {
     deomTplComponent,
 } = require('../paths');
 const {
-    writeFlammeModuleFileSync,
-    writeGlobalStylesSync,
-    writeTempRoutesFileSync,
-    writeTempSiteDataFileSync,
-    renderMarkdownRenderHoc,
-} = require('./render-files');
+    renderFlammae,
+    renderGlobalStyles,
+    renderMarkdownRenderer,
+    renderRoutes,
+    renderSiteDataJson,
+} = require('./file-renders');
 
 // TODO: 优化
 function getModulesPathMap() {
@@ -45,14 +45,12 @@ function getModulesPathMap() {
 module.exports = function createDynamicEntry() {
     // 初始化
     fs.ensureDirSync(appCache);
-    writeFlammeModuleFileSync();
-    writeTempSiteDataFileSync();
-    writeGlobalStylesSync();
-    writeTempRoutesFileSync();
-    renderMarkdownRenderHoc(getModulesPathMap());
+    renderFlammae();
+    renderSiteDataJson();
+    renderGlobalStyles();
+    renderRoutes();
+    renderMarkdownRenderer(getModulesPathMap());
 
-    // 从根目录开始创建一个fsMap
-    const fsMap = createFsMap(appRoot);
 
     /**
      * 读取 .theme\\styles\\*.{css,less,scss}
@@ -60,7 +58,7 @@ module.exports = function createDynamicEntry() {
      */
     const getGlobalStylesDataAndWriteFiles = () => {
         const stylePaths = getStylesData(fsMap);
-        writeGlobalStylesSync(stylePaths);
+        renderGlobalStyles(stylePaths);
     };
 
     /**
@@ -69,8 +67,8 @@ module.exports = function createDynamicEntry() {
     const getRoutesDataAndWriteInFiles = (callback = () => null) => {
         getRoutesData(fsMap).then((files) => {
             const siteData = parseRouteFiles(files);
-            writeTempRoutesFileSync(siteData);
-            writeTempSiteDataFileSync(siteData);
+            renderRoutes(siteData);
+            renderSiteDataJson(siteData);
             callback();
         }).catch((err) => {
             console.log(err);
@@ -81,36 +79,19 @@ module.exports = function createDynamicEntry() {
     getGlobalStylesDataAndWriteFiles();
 
     getRoutesDataAndWriteInFiles(() => {
-        fsMap.watch({
 
-            /**
-             * TODO: 不准确
-             * 路由
-             */
-            '{/docs,/docs/**,/docs/**/*.md,/.theme/pages,/.theme/pages/**,/.theme/pages/*/**/index.jsx}': () => {
-                getRoutesDataAndWriteInFiles();
-            },
-
-            /**
-             * 主题样式
-             */
-            '/.theme/styles,.theme/styles/*.{less,css,scss,sass}': () => {
-                getGlobalStylesDataAndWriteFiles();
-            },
-
-            '/.theme': () => {
-                getGlobalStylesDataAndWriteFiles();
-                getRoutesDataAndWriteInFiles();
-            },
-
-            /**
-             * 主题模板
-             */
-            '/.theme/templates/{content.jsx,demo.jsx,content/index.js,demo.jsx}': () => {
-                renderMarkdownRenderHoc(getModulesPathMap());
-            },
-        });
     });
 
     return appTempIndex;
 };
+
+
+class Render() {
+    constructor() {
+
+    }
+
+    render() {
+
+    }
+}
