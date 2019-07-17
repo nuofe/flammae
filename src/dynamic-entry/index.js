@@ -109,7 +109,7 @@ class DynamicEntryRender extends FileRender {
         });
     }
     getStylesData() {
-        const stylePaths = getStylesData(fsMap);
+        const stylePaths = getStylesData(this.fsMap);
         this.setState({
             stylePaths,
         });
