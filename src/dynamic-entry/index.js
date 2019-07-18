@@ -1,22 +1,17 @@
 const fs = require('fs-extra');
 const createFsMap = require('@flammae/fs-map');
+const memoizeOne = require('memoize-one');
+const FileRender = require('./file-render');
 const {
-    pathExistSync,
-    sepToModuleSystem,
-} = require('@flammae/helpers');
-const FileRender = require('./render');
-const getRoutesData = require('./models/get-routes-data');
-const getStylesData = require('./models/get-styles-data');
-const parseRouteFiles = require('./controllers/handle-routes');
+    getStylesData,
+    getRoutesData,
+    getModulesPathMap,
+} = require('./models');
+const parseRouteFiles = require('./parse-route-files');
 const {
     appRoot,
     appCache,
     appTempIndex,
-    contentTplComponent,
-    customContentComponent,
-    markdownTplComponent,
-    customDemoComponent,
-    deomTplComponent,
 } = require('../paths');
 const {
     renderFlammae,
@@ -26,26 +21,16 @@ const {
     renderSiteDataJson,
 } = require('./file-renders');
 
-// TODO: 优化
-function getModulesPathMap() {
-    return {
-        // content 组件路径
-        content: pathExistSync(customContentComponent)
-            ? sepToModuleSystem(customContentComponent)
-            : sepToModuleSystem(contentTplComponent),
-
-        demo: pathExistSync(customDemoComponent)
-            ? sepToModuleSystem(customDemoComponent)
-            : sepToModuleSystem(deomTplComponent),
-
-        // markdown 组件
-        markdown: sepToModuleSystem(markdownTplComponent),
-    };
-}
+const memoRenderFlammae = memoizeOne(renderFlammae);
+const memoRenderGlobalStyles = memoizeOne(renderGlobalStyles);
+const memoRenderMarkdownRenderer = memoizeOne(renderMarkdownRenderer);
+const memoRenderRoutes = memoizeOne(renderRoutes);
+const memoRenderSiteDataJson = memoizeOne(renderSiteDataJson);
 
 class DynamicEntryRender extends FileRender {
     constructor() {
-        // 初始化
+        super();
+
         fs.ensureDirSync(appCache);
 
         this.state = {
@@ -57,10 +42,7 @@ class DynamicEntryRender extends FileRender {
             stylePaths: [],
         };
 
-        fs.ensureDirSync(appCache);
         this.fsMap = createFsMap(appRoot);
-
-        return appTempIndex;
     }
 
     didRender() {
@@ -97,6 +79,7 @@ class DynamicEntryRender extends FileRender {
             },
         });
     }
+
     getRoutesData() {
         getRoutesData(this.fsMap).then((files) => {
             const siteData = parseRouteFiles(files);
@@ -108,6 +91,7 @@ class DynamicEntryRender extends FileRender {
             process.exit(1);
         });
     }
+
     getStylesData() {
         const stylePaths = getStylesData(this.fsMap);
         this.setState({
@@ -122,14 +106,15 @@ class DynamicEntryRender extends FileRender {
             modulePathMap,
         } = this.state;
 
-        renderFlammae();
-        renderRoutes(siteData);
-        renderSiteDataJson(siteData);
-        renderMarkdownRenderer(modulePathMap);
-        renderGlobalStyles(stylePaths);
+        memoRenderFlammae();
+        memoRenderRoutes(siteData);
+        memoRenderSiteDataJson(siteData);
+        memoRenderMarkdownRenderer(modulePathMap);
+        memoRenderGlobalStyles(stylePaths);
     }
 }
 
 module.exports = function createDynamicEntry() {
-    return new DynamicEntryRender();
+    FileRender.render(DynamicEntryRender);
+    return appTempIndex;
 };

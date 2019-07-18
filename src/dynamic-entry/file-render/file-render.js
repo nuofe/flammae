@@ -1,13 +1,12 @@
-
+/* eslint-disable class-methods-use-this */
 class FileRender {
-    constructor() {
-        this.render();
-        this.didRender();
-    }
     setState(newState) {
         this.state = Object.assign({}, this.state, newState);
         this.render();
     }
+
+    didRender() { }
+
     render() { }
 }
 

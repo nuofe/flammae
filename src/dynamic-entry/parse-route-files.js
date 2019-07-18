@@ -5,7 +5,7 @@ const {
 } = require('@flammae/helpers');
 const {
     routeIndexTplPage,
-} = require('../../paths');
+} = require('../paths');
 
 
 function getDefaultIndexPage() {

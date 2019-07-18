@@ -966,11 +966,12 @@
   resolved "https://registry.yarnpkg.com/@flammae/tpl-engine/-/tpl-engine-0.0.3.tgz#8f70d3404033d696dbebf6310ffbaee5474bc5c0"
   integrity sha512-8O2DpKuCa7XqzMt+zkbRTj49yWRbOUDT0mgNR6RG3qkzsvo6ondevlcg5/H9Lsg4la9N0Fn02XV6Bx0o+c1eTg==
 
-"@flammae/webpack-execter@0.0.4":
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/@flammae/webpack-execter/-/webpack-execter-0.0.4.tgz#245715de737b245c1d59cba75adbe55229ea04eb"
-  integrity sha512-YSD8L/ocFkCIHZK3K+NTdIlWuZWTU5R8OwX21nEgcJIUdLM7u9vnmjS0UYqEpjLVsS9IaIAFffHr+vL2hpVJIQ==
+"@flammae/webpack-execter@0.0.9":
+  version "0.0.9"
+  resolved "https://registry.npm.taobao.org/@flammae/webpack-execter/download/@flammae/webpack-execter-0.0.9.tgz#78ed9455058570fafb305af3fa978de76999342b"
+  integrity sha1-eO2UVQWFcPr7MFrz+peN52mZNCs=
   dependencies:
+    address "^1.1.0"
     chalk "^2.4.2"
     commander "^2.20.0"
     fs-extra "^8.0.1"
@@ -1194,6 +1195,11 @@ acorn@^6.2.0:
   version "6.2.0"
   resolved "https://registry.npm.taobao.org/acorn/download/acorn-6.2.0.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Facorn%2Fdownload%2Facorn-6.2.0.tgz#67f0da2fc339d6cfb5d6fb244fd449f33cd8bbe3"
   integrity sha1-Z/DaL8M51s+11vskT9RJ8zzYu+M=
+
+address@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.npm.taobao.org/address/download/address-1.1.0.tgz#ef8e047847fcd2c5b6f50c16965f924fd99fe709"
+  integrity sha1-744EeEf80sW29QwWll+ST9mf5wk=
 
 ajv-errors@^1.0.0:
   version "1.0.1"
