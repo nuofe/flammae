@@ -11,7 +11,7 @@ try {
         {
             cwd: process.cwd(),
             stdio: 'inherit',
-        },
+        }
     );
 } catch (err) {
     process.exit(err);
@@ -39,7 +39,7 @@ if (version.indexOf('beta') !== -1) {
         cwd: process.cwd(),
         stdio: 'inherit',
     });
-    child.on('error', (err) => {
+    child.on('error', err => {
         process.exit(err);
     });
 }
@@ -64,6 +64,6 @@ const child = spawn('npm', cmds, {
     cwd: process.cwd(),
     stdio: 'inherit',
 });
-child.on('error', (err) => {
+child.on('error', err => {
     process.exit(err);
 });
