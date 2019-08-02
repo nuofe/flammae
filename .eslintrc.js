@@ -1,7 +1,5 @@
 module.exports = {
-    extends: [
-        'eslint-config-airbnb-base'
-    ],
+    extends: ['eslint-config-airbnb-base', 'plugin:prettier/recommended'],
     settings: {
         react: {
             version: '>16.8',
@@ -9,10 +7,5 @@ module.exports = {
     },
     rules: {
         'no-console': 'off',
-        'indent': ['warn', 4],
-        'max-len': ['warn', 150, {
-            ignoreTrailingComments: true,
-            comments: 200
-        }],
-    }
+    },
 };

@@ -3,20 +3,23 @@
  */
 function readFilePromise(node, type) {
     return new Promise((resolve, reject) => {
-        node.readFile({
-            encoding: 'utf8',
-        }, (err, data) => {
-            if (err) {
-                reject(err);
-                return;
+        node.readFile(
+            {
+                encoding: 'utf8',
+            },
+            (err, data) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+                resolve({
+                    data,
+                    type,
+                    sortPath: node.sortPath,
+                    filePath: node.absPath,
+                });
             }
-            resolve({
-                data,
-                type,
-                sortPath: node.sortPath,
-                filePath: node.absPath,
-            });
-        });
+        );
     });
 }
 
@@ -32,7 +35,7 @@ function getRoutesData(fsMap) {
         /**
          * 匹配项目目录docs目录下所有的.md文档
          */
-        '/docs/**/*.md': (node) => {
+        '/docs/**/*.md': node => {
             if (node.isDirectory) {
                 return;
             }
@@ -51,7 +54,7 @@ function getRoutesData(fsMap) {
          * /.theme/pages/home/a.jsx
          *
          */
-        '/.theme/pages/*/**/index.jsx': (node) => {
+        '/.theme/pages/*/**/index.jsx': node => {
             if (node.isDirectory) {
                 return;
             }
@@ -60,7 +63,10 @@ function getRoutesData(fsMap) {
         /**
          * TODO: 将反glob 作为 traverse的配置项传入
          */
-        '!{/docs,/docs/**,/docs/**/*.md,/.theme,/.theme/pages,/.theme/pages/**,/.theme/pages/**/index.jsx}': (node, opts) => {
+        '!{/docs,/docs/**,/docs/**/*.md,/.theme,/.theme/pages,/.theme/pages/**,/.theme/pages/**/index.jsx}': (
+            node,
+            opts
+        ) => {
             opts.continue();
         },
     });

@@ -3,17 +3,14 @@ const {
     frontCommentsParse,
     sepToModuleSystem,
 } = require('@flammae/helpers');
-const {
-    routeIndexTplPage,
-} = require('../paths');
-
+const { appHomePageTemplateFile } = require('../paths');
 
 function getDefaultIndexPage() {
     return {
         routePath: '/index',
         type: 'page',
         title: 'index',
-        filePath: sepToModuleSystem(routeIndexTplPage),
+        filePath: sepToModuleSystem(appHomePageTemplateFile),
     };
 }
 
@@ -67,12 +64,7 @@ function parseRouteFiles(files) {
     let hasIndexPage = false;
 
     if (files.length) {
-        files.forEach(({
-            data,
-            type,
-            filePath,
-            sortPath,
-        }) => {
+        files.forEach(({ data, type, filePath, sortPath }) => {
             const isDoc = type === 'doc';
 
             const routePath = getRouterPath(sortPath);
@@ -84,7 +76,7 @@ function parseRouteFiles(files) {
             const result = Object.assign(
                 { routePath, title: filename },
                 frontmatter,
-                { filePath: sepToModuleSystem(filePath), type },
+                { filePath: sepToModuleSystem(filePath), type }
             );
 
             if (routePath === '/index') {

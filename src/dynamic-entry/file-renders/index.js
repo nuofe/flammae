@@ -1,13 +1,13 @@
+const renderAppEntry = require('./render-app-entry');
 const renderFlammae = require('./render-flammae');
-const renderGlobalStyles = require('./render-global-styles');
-const renderMarkdownRenderer = require('./render-markdown-renderer');
-const renderRoutes = require('./render-routes');
+const renderRouteData = require('./render-route-data');
 const renderSiteDataJson = require('./render-site-data');
+const renderMarkdownRenderer = require('./render-markdown-renderer');
 
 module.exports = {
+    renderAppEntry,
+    renderRouteData,
     renderFlammae,
-    renderGlobalStyles,
-    renderMarkdownRenderer,
-    renderRoutes,
     renderSiteDataJson,
+    renderMarkdownRenderer,
 };

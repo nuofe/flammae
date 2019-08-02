@@ -8,14 +8,14 @@ import './code-highlight.css';
 
 /**
  * 用于渲染markdown文件内容的组件
- * 
+ *
  * 1. 将markdown文件文本通过marked编译后作为html直接渲染
  * 2. 通过ReactDOM.render渲染demo
- * 3. 
+ * 3.
  */
 class Markdown extends Component {
     // state = {
-        // opacity: 1,
+    // opacity: 1,
     // }
 
     componentDidMount() {
@@ -27,10 +27,8 @@ class Markdown extends Component {
         }
     }
     componentWillUnmount() {
-        this.props.md.demos.forEach(({
-            container,
-        })=>{
-            if(!container) {
+        this.props.md.demos.forEach(({ container }) => {
+            if (!container) {
                 return;
             }
             ReactDOM.unmountComponentAtNode(document.getElementById(container));
@@ -41,43 +39,35 @@ class Markdown extends Component {
      * 渲染demo
      */
     renderDemo() {
-        const {
-            DemoComponent:Demo,
-            md,
-        } = this.props;
-        md.demos.forEach(({
-            style,
-            exec,
-            codeSource,
-            note,
-            lang,
-            container,
-        }) => {
-            /**
-             * markdown style
-             */
-            if (style) {
-                exec();
-                return;
+        const { DemoComponent: Demo, md } = this.props;
+        md.demos.forEach(
+            ({ style, exec, codeSource, note, lang, container }) => {
+                /**
+                 * markdown style
+                 */
+                if (style) {
+                    exec();
+                    return;
+                }
+
+                if (!container) {
+                    return;
+                }
+
+                const codeHtml = codeSource && marked(codeSource);
+                const noteHtml = note && marked(note);
+
+                ReactDOM.render(
+                    <Demo
+                        codeHtml={codeHtml}
+                        noteHtml={noteHtml}
+                        exec={exec()}
+                        lang={lang}
+                    />,
+                    document.getElementById(container)
+                );
             }
-
-            if(!container) {
-                return;
-            }
-
-            const codeHtml = codeSource && marked(codeSource);
-            const noteHtml = note && marked(note);
-
-            ReactDOM.render(
-                <Demo 
-                    codeHtml={codeHtml} 
-                    noteHtml= {noteHtml} 
-                    exec={exec()} 
-                    lang={lang}
-                />, 
-                document.getElementById(container),
-            );
-        });
+        );
     }
 
     /**
@@ -89,8 +79,10 @@ class Markdown extends Component {
     render() {
         return (
             <div
-                className='markdown'
-                dangerouslySetInnerHTML={{ __html: this.renderMarkdown(this.props.md.text)}}
+                className="markdown"
+                dangerouslySetInnerHTML={{
+                    __html: this.renderMarkdown(this.props.md.text),
+                }}
             />
         );
     }

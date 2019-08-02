@@ -1,12 +1,9 @@
-const {
-    pathExistSync,
-    sepToModuleSystem,
-} = require('@flammae/helpers');
+const { pathExistSync, sepToModuleSystem } = require('@flammae/helpers');
 const {
     contentTplComponent,
-    customContentComponent,
+    contentCompOverrideFile,
     markdownTplComponent,
-    customDemoComponent,
+    demoCompOverrideFile,
     deomTplComponent,
 } = require('../../paths');
 
@@ -14,12 +11,12 @@ const {
 function getModulesPathMap() {
     return {
         // content 组件路径
-        content: pathExistSync(customContentComponent)
-            ? sepToModuleSystem(customContentComponent)
+        content: pathExistSync(contentCompOverrideFile)
+            ? sepToModuleSystem(contentCompOverrideFile)
             : sepToModuleSystem(contentTplComponent),
 
-        demo: pathExistSync(customDemoComponent)
-            ? sepToModuleSystem(customDemoComponent)
+        demo: pathExistSync(demoCompOverrideFile)
+            ? sepToModuleSystem(demoCompOverrideFile)
             : sepToModuleSystem(deomTplComponent),
 
         // markdown 组件

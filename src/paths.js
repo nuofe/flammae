@@ -13,7 +13,6 @@ const path = require('path');
  *
  */
 
-
 const appRoot = fs.realpathSync(process.cwd());
 const ownRoot = path.resolve(__dirname, '../');
 
@@ -40,28 +39,29 @@ module.exports = {
     ],
     // 运行时临时文件
     flammae: resolveAppCache('flammae.js'),
-    appTempIndex: resolveAppCache('index.js'),
-    appTempRoute: resolveAppCache('routes.jsx'),
-    appTempMarkdownRender: resolveAppCache('markdown-render.jsx'),
-    appTempDataFile: resolveAppCache('site-data.json'),
+    appEntryTempFile: resolveAppCache('index.js'),
+    appDataTempFile: resolveAppCache('site-data.json'),
+    appRouteDataTempFile: resolveAppCache('route-data.js'),
+    mdRenderTempFile: resolveAppCache('markdown-render.jsx'),
 
-    // 自定义的页面及组件
+    // 用户自定义的文件及目录
     globalStylesDir: resolveAppTheme('styles'),
-    customAppRouteIndex: resolveAppTheme('pages/index.jsx'),
-    customContentComponent: resolveAppTheme('templates/content'),
-    customDemoComponent: resolveAppTheme('templates/demo'),
+    demoCompOverrideFile: resolveAppTheme('override/demo'),
+    contentCompOverrideFile: resolveAppTheme('override/content'),
+    appCompOverrideFile: resolveAppTheme('override/app'),
 
     // 模板组件及页面
-    routeIndexTplPage: resolveOwn('templates/.theme/pages/home'),
-    contentTplComponent: resolveOwn('templates/.theme/templates/content'),
-    markdownTplComponent: resolveOwn('templates/.theme/templates/markdown'),
-    deomTplComponent: resolveOwn('templates/.theme/templates/demo'),
+    appAppCompTemplateFile: resolveOwn('templates/components/app.jsx'),
+    appHomePageTemplateFile: resolveOwn('templates/components/home'),
+    deomTplComponent: resolveOwn('templates/components/demo'),
+    contentTplComponent: resolveOwn('templates/components/content'),
+    markdownTplComponent: resolveOwn('templates/components/markdown'),
 
-    // 模板
-    routesFileTpl: resolveOwn('templates/tpls/routes.tpl'),
+    //  .tpl 渲染模板
     appIndexFileTpl: resolveOwn('templates/tpls/index.tpl'),
+    routeDataFileTpl: resolveOwn('templates/tpls/route-data.tpl'),
     markdownRenderTpl: resolveOwn('templates/tpls/markdown-render.tpl'),
 
-    // 静态资源
+    // html
     appTemplateHtml: resolveOwn('templates/public/index.html'),
 };

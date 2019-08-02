@@ -8,7 +8,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const safePostCssParser = require('postcss-safe-parser');
 
-
 module.exports = function webpackConfigFactory(
     {
         mode,
@@ -19,7 +18,7 @@ module.exports = function webpackConfigFactory(
         dropConsole = true,
         dropDebugger = true,
     } = {},
-    webpackConfig,
+    webpackConfig
 ) {
     const __DEV__ = mode === 'development';
     const __PROD__ = mode === 'production';
@@ -58,7 +57,9 @@ module.exports = function webpackConfigFactory(
             // 因为这些代码大多不会经常变动，所以单独分离出来便于浏览器进行缓存
             // 2. 一些 被异步加载包 依赖的 公用代码 会被分离出来 以节省流量
             // -- 选项就是规定 如何命名这些 分割代码文件的名称
-            chunkFilename: `static/js/[name]${__DEV__ ? '' : '.[chunkhash:8]'}.chunk.js`,
+            chunkFilename: `static/js/[name]${
+                __DEV__ ? '' : '.[chunkhash:8]'
+            }.chunk.js`,
             // 对于按需加载或加载外部资源（如图片、文件等）来说，
             // output.publicPath 是很重要的选项。如果指定了一个错误的值，则在加载这些资源时
             // 会收到 404 错误。
@@ -198,19 +199,26 @@ module.exports = function webpackConfigFactory(
              * 定义在js中全局可用的静态变量。process.env.NODE_ENV是通用的规则。
              * 尽量少的定义全局静态变量，过多的全局静态变量会导致代码可读性变差
              */
-            new webpack.DefinePlugin(Object.assign({}, {
-                'process.env.NODE_ENV': JSON.stringify(mode),
-                __DEV__: JSON.stringify(__DEV__),
-                __PROD__: JSON.stringify(__PROD__),
-            })),
+            new webpack.DefinePlugin(
+                Object.assign(
+                    {},
+                    {
+                        'process.env.NODE_ENV': JSON.stringify(mode),
+                        __DEV__: JSON.stringify(__DEV__),
+                        __PROD__: JSON.stringify(__PROD__),
+                    }
+                )
+            ),
 
             /**
              * 分离 CSS
              */
-            __PROD__ && new MiniCssExtractPlugin({
-                filename: 'static/css/[name].[contenthash:8].css',
-                chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
-            }),
+            __PROD__ &&
+                new MiniCssExtractPlugin({
+                    filename: 'static/css/[name].[contenthash:8].css',
+                    chunkFilename:
+                        'static/css/[name].[contenthash:8].chunk.css',
+                }),
 
             /**
              * HMR

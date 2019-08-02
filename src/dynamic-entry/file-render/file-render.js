@@ -5,9 +5,9 @@ class FileRender {
         this.render();
     }
 
-    didRender() { }
+    didRender() {}
 
-    render() { }
+    render() {}
 }
 
 module.exports = FileRender;

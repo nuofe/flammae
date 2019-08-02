@@ -1,35 +1,31 @@
 const fs = require('fs-extra');
-const createFsMap = require('@flammae/fs-map');
 const memoizeOne = require('memoize-one');
+const createFsMap = require('@flammae/fs-map');
 const FileRender = require('./file-render');
+const parseRouteFiles = require('./parse-route-files');
+const { appRoot, appCache } = require('../paths');
 const {
     getStylesData,
     getRoutesData,
     getModulesPathMap,
+    getAppFilePath,
 } = require('./models');
-const parseRouteFiles = require('./parse-route-files');
-const {
-    appRoot,
-    appCache,
-} = require('../paths');
 const {
     renderFlammae,
-    renderGlobalStyles,
+    renderAppEntry,
     renderMarkdownRenderer,
-    renderRoutes,
+    renderRouteData,
     renderSiteDataJson,
 } = require('./file-renders');
 
-const memoRenderFlammae = memoizeOne(renderFlammae);
-const memoRenderGlobalStyles = memoizeOne(renderGlobalStyles);
+const memoRenderAppEntry = memoizeOne(renderAppEntry);
 const memoRenderMarkdownRenderer = memoizeOne(renderMarkdownRenderer);
-const memoRenderRoutes = memoizeOne(renderRoutes);
+const memoRenderRoutes = memoizeOne(renderRouteData);
 const memoRenderSiteDataJson = memoizeOne(renderSiteDataJson);
 
 module.exports = class DynamicEntryRender extends FileRender {
     constructor() {
         super();
-        fs.ensureDirSync(appCache);
         this.state = {
             siteData: {
                 docs: [],
@@ -37,9 +33,13 @@ module.exports = class DynamicEntryRender extends FileRender {
             },
             modulePathMap: getModulesPathMap(),
             stylePaths: [],
+            appFilePath: getAppFilePath(),
         };
 
         this.fsMap = createFsMap(appRoot);
+
+        fs.ensureDirSync(appCache);
+        renderFlammae();
     }
 
     didRender() {
@@ -69,24 +69,31 @@ module.exports = class DynamicEntryRender extends FileRender {
             /**
              * 主题模板
              */
-            '/.theme/templates/{content.jsx,demo.jsx,content/index.js,demo.jsx}': () => {
+            '/.theme/override/{content.jsx,demo.jsx,content/index.js,demo.jsx}': () => {
                 this.setState({
                     stylePaths: getModulesPathMap(),
+                });
+            },
+            './.theme/override/{app.jsx,app/index.jsx}': () => {
+                this.setState({
+                    appFilePath: getAppFilePath(),
                 });
             },
         });
     }
 
     getRoutesData() {
-        getRoutesData(this.fsMap).then((files) => {
-            const siteData = parseRouteFiles(files);
-            this.setState({
-                siteData,
+        getRoutesData(this.fsMap)
+            .then(files => {
+                const siteData = parseRouteFiles(files);
+                this.setState({
+                    siteData,
+                });
+            })
+            .catch(err => {
+                console.log(err);
+                process.exit(1);
             });
-        }).catch((err) => {
-            console.log(err);
-            process.exit(1);
-        });
     }
 
     getStylesData() {
@@ -97,16 +104,11 @@ module.exports = class DynamicEntryRender extends FileRender {
     }
 
     render() {
-        const {
-            siteData,
-            stylePaths,
-            modulePathMap,
-        } = this.state;
+        const { siteData, stylePaths, modulePathMap, appFilePath } = this.state;
 
-        memoRenderFlammae();
         memoRenderRoutes(siteData);
         memoRenderSiteDataJson(siteData);
         memoRenderMarkdownRenderer(modulePathMap);
-        memoRenderGlobalStyles(stylePaths);
+        memoRenderAppEntry(stylePaths, appFilePath);
     }
 };
