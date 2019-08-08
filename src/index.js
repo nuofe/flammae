@@ -1,3 +1,5 @@
+'use strict';
+
 /* eslint-disable no-underscore-dangle */
 const execWebpack = require('@flammae/webpack-execter');
 const dynamicEntry = require('./dynamic-entry');

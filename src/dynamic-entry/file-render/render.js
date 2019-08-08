@@ -1,4 +1,6 @@
-import FileRender from './file-render';
+'use strict';
+
+const FileRender = require('./file-render');
 
 function render(Render) {
     if (

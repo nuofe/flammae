@@ -1,3 +1,5 @@
+'use strict';
+
 /* eslint-disable import/no-extraneous-dependencies */
 const semver = require('semver');
 const spawn = require('cross-spawn');
@@ -13,15 +15,15 @@ try {
             stdio: 'inherit',
         }
     );
-} catch (err) {
-    process.exit(err);
+} catch (error) {
+    throw Error(error);
 }
 
 let rawArgv;
 try {
     rawArgv = JSON.parse(process.env.npm_config_argv);
 } catch (error) {
-    process.exit(error);
+    throw Error(error);
 }
 const cookedArgv = rawArgv.cooked;
 const index = cookedArgv.indexOf('--otp');
@@ -40,7 +42,7 @@ if (version.indexOf('beta') !== -1) {
         stdio: 'inherit',
     });
     child.on('error', err => {
-        process.exit(err);
+        throw Error(err);
     });
 }
 
@@ -51,8 +53,8 @@ try {
         cwd: process.cwd(),
         stdio: 'inherit',
     });
-} catch (err) {
-    process.exit(err);
+} catch (error) {
+    throw Error(error);
 }
 
 const cmds = ['publish', '--tag=beta'];
@@ -64,6 +66,6 @@ const child = spawn('npm', cmds, {
     cwd: process.cwd(),
     stdio: 'inherit',
 });
-child.on('error', err => {
-    process.exit(err);
+child.on('error', error => {
+    throw Error(error);
 });

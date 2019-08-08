@@ -1,4 +1,10 @@
 module.exports = {
+    parserOptions: {
+        sourceType: 'script',
+        ecmaFeatures: {
+            jsx: true,
+        },
+    },
     extends: ['eslint-config-airbnb-base', 'plugin:prettier/recommended'],
     settings: {
         react: {

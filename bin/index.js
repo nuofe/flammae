@@ -1,12 +1,16 @@
 #!/usr/bin/env node
 
-process.on('uncaughtException', (err) => {
+'use strict';
+
+process.on('uncaughtException', err => {
+    console.log('uncaughtException: ');
     throw err;
 });
-process.on('unhandledRejection', (err) => {
+process.on('unhandledRejection', err => {
+    console.log('unhandledRejection: ');
     throw err;
 });
-process.on('exit', (code) => {
+process.on('exit', code => {
     console.log(`exit code: ${code}`);
 });
 
@@ -26,45 +30,53 @@ function printCliHelp(command) {
     if (command) {
         console.log(`无效的指令：${command}\n`);
     }
-    console.log(`使用 ${chalk.cyan('flammae create 项目名')} 指令创建一个flammae项目。\n`);
+    console.log(
+        `使用 ${chalk.cyan(
+            'flammae create 项目名'
+        )} 指令创建一个flammae项目。\n`
+    );
     console.log(`使用 ${chalk.cyan('flammae run <cmd>')} 执行指令。\n`);
     console.log(`输入 ${chalk.cyan('flammae -h')} 查看更多\n`);
-    process.exit(1);
+    process.exit(0);
 }
 
 if (!process.argv.slice(2).length) {
     printCliHelp();
-}
+} else {
+    // cli根目录
+    const ownPath = path.dirname(
+        require.resolve(path.join(__dirname, '..', 'package.json'))
+    );
+    // flammae create prooject-name
+    program
+        .version(packageJSON.version)
+        .command('create [project-directory]')
+        .description('创建一个flammae项目')
+        .action(projectName => {
+            console.log();
+            if (!projectName) {
+                console.log(
+                    chalk.yellow('给你的项目起个名字，例如：'),
+                    chalk.cyan('flammae create 我的项目名 \n')
+                );
+                process.exit(0);
+                return;
+            }
+            createProject(
+                ownPath,
+                projectName,
+                path.resolve(process.cwd(), projectName)
+            );
+        });
 
-// cli根目录
-const ownPath = path.dirname(
-    require.resolve(path.join(__dirname, '..', 'package.json')),
-);
+    // flammae run ...
+    // 启动引擎
+    const cmdMap = {
+        dev: 'development',
+        build: 'production',
+    };
 
-// flammae create prooject-name
-program
-    .version(packageJSON.version)
-    .command('create [project-directory]')
-    .description('创建一个flammae项目')
-    .action((projectName) => {
-        console.log();
-        if (!projectName) {
-            console.log(chalk.yellow('给你的项目起个名字，例如：'), chalk.cyan('flammae create 我的项目名 \n'));
-            process.exit(1);
-        }
-        createProject(ownPath, projectName, path.resolve(process.cwd(), projectName));
-    });
-
-// flammae run ...
-// 启动引擎
-const cmdMap = {
-    dev: 'development',
-    build: 'production',
-};
-
-program
-    .command('run <cmd>')
-    .action((cmd) => {
+    program.command('run <cmd>').action(cmd => {
         if (['dev', 'build'].includes(cmd)) {
             flammaeStart(cmdMap[cmd]);
         } else {
@@ -73,7 +85,7 @@ program
                 cwd: path.resolve(process.cwd()),
                 stdio: 'inherit',
             });
-            child.on('close', (code) => {
+            child.on('close', code => {
                 if (code !== 0) {
                     console.log(`run ${cmd} failed`);
                 }
@@ -81,6 +93,7 @@ program
         }
     });
 
-program.on('command:*', printCliHelp);
+    program.on('command:*', printCliHelp);
 
-program.parse(process.argv);
+    program.parse(process.argv);
+}

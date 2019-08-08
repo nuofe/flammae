@@ -1,3 +1,5 @@
+'use strict';
+
 /* eslint-disable camelcase */
 const { appEntryTempFile } = require('../paths');
 const FileRender = require('./file-render');

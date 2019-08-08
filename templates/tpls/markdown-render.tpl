@@ -11,5 +11,13 @@ import React from 'react';
 
 
 export default function getMarkdownRender(markdownData) {
-    return <Content renderMarkdown={()=><Markdown demoComponent={Demo} md={markdownData}/>} data={markdownData}/>;
+    return props => (
+        <Content
+            {...props}
+            renderMarkdown={() => (
+                <Markdown demoComponent={Demo} md={markdownData} />
+            )}
+            data={markdownData}
+        />
+    );
 }

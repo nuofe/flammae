@@ -1,3 +1,5 @@
+'use strict';
+
 const render = require('./render');
 const FileRender = require('./file-render');
 

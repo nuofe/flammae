@@ -1,3 +1,5 @@
+'use strict';
+
 /* eslint-disable no-underscore-dangle */
 const webpack = require('webpack');
 const merge = require('webpack-merge');

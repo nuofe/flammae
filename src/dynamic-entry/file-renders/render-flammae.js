@@ -1,3 +1,5 @@
+'use strict';
+
 const fs = require('fs-extra');
 const { flammae } = require('../../paths');
 
@@ -7,8 +9,8 @@ const { flammae } = require('../../paths');
  */
 module.exports = function renderFlammae() {
     const code = `
-export {default as routes} from './route-data';
-export {default as siteData} from './site-data.json';
+export { default as siteData } from './site-data.json';
+export { default as routes } from './route-data';
 `;
     fs.writeFileSync(flammae, code);
 };

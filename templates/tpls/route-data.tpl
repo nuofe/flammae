@@ -8,6 +8,8 @@ $data.siteData.docs.length
 ? `import getMarkdownRender from './markdown-render';`
 : null
 %>
+
+<%
 $data.siteData.pages.length 
 ? `import { isValidElementType } from 'react-is';`
 : null
@@ -21,9 +23,9 @@ export default [
     const moduleName = `Component${i}`;
     return `{
         component: ${__DOC__ ? `getMarkdownRender(${moduleName})`: `isValidElementType(${moduleName}) ? ${moduleName} : null `},
-        path: ${item.routePath},
-        type: ${item.type},
-        title: ${item.title},
+        path: '${item.routePath}',
+        type: '${item.type}',
+        title: '${item.title}',
 },`;
 })
 %>

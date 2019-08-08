@@ -1,3 +1,5 @@
+'use strict';
+
 const fs = require('fs-extra');
 const memoizeOne = require('memoize-one');
 const createFsMap = require('@flammae/fs-map');
@@ -91,6 +93,9 @@ module.exports = class DynamicEntryRender extends FileRender {
                 });
             })
             .catch(err => {
+                console.log(
+                    'There is something wrong in flammae at: getRoutesData （file: dynamic-entry-render）:'
+                );
                 console.log(err);
                 process.exit(1);
             });

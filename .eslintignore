@@ -22,3 +22,8 @@ LICENSE
 # 测试及示例文件
 **/__test__/**
 **/__example__/**
+
+/templates/**/*
+
+
+TODO

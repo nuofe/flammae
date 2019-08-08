@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * 以promise的形式读取文件
  */

@@ -1,3 +1,5 @@
+'use strict';
+
 const fs = require('fs-extra');
 const render = require('@flammae/tpl-engine');
 const { appEntryTempFile, appIndexFileTpl } = require('../../paths');

@@ -1,3 +1,5 @@
+'use strict';
+
 const { pathExistSync, sepToModuleSystem } = require('@flammae/helpers');
 const { appCompOverrideFile, appAppCompTemplateFile } = require('../../paths');
 

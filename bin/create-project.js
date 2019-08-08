@@ -1,3 +1,5 @@
+'use strict';
+
 const fs = require('fs-extra');
 const path = require('path');
 const chalk = require('chalk');
@@ -17,7 +19,7 @@ module.exports = function createProject(ownPath, projectName, projectRoot) {
         try {
             fs.copySync(
                 path.resolve(ownPath, 'templates/create-project'),
-                projectRoot,
+                projectRoot
             );
         } catch (err) {
             throw err;
@@ -34,11 +36,11 @@ module.exports = function createProject(ownPath, projectName, projectRoot) {
     // 判断文件夹是否已被占用
     //  -- 占用。退出程序
     //  -- 没占用。创建文件夹
-    process.once('exit', (code) => {
+    process.once('exit', code => {
         if (code === -1) {
             return;
         }
-        fs.remove(projectRoot, (err) => {
+        fs.remove(projectRoot, err => {
             if (err) {
                 throw err;
             }
@@ -46,26 +48,30 @@ module.exports = function createProject(ownPath, projectName, projectRoot) {
     });
 
     if (fs.existsSync(projectRoot)) {
-        inquirer.prompt({
-            type: 'confirm',
-            message: `项目名称 ${projectName} 已被占用，是否覆盖？（将删除文件夹内所有内容）`,
-            default: false,
-            name: 'overwrite',
-        }).then((res) => {
-            console.log();
-            if (!res.overwrite) {
-                process.exit(-1);
-            }
-            console.log('正在清理文件夹...');
-            fs.emptyDirSync(projectRoot);
-            console.log();
-            console.log('清理完成');
-            run();
-        }).catch((err) => {
-            console.log();
-            console.log(chalk.red('文件夹清理失败，请手动清理'));
-            throw err;
-        });
+        inquirer
+            .prompt({
+                type: 'confirm',
+                message: `项目名称 ${projectName} 已被占用，是否覆盖？（将删除文件夹内所有内容）`,
+                default: false,
+                name: 'overwrite',
+            })
+            .then(res => {
+                console.log();
+                if (!res.overwrite) {
+                    process.exit(0);
+                    return;
+                }
+                console.log('正在清理文件夹...');
+                fs.emptyDirSync(projectRoot);
+                console.log();
+                console.log('清理完成');
+                run();
+            })
+            .catch(err => {
+                console.log();
+                console.log(chalk.red('文件夹清理失败，请手动清理'));
+                throw err;
+            });
     } else {
         fs.ensureDirSync(projectRoot);
         run();

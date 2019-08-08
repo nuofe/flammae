@@ -3,7 +3,6 @@ import hljs from 'highlight.js/lib/highlight';
 import javascript from 'highlight.js/lib/languages/javascript';
 import xml from 'highlight.js/lib/languages/xml';
 
-
 hljs.registerLanguage('javascript', javascript);
 hljs.registerLanguage('xml', xml);
 
@@ -12,7 +11,6 @@ marked.setOptions({
     highlight: code => hljs.highlightAuto(code).value,
     gfm: true, // 启用github标准
 });
-
 
 const renderer = new marked.Renderer();
 
@@ -27,8 +25,7 @@ const renderer = new marked.Renderer();
 //           </h${level}>`;
 // };
 
-
-export default function (str) {
+export default function(str) {
     return marked(str, {
         renderer,
     });
