@@ -19,7 +19,7 @@ const {
 module.exports = function flammaeWebpackConfigFactory({
     mode,
     entry,
-    publicPath = '/',
+    publicPath = './',
     style,
     outputPath = appDefaultDist,
 }) {
