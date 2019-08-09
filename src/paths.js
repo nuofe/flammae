@@ -33,6 +33,7 @@ module.exports = {
     appDocs: resolveApp('docs'),
     appTheme: resolveAppTheme('.'),
     appCache: resolveAppCache('.'),
+    appDefaultDist: resolveApp('flammaeDist'),
     templates,
     nodeModules: [
         'node_modules',

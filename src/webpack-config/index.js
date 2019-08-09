@@ -13,6 +13,7 @@ const {
     flammae,
     appCache,
     templates,
+    appDefaultDist,
 } = paths;
 
 module.exports = function flammaeWebpackConfigFactory({
@@ -20,7 +21,7 @@ module.exports = function flammaeWebpackConfigFactory({
     entry,
     publicPath = '/',
     style,
-    outputPath = '/dist',
+    outputPath = appDefaultDist,
 }) {
     // const __DEV__ = mode === 'development';
     const __PROD__ = mode === 'production';
