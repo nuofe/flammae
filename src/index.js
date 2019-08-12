@@ -15,6 +15,7 @@ function startFlammae({ mode, cwd = process.cwd(), ...options }) {
     const webpackConfig = webpackConfigFactory({
         mode,
         cwd,
+        entry: dynamicEntry(cwd),
         ...options,
     });
 
