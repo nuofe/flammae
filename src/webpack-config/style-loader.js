@@ -50,11 +50,9 @@ function getBaseStyleLoaders(
         // isVueApp && require.resolve('vue-style-loader'),
         __PROD__ && {
             loader: MiniCssExtractPlugin.loader,
-            options: {
-                publicPath: shouldUseRelativeAssetPaths
-                    ? { publicPath: '../../' }
-                    : {},
-            },
+            options: shouldUseRelativeAssetPaths
+                ? { publicPath: '../../' }
+                : {},
         },
         {
             loader: require.resolve('css-loader'),
