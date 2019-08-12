@@ -7,7 +7,6 @@ const webpackConfigFactory = require('./webpack-config');
 
 /**
  * 启动flammae
- * @param {'production'|'development'} mode webpack模式
  */
 function startFlammae({ mode, cwd = process.cwd(), ...options }) {
     const __DEV__ = mode === 'development';
