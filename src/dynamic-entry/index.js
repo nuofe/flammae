@@ -5,7 +5,7 @@ const { appEntryTempFile } = require('../paths');
 const FileRender = require('./file-render');
 const DynamicEntryRender = require('./dynamic-entry-render');
 
-module.exports = function createDynamicEntry() {
+module.exports = function createDynamicEntry(cwd) {
     FileRender.render(DynamicEntryRender);
     return appEntryTempFile;
 };
