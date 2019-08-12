@@ -28,6 +28,7 @@ function getBaseStyleLoaders(
 ) {
     const __DEV__ = mode === 'development';
     const __PROD__ = mode === 'production';
+    const shouldUseRelativeAssetPaths = publicPath === './';
 
     // css-loader的配置
     const mergedCssLoaderOptions = {
@@ -50,7 +51,9 @@ function getBaseStyleLoaders(
         __PROD__ && {
             loader: MiniCssExtractPlugin.loader,
             options: {
-                publicPath,
+                publicPath: shouldUseRelativeAssetPaths
+                    ? { publicPath: '../../' }
+                    : {},
             },
         },
         {
