@@ -9,12 +9,13 @@ const webpackConfigFactory = require('./webpack-config');
  * 启动flammae
  * @param {'production'|'development'} mode webpack模式
  */
-function startFlammae(mode) {
+function startFlammae({ mode, ...options }) {
     const __DEV__ = mode === 'development';
     // 生成webpack配置
     const webpackConfig = webpackConfigFactory({
         mode,
         entry: dynamicEntry(),
+        ...options,
     });
     // 运行webpack
     const exector = __DEV__ ? execWebpack.runServer : execWebpack.runBuild;

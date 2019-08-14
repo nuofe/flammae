@@ -21,7 +21,7 @@ module.exports = function flammaeWebpackConfigFactory({
     entry,
     publicPath = './',
     style,
-    outputPath = appDefaultDist,
+    ...options
 }) {
     // const __DEV__ = mode === 'development';
     const __PROD__ = mode === 'production';
@@ -116,8 +116,9 @@ module.exports = function flammaeWebpackConfigFactory({
             mode,
             entry,
             publicPath,
-            outputPath, // 项目打包路径
+            outputPath: appDefaultDist,
             htmlTemplate: appTemplateHtml, // html模板文件路径
+            ...options,
         },
         config
     );

@@ -21,6 +21,7 @@ const spawn = require('cross-spawn');
 const packageJSON = require('../package.json');
 const createProject = require('./create-project');
 const flammaeStart = require('../src/index');
+const readConfig = require('./read-config.js');
 
 /**
  * 打印帮助信息
@@ -78,19 +79,21 @@ if (!process.argv.slice(2).length) {
 
     program.command('run <cmd>').action(cmd => {
         if (['dev', 'build'].includes(cmd)) {
-            flammaeStart(cmdMap[cmd]);
-        } else {
-            let child = null;
-            child = spawn('npm', ['run', cmd], {
-                cwd: path.resolve(process.cwd()),
-                stdio: 'inherit',
-            });
-            child.on('close', code => {
-                if (code !== 0) {
-                    console.log(`run ${cmd} failed`);
-                }
-            });
+            const config = readConfig();
+            flammaeStart(Object.assign({}, config, { mode: cmdMap[cmd] }));
+            return;
         }
+
+        let child = null;
+        child = spawn('npm', ['run', cmd], {
+            cwd: path.resolve(process.cwd()),
+            stdio: 'inherit',
+        });
+        child.on('close', code => {
+            if (code !== 0) {
+                console.log(`run ${cmd} failed`);
+            }
+        });
     });
 
     program.on('command:*', printCliHelp);

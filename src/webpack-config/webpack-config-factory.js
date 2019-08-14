@@ -17,6 +17,7 @@ module.exports = function webpackConfigFactory(
         outputPath, // 项目打包路径
         publicPath, // publicPath
         htmlTemplate, // html模板文件路径
+        htmlTitle,
         dropConsole = true,
         dropDebugger = true,
     } = {},
@@ -192,7 +193,7 @@ module.exports = function webpackConfigFactory(
             new HtmlWebpackPlugin({
                 template: htmlTemplate,
                 templateParameters: Object.assign({
-                    title: 'Title',
+                    title: htmlTitle,
                     PUBLIC_URL: publicPath,
                 }),
             }),
