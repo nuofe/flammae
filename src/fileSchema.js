@@ -9,7 +9,7 @@ module.exports = {
 
     // 临时文件
     flammaeJsFile: '.flammae/flammae.js',
-    appIndexJsFile: '.flammae/flammae.js',
+    appIndexJsFile: '.flammae/index.js',
     siteDataJsonFile: '.flammae/site-data.json',
     routeDataJsFile: '.flammae/route-data.js',
     markdownRenderJsxFile: '.flammae/markdown-render.jsx',
