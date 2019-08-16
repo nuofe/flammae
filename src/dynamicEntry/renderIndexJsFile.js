@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const render = require('@flammae/tpl-engine');
+const { glob } = require('@flammae/fs-helpers');
 const { sepToModuleSystem } = require('@flammae/helpers');
 const { appIndexFileTpl } = require('../paths');
 
@@ -10,14 +11,18 @@ module.exports = function getRenderIndexJsFile(output) {
     const indexTplText = fs.readFileSync(appIndexFileTpl, {
         encoding: 'utf8',
     });
-    return function renderIndexJsFile({ src }) {
-        src('/.theme/styles/*.{css,scss,less,sass,styl}').then(nodes => {
-            const stylePaths = nodes.map(node =>
-                sepToModuleSystem(node.absPath)
-            );
-            // 生成index.js文本
-            const text = render(indexTplText, { stylePaths });
-            fs.writeFileSync(output, text);
-        });
+    return function renderIndexJsFile(done) {
+        const stylePaths = [];
+        glob(
+            '/.theme/styles/*.{css,scss,less,sass,styl}',
+            (sortPath, absPath) => {
+                stylePaths.push(sepToModuleSystem(absPath));
+            }
+        );
+
+        // 生成index.js文本
+        const text = render(indexTplText, { stylePaths });
+        fs.writeFileSync(output, text);
+        done();
     };
 };

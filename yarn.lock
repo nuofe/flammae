@@ -921,6 +921,14 @@
   resolved "https://registry.npm.taobao.org/@csstools/convert-colors/download/@csstools/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"
   integrity sha1-rUldxBsS511YjG24uYNPCPoTHrc=
 
+"@flammae/fs-helpers@^0.1.0-beta.1":
+  version "0.1.0-beta.1"
+  resolved "https://registry.npm.taobao.org/@flammae/fs-helpers/download/@flammae/fs-helpers-0.1.0-beta.1.tgz#69794ed09581f4780d43d8445538b3db0aed1c5f"
+  integrity sha1-aXlO0JWB9HgNQ9hEVTiz2wrtHF8=
+  dependencies:
+    "@flammae/fs-map" "^0.0.3"
+    minimatch "^3.0.4"
+
 "@flammae/fs-map@^0.0.3":
   version "0.0.3"
   resolved "https://registry.npm.taobao.org/@flammae/fs-map/download/@flammae/fs-map-0.0.3.tgz?cache=0&sync_timestamp=1565580600962&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40flammae%2Ffs-map%2Fdownload%2F%40flammae%2Ffs-map-0.0.3.tgz#73923f2ac80ba40c6491e93b134b7fac868db6b4"

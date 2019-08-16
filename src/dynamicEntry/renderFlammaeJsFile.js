@@ -3,15 +3,14 @@
 const fs = require('fs-extra');
 
 /**
- * 在项目的 **.flammae** 文件夹下生成**flammae.js**文件，
- * 这样在项目中可以通过 `import{ siteData } from 'flammae';` 来获取所有数据
+ * 生成**flammae.js**文件，在项目中可以通过 `import{ siteData } from 'flammae';` 来获取所有数据
  */
 module.exports = function returnRenderFlammae(output) {
-    return function renderFlammae() {
+    return function renderFlammae(done) {
         const code = `
 export { default as siteData } from './site-data.json';
 export { default as routes } from './route-data';`;
-
         fs.writeFileSync(output, code);
+        done();
     };
 };
