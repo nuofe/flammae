@@ -23,8 +23,13 @@ module.exports = function flammaeWebpackConfigFactory({
     style,
     ...options
 }) {
-    // const __DEV__ = mode === 'development';
+    const __DEV__ = mode === 'development';
     const __PROD__ = mode === 'production';
+
+    if (__DEV__) {
+        // eslint-disable-next-line no-param-reassign
+        publicPath = '/';
+    }
 
     const stylesLoader = getStyleLoader({
         mode,

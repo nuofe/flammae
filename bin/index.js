@@ -79,8 +79,10 @@ if (!process.argv.slice(2).length) {
 
     program.command('run <cmd>').action(cmd => {
         if (['dev', 'build'].includes(cmd)) {
+            const mode = cmdMap[cmd];
+            process.env.NODE_ENV = mode;
             const config = readConfig();
-            flammaeStart(Object.assign({}, config, { mode: cmdMap[cmd] }));
+            flammaeStart(Object.assign({}, config, { mode }));
             return;
         }
 
