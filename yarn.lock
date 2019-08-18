@@ -969,6 +969,11 @@
     "@babel/preset-env" "^7.5.4"
     "@babel/preset-react" "^7.0.0"
 
+"@flammae/task@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.npm.taobao.org/@flammae/task/download/@flammae/task-0.1.0.tgz#737d3f10093e6b2fe14bccefbea3343edff88812"
+  integrity sha1-c30/EAk+ay/hS8zvvqM0Pt/4iBI=
+
 "@flammae/tpl-engine@^0.0.3":
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/@flammae/tpl-engine/-/tpl-engine-0.0.3.tgz#8f70d3404033d696dbebf6310ffbaee5474bc5c0"

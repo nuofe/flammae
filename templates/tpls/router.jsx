@@ -2,7 +2,7 @@ import React from 'react';
 import { Switch, HashRouter, Route, Redirect } from 'react-router-dom';
 import { routes } from 'flammae';
 
-export default function App() {
+export default function Router() {
     return (
         <HashRouter>
             <Switch>

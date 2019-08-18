@@ -1,10 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-<%
-`import App from '${$data.appFilePath}';`
-%>
+import Router from './router.jsx';
 <%
 $data.stylePaths.map(path => `import '${path}';`)
 %>
 
-ReactDOM.render(<App/>, document.querySelector('#root'));
+ReactDOM.render(<Router/>, document.querySelector('#root'));
