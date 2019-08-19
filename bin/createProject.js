@@ -4,11 +4,8 @@ const fs = require('fs-extra');
 const path = require('path');
 const chalk = require('chalk');
 const inquirer = require('inquirer');
-// const spawn = require('cross-spawn');
 
-// const useYarn = !spawn.sync('yarn', ['-v']).error;
-
-module.exports = function createProject(ownPath, projectName, projectRoot) {
+module.exports = function createProject(projectName, projectRoot) {
     /**
      * 创建项目
      */
@@ -18,7 +15,7 @@ module.exports = function createProject(ownPath, projectName, projectRoot) {
         // 拷贝文件夹
         try {
             fs.copySync(
-                path.resolve(ownPath, 'templates/create-project'),
+                path.resolve(__dirname, 'createProjectTpl'),
                 projectRoot
             );
         } catch (err) {

@@ -19,9 +19,9 @@ const program = require('commander');
 const chalk = require('chalk');
 const spawn = require('cross-spawn');
 const packageJSON = require('../package.json');
-const createProject = require('./create-project');
-const flammaeStart = require('../src/index');
-const readConfig = require('./read-config.js');
+const createProject = require('./createProject');
+const flammaeStart = require('../lib/index');
+const readConfig = require('./readConfig.js');
 
 /**
  * 打印帮助信息
@@ -44,10 +44,6 @@ function printCliHelp(command) {
 if (!process.argv.slice(2).length) {
     printCliHelp();
 } else {
-    // cli根目录
-    const ownPath = path.dirname(
-        require.resolve(path.join(__dirname, '..', 'package.json'))
-    );
     // flammae create prooject-name
     program
         .version(packageJSON.version)
@@ -64,7 +60,6 @@ if (!process.argv.slice(2).length) {
                 return;
             }
             createProject(
-                ownPath,
                 projectName,
                 path.resolve(process.cwd(), projectName)
             );

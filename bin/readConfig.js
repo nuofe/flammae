@@ -1,15 +1,20 @@
+'use strict';
+
 const fs = require('fs-extra');
 const path = require('path');
 
-function readConfig() {
+function readConfig(cwd) {
     let config = null;
     const configFilePath = path.resolve(
-        fs.realpathSync(process.cwd()),
+        fs.realpathSync(cwd || process.cwd()),
         'flammae.config.js'
     );
     try {
+        /* eslint-disable-next-line global-require,import/no-dynamic-require */
         config = require(configFilePath);
-    } catch (err) {}
+    } catch (err) {
+        // 配置文件不存在
+    }
     return config;
 }
 

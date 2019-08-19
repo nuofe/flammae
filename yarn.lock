@@ -921,10 +921,10 @@
   resolved "https://registry.npm.taobao.org/@csstools/convert-colors/download/@csstools/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"
   integrity sha1-rUldxBsS511YjG24uYNPCPoTHrc=
 
-"@flammae/fs-helpers@^0.1.0-beta.1":
-  version "0.1.0-beta.1"
-  resolved "https://registry.npm.taobao.org/@flammae/fs-helpers/download/@flammae/fs-helpers-0.1.0-beta.1.tgz#69794ed09581f4780d43d8445538b3db0aed1c5f"
-  integrity sha1-aXlO0JWB9HgNQ9hEVTiz2wrtHF8=
+"@flammae/fs-enhance@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.npm.taobao.org/@flammae/fs-enhance/download/@flammae/fs-enhance-0.1.0.tgz?cache=0&sync_timestamp=1566193488953&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40flammae%2Ffs-enhance%2Fdownload%2F%40flammae%2Ffs-enhance-0.1.0.tgz#2bf07d93413e4bb20f5e1ed7d4c777f9a454a577"
+  integrity sha1-K/B9k0E+S7IPXh7X1Md3+aRUpXc=
   dependencies:
     "@flammae/fs-map" "^0.0.3"
     minimatch "^3.0.4"
@@ -969,10 +969,10 @@
     "@babel/preset-env" "^7.5.4"
     "@babel/preset-react" "^7.0.0"
 
-"@flammae/task@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.npm.taobao.org/@flammae/task/download/@flammae/task-0.1.0.tgz#737d3f10093e6b2fe14bccefbea3343edff88812"
-  integrity sha1-c30/EAk+ay/hS8zvvqM0Pt/4iBI=
+"@flammae/task@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.npm.taobao.org/@flammae/task/download/@flammae/task-0.2.1.tgz?cache=0&sync_timestamp=1566206245618&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40flammae%2Ftask%2Fdownload%2F%40flammae%2Ftask-0.2.1.tgz#e64327f2981f8f1e91489c06216907a965e8d29c"
+  integrity sha1-5kMn8pgfjx6RSJwGIWkHqWXo0pw=
 
 "@flammae/tpl-engine@^0.0.3":
   version "0.0.3"

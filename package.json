@@ -33,11 +33,11 @@
     "dependencies": {
         "@babel/core": "^7.5.4",
         "@babel/plugin-syntax-dynamic-import": "^7.2.0",
-        "@flammae/fs-enhance": "^0.1.0-beta",
+        "@flammae/fs-enhance": "^0.1.0",
         "@flammae/fs-map": "^0.0.3",
         "@flammae/helpers": "^0.0.3",
         "@flammae/markdown-loader": "0.0.1",
-        "@flammae/task": "^0.1.0",
+        "@flammae/task": "^0.2.1",
         "@flammae/tpl-engine": "^0.0.3",
         "@flammae/webpack-execter": "0.0.9",
         "babel-loader": "^8.0.6",
